@@ -40,10 +40,6 @@ import org.apache.commons.lang3.StringUtils;
  * @author malbinola
  */
 public class Category {
-	public final static String SYNC_OFF = "O";
-	public final static String SYNC_READ_ONLY = "R";
-	public final static String SYNC_READ_WRITE = "W";
-	
 	private Integer categoryId;
 	private String domainId;
 	private String userId;
@@ -51,7 +47,7 @@ public class Category {
 	private String name;
 	private String description;
 	private String color;
-	private String sync;
+	private Sync sync;
 	private Boolean isPrivate;
 	private Boolean isDefault;
 
@@ -111,11 +107,11 @@ public class Category {
 		this.color = color;
 	}
 
-	public String getSync() {
+	public Sync getSync() {
 		return sync;
 	}
 
-	public void setSync(String sync) {
+	public void setSync(Sync sync) {
 		this.sync = sync;
 	}
 

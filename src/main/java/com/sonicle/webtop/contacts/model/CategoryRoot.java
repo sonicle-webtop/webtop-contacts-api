@@ -35,7 +35,7 @@ package com.sonicle.webtop.contacts.model;
 import com.sonicle.webtop.core.bol.model.IncomingShareRoot;
 import com.sonicle.webtop.core.bol.model.SharePermsRoot;
 import com.sonicle.webtop.core.bol.model.ShareRoot;
-import com.sonicle.webtop.core.sdk.UserProfile;
+import com.sonicle.webtop.core.sdk.UserProfileId;
 
 /**
  *
@@ -43,7 +43,7 @@ import com.sonicle.webtop.core.sdk.UserProfile;
  */
 public class CategoryRoot extends ShareRoot {
 	
-	public CategoryRoot(String shareId, SharePermsRoot perms, UserProfile.Id ownerProfileId, String description) {
+	public CategoryRoot(String shareId, SharePermsRoot perms, UserProfileId ownerProfileId, String description) {
 		super(shareId, perms, ownerProfileId, description);
 	}
 	

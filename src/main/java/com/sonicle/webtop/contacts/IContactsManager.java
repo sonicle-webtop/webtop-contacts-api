@@ -53,7 +53,7 @@ public interface IContactsManager {
 	public Category updateCategory(Category cat) throws WTException;
 	public boolean deleteCategory(int categoryId) throws WTException;
 	//public List<CategoryContacts> listContacts(CategoryRoot root, Integer[] categoryFolders, String searchMode, String pattern) throws WTException;
-	//public List<CategoryContacts> listContacts(UserProfile.Id pid, Integer[] categoryFolders, String searchMode, String pattern) throws WTException;
+	//public List<CategoryContacts> listContacts(UserProfileId pid, Integer[] categoryFolders, String searchMode, String pattern) throws WTException;
 	public Contact getContact(int contactId) throws WTException;
 	public void addContact(Contact contact) throws WTException;
 	public void addContact(Contact contact, ContactPicture picture) throws WTException;

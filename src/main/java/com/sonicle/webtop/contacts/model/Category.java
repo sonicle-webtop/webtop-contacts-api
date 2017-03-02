@@ -32,7 +32,7 @@
  */
 package com.sonicle.webtop.contacts.model;
 
-import com.sonicle.webtop.core.sdk.UserProfile;
+import com.sonicle.webtop.core.sdk.UserProfileId;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -131,8 +131,8 @@ public class Category {
 		this.isDefault = isDefault;
 	}
 	
-	public UserProfile.Id getProfileId() {
-		return new UserProfile.Id(getDomainId(), getUserId());
+	public UserProfileId getProfileId() {
+		return new UserProfileId(getDomainId(), getUserId());
 	}
 	
 	public String getHexColor() {

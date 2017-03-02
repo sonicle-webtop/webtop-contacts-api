@@ -32,9 +32,9 @@
  */
 package com.sonicle.webtop.contacts.model;
 
-import com.sonicle.webtop.core.bol.model.IncomingShareRoot;
-import com.sonicle.webtop.core.bol.model.SharePermsRoot;
-import com.sonicle.webtop.core.bol.model.ShareRoot;
+import com.sonicle.webtop.core.model.IncomingShareRoot;
+import com.sonicle.webtop.core.model.SharePermsRoot;
+import com.sonicle.webtop.core.model.ShareRoot;
 import com.sonicle.webtop.core.sdk.UserProfileId;
 
 /**

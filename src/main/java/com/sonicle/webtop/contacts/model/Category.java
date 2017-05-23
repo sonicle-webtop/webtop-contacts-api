@@ -135,7 +135,7 @@ public class Category {
 		return new UserProfileId(getDomainId(), getUserId());
 	}
 	
-	public String getHexColor() {
-		return (StringUtils.indexOf(this.color, "#") == 0) ? StringUtils.substring(this.color, 1) : this.color;
+	public static String getHexColor(String color) {
+		return (StringUtils.indexOf(color, "#") == 0) ? StringUtils.substring(color, 1) : color;
 	}
 }

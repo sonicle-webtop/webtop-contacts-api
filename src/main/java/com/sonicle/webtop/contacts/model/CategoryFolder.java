@@ -32,7 +32,6 @@
  */
 package com.sonicle.webtop.contacts.model;
 
-import com.sonicle.webtop.contacts.model.Category;
 import com.sonicle.webtop.core.model.ShareFolder;
 import com.sonicle.webtop.core.model.SharePermsFolder;
 import com.sonicle.webtop.core.model.SharePermsElements;
@@ -42,12 +41,22 @@ import com.sonicle.webtop.core.model.SharePermsElements;
  * @author malbinola
  */
 public class CategoryFolder extends ShareFolder {
+	private Object data;
 	
 	public CategoryFolder(String shareId, SharePermsFolder perms, SharePermsElements elsPerms, Category category) {
 		super(shareId, perms, elsPerms, category);
+		data = null;
 	}
 
 	public Category getCategory() {
 		return (Category)object;
+	}
+	
+	public Object getData() {
+		return data;
+	}
+	
+	public void setData(Object data) {
+		this.data = data;
 	}
 }

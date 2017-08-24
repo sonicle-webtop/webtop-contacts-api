@@ -12,4 +12,12 @@
 		<artifactId>webtop-superpom-service-api</artifactId>
 		<version>1</version>
 	</parent>
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.googlecode.ez-vcard</groupId>
+			<artifactId>ez-vcard</artifactId>
+			<version>0.9.8</version>
+		</dependency>
+	</dependencies>
 </project>

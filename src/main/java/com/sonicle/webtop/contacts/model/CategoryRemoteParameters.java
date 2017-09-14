@@ -32,15 +32,34 @@
  */
 package com.sonicle.webtop.contacts.model;
 
+import com.sonicle.commons.web.json.JsonResult;
+import java.net.URI;
+
 /**
  *
  * @author malbinola
  */
-public enum Sync {
-	OFF("O"), READ("R"), WRITE("W");
-		
-	private final String value;
-	private Sync(String value) { this.value = value; }
-	@Override
-	public String toString() { return value; }
+public class CategoryRemoteParameters {
+	public URI url;
+	public String username;
+	public String password;
+	public String syncToken;
+	
+	public CategoryRemoteParameters() {}
+	
+	public CategoryRemoteParameters(URI url, String username, String password) {
+		this.url = url;
+		this.username = username;
+		this.password = password;
+	}
+	
+	public static CategoryRemoteParameters fromJson(String value) {
+		if (value == null) return null;
+		return JsonResult.gson.fromJson(value, CategoryRemoteParameters.class);
+	}
+	
+	public static String toJson(CategoryRemoteParameters value) {
+		if (value == null) return null;
+		return JsonResult.gson.toJson(value, CategoryRemoteParameters.class);
+	}
 }

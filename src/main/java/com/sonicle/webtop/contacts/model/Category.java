@@ -32,6 +32,7 @@
  */
 package com.sonicle.webtop.contacts.model;
 
+import com.google.gson.annotations.SerializedName;
 import com.sonicle.webtop.core.sdk.UserProfileId;
 import org.apache.commons.lang3.StringUtils;
 
@@ -44,12 +45,14 @@ public class Category {
 	private String domainId;
 	private String userId;
 	private Boolean builtIn;
+	private Provider provider;
 	private String name;
 	private String description;
 	private String color;
 	private Sync sync;
-	private Boolean isPrivate;
 	private Boolean isDefault;
+	private Boolean isPrivate;
+	private String parameters;
 
 	public Integer getCategoryId() {
 		return categoryId;
@@ -81,6 +84,14 @@ public class Category {
 
 	public void setBuiltIn(Boolean builtIn) {
 		this.builtIn = builtIn;
+	}
+	
+	public Provider getProvider() {
+		return provider;
+	}
+
+	public void setProvider(Provider provider) {
+		this.provider = provider;
 	}
 
 	public String getName() {
@@ -114,6 +125,14 @@ public class Category {
 	public void setSync(Sync sync) {
 		this.sync = sync;
 	}
+	
+	public Boolean getIsDefault() {
+		return isDefault;
+	}
+
+	public void setIsDefault(Boolean isDefault) {
+		this.isDefault = isDefault;
+	}
 
 	public Boolean getIsPrivate() {
 		return isPrivate;
@@ -122,20 +141,35 @@ public class Category {
 	public void setIsPrivate(Boolean isPrivate) {
 		this.isPrivate = isPrivate;
 	}
-
-	public Boolean getIsDefault() {
-		return isDefault;
+	
+	public String getParameters() {
+		return parameters;
 	}
 
-	public void setIsDefault(Boolean isDefault) {
-		this.isDefault = isDefault;
+	public void setParameters(String parameters) {
+		this.parameters = parameters;
 	}
 	
 	public UserProfileId getProfileId() {
 		return new UserProfileId(getDomainId(), getUserId());
 	}
 	
+	public boolean isRemoteProvider() {
+		return Provider.CARDDAV.equals(getProvider());
+	}
+	
 	public static String getHexColor(String color) {
 		return (StringUtils.indexOf(color, "#") == 0) ? StringUtils.substring(color, 1) : color;
+	}
+	
+	public static enum Provider {
+		@SerializedName("local") LOCAL,
+		@SerializedName("carddav") CARDDAV;
+	}
+	
+	public static enum Sync {
+		@SerializedName("O") OFF,
+		@SerializedName("R") READ,
+		@SerializedName("W") WRITE;
 	}
 }

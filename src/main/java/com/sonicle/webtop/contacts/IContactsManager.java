@@ -44,7 +44,13 @@ import java.util.List;
  * @author malbinola
  */
 public interface IContactsManager {
+	public static final String RCPT_ORIGIN_CONTACT_WORK = "contact-work";
+	public static final String RCPT_ORIGIN_CONTACT_HOME = "contact-home";
+	public static final String RCPT_ORIGIN_CONTACT_OTHER = "contact-other";
+	public static final String RCPT_ORIGIN_LIST = "list";
+	public static final String RCPT_ORIGIN_LISTITEM = "listitem";
 	
+	public List<Integer> listCategoryIds() throws WTException;
 	public List<Category> listCategories() throws WTException;
 	public Category getCategory(int categoryId) throws WTException;
 	public Category getBuiltInCategory() throws WTException;

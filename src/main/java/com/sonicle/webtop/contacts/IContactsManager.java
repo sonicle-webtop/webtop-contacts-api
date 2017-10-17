@@ -36,7 +36,9 @@ import com.sonicle.webtop.contacts.model.Category;
 import com.sonicle.webtop.contacts.model.Contact;
 import com.sonicle.webtop.contacts.model.ContactPicture;
 import com.sonicle.webtop.contacts.model.ContactsList;
+import com.sonicle.webtop.contacts.model.FolderContacts;
 import com.sonicle.webtop.core.sdk.WTException;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -58,8 +60,7 @@ public interface IContactsManager {
 	public Category addBuiltInCategory() throws WTException;
 	public Category updateCategory(Category cat) throws WTException;
 	public boolean deleteCategory(int categoryId) throws WTException;
-	//public List<CategoryContacts> listContacts(CategoryRoot root, Integer[] categoryFolders, String searchMode, String pattern) throws WTException;
-	//public List<CategoryContacts> listContacts(UserProfileId pid, Integer[] categoryFolders, String searchMode, String pattern) throws WTException;
+	public List<FolderContacts> listFolderContacts(Collection<Integer> categoryFolderIds, String searchMode, String pattern) throws WTException;
 	public Contact getContact(int contactId) throws WTException;
 	public void addContact(Contact contact) throws WTException;
 	public void addContact(Contact contact, ContactPicture picture) throws WTException;
@@ -68,14 +69,14 @@ public interface IContactsManager {
 	public ContactPicture getContactPicture(int contactId) throws WTException;
 	public void updateContactPicture(int contactId, ContactPicture picture) throws WTException;
 	public void deleteContact(int contactId) throws WTException;
-	public void deleteContact(List<Integer> contactIds) throws WTException;
+	public void deleteContact(Collection<Integer> contactIds) throws WTException;
 	public int deleteAllContacts(int categoryId) throws WTException;
 	public void moveContact(boolean copy, int contactId, int targetCategoryId) throws WTException;
 	public ContactsList getContactsList(int contactId) throws WTException;
 	public void addContactsList(ContactsList list) throws WTException;
 	public void updateContactsList(ContactsList list) throws WTException;
 	public void deleteContactsList(int contactsListId) throws WTException;
-	public void deleteContactsList(List<Integer> contactsListIds) throws WTException;
+	public void deleteContactsList(Collection<Integer> contactsListIds) throws WTException;
 	public int deleteAllContactsLists(int categoryId) throws WTException;
 	public void moveContactsList(boolean copy, int contactsListId, int targetCategoryId) throws WTException;
 }

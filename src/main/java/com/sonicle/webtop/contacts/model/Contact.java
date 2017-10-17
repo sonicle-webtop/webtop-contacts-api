@@ -32,6 +32,7 @@
  */
 package com.sonicle.webtop.contacts.model;
 
+import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 
@@ -42,12 +43,12 @@ import org.joda.time.LocalDate;
 public class Contact {
 	protected Integer contactId;
 	protected Integer categoryId;
-	protected String revisionStatus;
+	protected RevisionStatus revisionStatus;
 	protected String title;
 	protected String firstName;
 	protected String lastName;
 	protected String nickname;
-	protected String gender;
+	protected Gender gender;
 	protected String workAddress;
 	protected String workPostalCode;
 	protected String workCity;
@@ -110,11 +111,11 @@ public class Contact {
 		this.categoryId = categoryId;
 	}
 
-	public String getRevisionStatus() {
+	public RevisionStatus getRevisionStatus() {
 		return revisionStatus;
 	}
 
-	public void setRevisionStatus(String revisionStatus) {
+	public void setRevisionStatus(RevisionStatus revisionStatus) {
 		this.revisionStatus = revisionStatus;
 	}
 
@@ -150,11 +151,11 @@ public class Contact {
 		this.nickname = nickname;
 	}
 
-	public String getGender() {
+	public Gender getGender() {
 		return gender;
 	}
 
-	public void setGender(String gender) {
+	public void setGender(Gender gender) {
 		this.gender = gender;
 	}
 
@@ -539,24 +540,15 @@ public class Contact {
 		return StringUtils.trim(StringUtils.defaultString(firstName) + " " + StringUtils.defaultString(lastName));
 	}
 	
+	public static enum RevisionStatus {
+		@SerializedName("N") NEW,
+		@SerializedName("M") MODIFIED,
+		@SerializedName("D") DELETED;
+	}
+	
 	public static enum Gender {
-		MALE {
-			@Override
-			public String toString() {
-				return "male";
-			}
-		},
-		FEMALE {
-			@Override
-			public String toString() {
-				return "female";
-			}
-		},
-		OTHER {
-			@Override
-			public String toString() {
-				return "other";
-			}
-		}
+		@SerializedName("male") MALE,
+		@SerializedName("female") FEMALE,
+		@SerializedName("other") OTHER;
 	}
 }

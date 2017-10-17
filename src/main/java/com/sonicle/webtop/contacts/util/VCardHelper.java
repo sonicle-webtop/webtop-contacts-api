@@ -268,10 +268,10 @@ public class VCardHelper {
 		return new ToContactResult(contact, picture);
 	}
 	
-	public static String parseGender(Gender ge) {
-		if (ge.isMale()) return Contact.Gender.MALE.toString();
-		if (ge.isFemale()) return Contact.Gender.FEMALE.toString();
-		if (ge.isOther()) return Contact.Gender.OTHER.toString();
+	public static Contact.Gender parseGender(Gender ge) {
+		if (ge.isMale()) return Contact.Gender.MALE;
+		if (ge.isFemale()) return Contact.Gender.FEMALE;
+		if (ge.isOther()) return Contact.Gender.OTHER;
 		return null;
 	}
 	
@@ -395,11 +395,11 @@ public class VCardHelper {
 	
 	public static Gender extractGender(Contact contact) {
 		Gender prop = null;
-		if (!StringUtils.equals(contact.getGender(), Contact.Gender.MALE.toString())) {
+		if (Contact.Gender.MALE.equals(contact.getGender())) {
 			prop = new Gender("MALE");
-		} else if (!StringUtils.equals(contact.getGender(), Contact.Gender.FEMALE.toString())) {
+		} else if (Contact.Gender.FEMALE.equals(contact.getGender())) {
 			prop = new Gender("FEMALE");
-		} else if (!StringUtils.equals(contact.getGender(), Contact.Gender.OTHER.toString())) {
+		} else if (Contact.Gender.OTHER.equals(contact.getGender())) {
 			prop = new Gender("OTHER");
 		}
 		return prop;

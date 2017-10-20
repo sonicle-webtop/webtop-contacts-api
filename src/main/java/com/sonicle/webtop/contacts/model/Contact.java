@@ -505,31 +505,31 @@ public class Contact {
 	
 	public boolean isNameEmpty() {
 		return StringUtils.isEmpty(getFirstName())
-				&& StringUtils.isEmpty(getLastName());
+			&& StringUtils.isEmpty(getLastName());
 	}
 	
 	public boolean isWorkAddressEmpty() {
 		return StringUtils.isEmpty(getWorkAddress())
-				&& StringUtils.isEmpty(getWorkPostalCode())
-				&& StringUtils.isEmpty(getWorkCity())
-				&& StringUtils.isEmpty(getWorkState())
-				&& StringUtils.isEmpty(getWorkCountry());
+			&& StringUtils.isEmpty(getWorkPostalCode())
+			&& StringUtils.isEmpty(getWorkCity())
+			&& StringUtils.isEmpty(getWorkState())
+			&& StringUtils.isEmpty(getWorkCountry());
 	}
 	
 	public boolean isHomeAddressEmpty() {
 		return StringUtils.isEmpty(getHomeAddress())
-				&& StringUtils.isEmpty(getHomePostalCode())
-				&& StringUtils.isEmpty(getHomeCity())
-				&& StringUtils.isEmpty(getHomeState())
-				&& StringUtils.isEmpty(getHomeCountry());
+			&& StringUtils.isEmpty(getHomePostalCode())
+			&& StringUtils.isEmpty(getHomeCity())
+			&& StringUtils.isEmpty(getHomeState())
+			&& StringUtils.isEmpty(getHomeCountry());
 	}
 	
 	public boolean isOtherAddressEmpty() {
 		return StringUtils.isEmpty(getOtherAddress())
-				&& StringUtils.isEmpty(getOtherPostalCode())
-				&& StringUtils.isEmpty(getOtherCity())
-				&& StringUtils.isEmpty(getOtherState())
-				&& StringUtils.isEmpty(getOtherCountry());
+			&& StringUtils.isEmpty(getOtherPostalCode())
+			&& StringUtils.isEmpty(getOtherCity())
+			&& StringUtils.isEmpty(getOtherState())
+			&& StringUtils.isEmpty(getOtherCountry());
 	}
 	
 	public static String buildUid(Object contactId) {

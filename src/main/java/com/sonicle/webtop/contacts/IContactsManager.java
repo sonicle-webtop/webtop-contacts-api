@@ -58,6 +58,7 @@ public interface IContactsManager {
 	public List<CategoryRoot> listIncomingCategoryRoots() throws WTException;
 	public HashMap<Integer, CategoryFolder> listIncomingCategoryFolders(String rootShareId) throws WTException;
 	public List<Integer> listCategoryIds() throws WTException;
+	public List<Integer> listIncomingCategoryIds() throws WTException;
 	public List<Category> listCategories() throws WTException;
 	public Category getCategory(int categoryId) throws WTException;
 	public Category getBuiltInCategory() throws WTException;

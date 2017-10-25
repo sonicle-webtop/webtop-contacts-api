@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2014 Sonicle S.r.l.
+/*
+ * Copyright (C) 2017 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,35 +28,23 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2014 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2017 Sonicle S.r.l.".
  */
-package com.sonicle.webtop.contacts.model;
+package com.sonicle.webtop.contacts.io;
 
-import com.sonicle.webtop.core.model.ShareFolder;
-import com.sonicle.webtop.core.model.SharePermsFolder;
-import com.sonicle.webtop.core.model.SharePermsElements;
+import com.sonicle.webtop.contacts.model.Contact;
+import com.sonicle.webtop.contacts.model.ContactPicture;
 
 /**
  *
  * @author malbinola
  */
-public class CategoryFolder extends ShareFolder {
-	private Object data;
-	
-	public CategoryFolder(String shareId, SharePermsFolder perms, SharePermsElements elsPerms, Category category) {
-		super(shareId, perms, category.isRemoteProvider() ? new SharePermsElements() : elsPerms, category);
-		data = null;
-	}
+public class ContactInput {
+	public final Contact contact;
+	public final ContactPicture picture;
 
-	public Category getCategory() {
-		return (Category)object;
-	}
-	
-	public Object getData() {
-		return data;
-	}
-	
-	public void setData(Object data) {
-		this.data = data;
+	public ContactInput(Contact contact, ContactPicture picture) {
+		this.contact = contact;
+		this.picture = picture;
 	}
 }

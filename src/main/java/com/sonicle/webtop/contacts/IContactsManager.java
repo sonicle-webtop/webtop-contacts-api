@@ -76,13 +76,11 @@ public interface IContactsManager {
 	public void updateContactPicture(int contactId, ContactPicture picture) throws WTException;
 	public void deleteContact(int contactId) throws WTException;
 	public void deleteContact(Collection<Integer> contactIds) throws WTException;
-	public int deleteAllContacts(int categoryId) throws WTException;
 	public void moveContact(boolean copy, int contactId, int targetCategoryId) throws WTException;
 	public ContactsList getContactsList(int contactId) throws WTException;
 	public void addContactsList(ContactsList list) throws WTException;
 	public void updateContactsList(ContactsList list) throws WTException;
 	public void deleteContactsList(int contactsListId) throws WTException;
 	public void deleteContactsList(Collection<Integer> contactsListIds) throws WTException;
-	public int deleteAllContactsLists(int categoryId) throws WTException;
 	public void moveContactsList(boolean copy, int contactsListId, int targetCategoryId) throws WTException;
 }

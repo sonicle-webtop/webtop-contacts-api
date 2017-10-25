@@ -44,6 +44,7 @@ public class Contact {
 	protected Integer contactId;
 	protected Integer categoryId;
 	protected RevisionStatus revisionStatus;
+	protected String publicUid;
 	protected String title;
 	protected String firstName;
 	protected String lastName;
@@ -90,7 +91,8 @@ public class Contact {
 	protected LocalDate anniversary;
 	protected String url;
 	protected String notes;
-	protected String publicUid;
+	protected String href;
+	protected String etag;
 	protected boolean hasPicture;
 	
 	public Contact() {}
@@ -117,6 +119,14 @@ public class Contact {
 
 	public void setRevisionStatus(RevisionStatus revisionStatus) {
 		this.revisionStatus = revisionStatus;
+	}
+	
+	public String getPublicUid() {
+		return publicUid;
+	}
+
+	public void setPublicUid(String publicUid) {
+		this.publicUid = publicUid;
 	}
 
 	public String getTitle() {
@@ -487,12 +497,20 @@ public class Contact {
 		this.notes = notes;
 	}
 	
-	public String getPublicUid() {
-		return publicUid;
+	public String getHref() {
+		return href;
 	}
 
-	public void setPublicUid(String publicUid) {
-		this.publicUid = publicUid;
+	public void setHref(String href) {
+		this.href = href;
+	}
+	
+	public String getEtag() {
+		return etag;
+	}
+
+	public void setEtag(String etag) {
+		this.etag = etag;
 	}
 	
 	public boolean getHasPicture() {

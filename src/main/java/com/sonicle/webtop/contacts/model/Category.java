@@ -154,6 +154,11 @@ public class Category {
 		return new UserProfileId(getDomainId(), getUserId());
 	}
 	
+	public void setProfileId(UserProfileId pid) {
+		setDomainId(pid.getDomain());
+		setUserId(pid.getUser());
+	}
+	
 	public boolean isRemoteProvider() {
 		return Provider.CARDDAV.equals(getProvider());
 	}
@@ -164,12 +169,12 @@ public class Category {
 	
 	public static enum Provider {
 		@SerializedName("local") LOCAL,
-		@SerializedName("carddav") CARDDAV;
+		@SerializedName("carddav") CARDDAV
 	}
 	
 	public static enum Sync {
 		@SerializedName("O") OFF,
 		@SerializedName("R") READ,
-		@SerializedName("W") WRITE;
+		@SerializedName("W") WRITE
 	}
 }

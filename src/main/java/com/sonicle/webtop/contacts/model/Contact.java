@@ -521,6 +521,10 @@ public class Contact {
 		this.hasPicture = hasPicture;
 	}
 	
+	public String getFullName() {
+		return StringUtils.trim(StringUtils.defaultString(getFirstName()) + " " + StringUtils.defaultString(getLastName()));
+	}
+	
 	public boolean isNameEmpty() {
 		return StringUtils.isEmpty(getFirstName())
 			&& StringUtils.isEmpty(getLastName());

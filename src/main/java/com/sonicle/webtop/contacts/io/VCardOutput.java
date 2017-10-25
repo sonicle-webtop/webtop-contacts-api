@@ -35,7 +35,9 @@ package com.sonicle.webtop.contacts.io;
 import com.sonicle.webtop.contacts.model.Contact;
 import com.sonicle.webtop.contacts.model.ContactPicture;
 import com.sonicle.webtop.core.sdk.WTException;
+import ezvcard.Ezvcard;
 import ezvcard.VCard;
+import ezvcard.VCardVersion;
 import ezvcard.parameter.AddressType;
 import ezvcard.parameter.EmailType;
 import ezvcard.parameter.ImageType;
@@ -66,6 +68,19 @@ import org.apache.commons.lang3.StringUtils;
  * @author malbinola
  */
 public class VCardOutput {
+	private final VCardVersion version;
+	
+	public VCardOutput() {
+		this(VCardVersion.V4_0);
+	}
+	
+	public VCardOutput(VCardVersion version) {
+		this.version = version;
+	}
+	
+	public String write(VCard vCard) {
+		return Ezvcard.write(vCard).version(version).go();
+	}
 	
 	public VCard toVCard(Contact contact, ContactPicture picture) throws WTException {
 		VCard vCard = new VCard();

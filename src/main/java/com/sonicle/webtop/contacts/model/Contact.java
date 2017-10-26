@@ -522,7 +522,26 @@ public class Contact {
 	}
 	
 	public String getFullName() {
-		return StringUtils.trim(StringUtils.defaultString(getFirstName()) + " " + StringUtils.defaultString(getLastName()));
+		return getFullName(true);
+	}
+	
+	public String getFullName(boolean firstLastOnly) {
+		if (firstLastOnly) {
+			return StringUtils.join(getFirstName(), " ", getLastName()).trim();
+		} else {
+			return StringUtils.join(getTitle(), " ", getFirstName(), " ", getLastName()).trim();
+		}
+	}
+	
+	public boolean areNamesBlank(boolean firstLastOnly) {
+		if (firstLastOnly) {
+			return StringUtils.isBlank(getFirstName())
+				&& StringUtils.isBlank(getLastName());
+		} else {
+			return StringUtils.isBlank(getFirstName())
+				&& StringUtils.isBlank(getLastName())
+				&& StringUtils.isBlank(getTitle());
+		}
 	}
 	
 	public boolean isNameEmpty() {

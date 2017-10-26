@@ -77,14 +77,14 @@ import org.joda.time.LocalDate;
  * @author malbinola
  */
 public class VCardInput {
-	private final RecipientFieldCategory defaultTarget;
+	private final RecipientFieldCategory preferredTarget;
 	
 	public VCardInput() {
 		this(RecipientFieldCategory.WORK);
 	}
 	
-	public VCardInput(RecipientFieldCategory defaultTarget) {
-		this.defaultTarget = defaultTarget;
+	public VCardInput(RecipientFieldCategory preferredTarget) {
+		this.preferredTarget = preferredTarget;
 	}
 	
 	public List<ContactInput> fromVCardFile(InputStream is, LogEntries log) throws WTException {
@@ -348,7 +348,7 @@ public class VCardInput {
 			} else if (types.contains(EmailType.HOME)) {
 				key = RecipientFieldCategory.HOME;
 			} else if (types.contains(EmailType.INTERNET)) {
-				key = defaultTarget;
+				key = preferredTarget;
 			} else {
 				key = RecipientFieldCategory.OTHER;
 			}
@@ -375,7 +375,7 @@ public class VCardInput {
 			} else if (types.contains(EmailType.HOME)) {
 				key = RecipientFieldCategory.HOME;
 			} else if (types.contains(EmailType.INTERNET)) {
-				key = defaultTarget;
+				key = preferredTarget;
 			} else {
 				key = RecipientFieldCategory.OTHER;
 			}

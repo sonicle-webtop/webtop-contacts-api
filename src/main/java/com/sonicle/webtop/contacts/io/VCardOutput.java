@@ -34,6 +34,7 @@ package com.sonicle.webtop.contacts.io;
 
 import com.sonicle.webtop.contacts.model.Contact;
 import com.sonicle.webtop.contacts.model.ContactPicture;
+import com.sonicle.webtop.core.model.RecipientFieldCategory;
 import com.sonicle.webtop.core.sdk.WTException;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
@@ -47,6 +48,7 @@ import ezvcard.property.Address;
 import ezvcard.property.Anniversary;
 import ezvcard.property.Birthday;
 import ezvcard.property.Email;
+import ezvcard.property.FormattedName;
 import ezvcard.property.Gender;
 import ezvcard.property.Impp;
 import ezvcard.property.Nickname;
@@ -56,7 +58,6 @@ import ezvcard.property.Photo;
 import ezvcard.property.Role;
 import ezvcard.property.StructuredName;
 import ezvcard.property.Telephone;
-import ezvcard.property.Title;
 import ezvcard.property.Uid;
 import ezvcard.property.Url;
 import java.util.ArrayList;
@@ -69,13 +70,18 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class VCardOutput {
 	private final VCardVersion version;
+	private final RecipientFieldCategory preferredTarget;
+	private final EmailType otherEmailType = EmailType.AOL;
+	private final ImppType otherImppType = ImppType.PERSONAL;
+	private final AddressType otherAddressType = AddressType.POSTAL;
 	
 	public VCardOutput() {
-		this(VCardVersion.V4_0);
+		this(VCardVersion.V4_0, RecipientFieldCategory.WORK);
 	}
 	
-	public VCardOutput(VCardVersion version) {
+	public VCardOutput(VCardVersion version, RecipientFieldCategory preferredTarget) {
 		this.version = version;
+		this.preferredTarget = preferredTarget;
 	}
 	
 	public String write(VCard vCard) {
@@ -85,92 +91,93 @@ public class VCardOutput {
 	public VCard toVCard(Contact contact, ContactPicture picture) throws WTException {
 		VCard vCard = new VCard();
 		
-		// UID
-		vCard.setUid(new Uid(contact.getPublicUid()));
+		// UID(?)
+		vCard.setUid(toUid(contact));
 		
-		// TITLE
-		Title title = toTitle(contact);
-		if (title != null) vCard.getTitles().add(title);
+		// FN(+) -> Formatted Name (full name)
+		vCard.setFormattedName(toFormattedName(contact));
 		
-		// N -> FirstName/LastName
-		StructuredName sname = toStructuredName(contact);
-		if (sname != null) vCard.setStructuredName(sname);
+		// N(?) -> Structured Name (name components)
+		vCard.setStructuredName(toStructuredName(contact));
 		
-		// NICKNAME
-		Nickname nick = toNickname(contact);
-		if (nick != null) vCard.setNickname(nick);
+		// NICKNAME(*)
+		vCard.setNickname(toNickname(contact));
 		
-		// GENDER
-		Gender gender = toGender(contact);
-		if (gender != null) vCard.setGender(gender);
+		// GENDER(?)
+		vCard.setGender(toGender(contact));
 		
-		// ADR
-		List<Address> addrs = toAddresses(contact);
-		if (!addrs.isEmpty()) vCard.getAddresses().addAll(addrs);
+		// ADR(*)
+		for (Address address : toAddresses(contact)) {
+			vCard.addAddress(address);
+		}
 		
-		// TEL
-		List<Telephone> tels = toTelephones(contact);
-		if (!tels.isEmpty()) vCard.getTelephoneNumbers().addAll(tels);
+		// TEL(*)
+		for (Telephone telephone : toTelephones(contact)) {
+			vCard.addTelephoneNumber(telephone);
+		}
 		
-		// EMAIL
-		List<Email> emails = toEmails(contact);
-		if (!emails.isEmpty()) vCard.getEmails().addAll(emails);
+		// EMAIL(*)
+		for (Email email : toEmails(contact)) {
+			vCard.addEmail(email);
+		}
 		
-		// IMPP -> InstantMsg
-		List<Impp> impps = toImpps(contact);
-		if (!impps.isEmpty()) vCard.getImpps().addAll(impps);
+		// IMPP(*) -> InstantMsg
+		for (Impp impp : toImpps(contact)) {
+			vCard.addImpp(impp);
+		}
 		
-		// ORG -> Company/Department
-		Organization org = toOrganization(contact);
-		if (org != null) vCard.setOrganization(org);
+		// ORG(*) -> Company/Department
+		vCard.setOrganization(toOrganization(contact));
 		
-		// ROLE <- Function
+		// ROLE(*) -> Function
 		Role role = toRole(contact);
-		if (role != null) vCard.getRoles().add(role);
+		if (role != null) vCard.addRole(role);
 		
 		//TODO: come riempiamo il campo manager?
 		//TODO: come riempiamo il campo assistant?
 		//TODO: come riempiamo il campo telephoneAssistant?
 		
-		// BDAY
-		Birthday bday = toBirthday(contact);
-		if (bday != null) vCard.setBirthday(bday);
+		// BDAY(*)
+		vCard.setBirthday(toBirthday(contact));
 		
-		// ANNIVERSARY
-		Anniversary ann = toAnniversary(contact);
-		if (ann != null) vCard.setAnniversary(ann);
+		// ANNIVERSARY(*)
+		vCard.setAnniversary(toAnniversary(contact));
 		
-		// URL
+		// URL(*)
 		Url url = toUrl(contact);
-		if (url != null) vCard.getUrls().add(url);
+		if (url != null) vCard.addUrl(url);
 		
-		// NOTE
+		// NOTE(*)
 		Note note = toNotes(contact);
-		if (note != null) vCard.getNotes().add(note);
+		if (note != null) vCard.addNote(note);
 		
-		// PHOTO
+		// PHOTO(*)
 		if (contact.getHasPicture()) {
 			Photo photo = toPhoto(picture);
-			if (photo != null) vCard.getPhotos().add(photo);
+			if (photo != null) vCard.addPhoto(photo);
 		}
 		
 		return vCard;
 	}
 	
-	public static Title toTitle(Contact contact) {
-		Title prop = null;
-		if (!StringUtils.isBlank(contact.getTitle())) {
-			prop = new Title(contact.getTitle());
-		}
-		return prop;
+	public Uid toUid(Contact contact) {
+		final String uid = contact.getPublicUid();
+		return !StringUtils.isBlank(uid) ? new Uid(uid) : null;
+	}
+	
+	public FormattedName toFormattedName(Contact contact) {
+		return new FormattedName(contact.getFullName(false));
 	}
 	
 	public StructuredName toStructuredName(Contact contact) {
 		StructuredName prop = null;
-		if (!contact.isNameEmpty()) {
+		if (!contact.areNamesBlank(false)) {
 			prop = new StructuredName();
 			prop.setGiven(deflt(contact.getFirstName()));
 			prop.setFamily(deflt(contact.getLastName()));
+			if (!StringUtils.isBlank(contact.getTitle())) {
+				prop.addPrefix(contact.getTitle());
+			}
 		}
 		return prop;
 	}
@@ -200,88 +207,118 @@ public class VCardOutput {
 		List<Address> props = new ArrayList<>();
 		if (!contact.isWorkAddressEmpty()) {
 			Address addr = new Address();
-			addr.getTypes().add(AddressType.WORK);
+			addr.addType(AddressType.WORK);
 			addr.setStreetAddress(deflt(contact.getWorkAddress()));
 			addr.setPostalCode(deflt(contact.getWorkPostalCode()));
 			addr.setLocality(deflt(contact.getWorkCity()));
 			addr.setRegion(deflt(contact.getWorkState()));
 			addr.setCountry(deflt(contact.getWorkCountry()));
+			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
+				addr.setPref(1);
+			}
 		}
 		if (!contact.isHomeAddressEmpty()) {
 			Address addr = new Address();
-			addr.getTypes().add(AddressType.HOME);
+			addr.addType(AddressType.HOME);
 			addr.setStreetAddress(deflt(contact.getHomeAddress()));
 			addr.setPostalCode(deflt(contact.getHomePostalCode()));
 			addr.setLocality(deflt(contact.getHomeCity()));
 			addr.setRegion(deflt(contact.getHomeState()));
 			addr.setCountry(deflt(contact.getHomeCountry()));
+			if (RecipientFieldCategory.HOME.equals(preferredTarget)) {
+				addr.setPref(1);
+			}
 		}
 		if (!contact.isOtherAddressEmpty()) {
 			Address addr = new Address();
-			addr.getTypes().add(AddressType.POSTAL); //TODO: che tipo usiamo?
+			addr.addType(otherAddressType);
 			addr.setStreetAddress(deflt(contact.getOtherAddress()));
 			addr.setPostalCode(deflt(contact.getOtherPostalCode()));
 			addr.setLocality(deflt(contact.getOtherCity()));
 			addr.setRegion(deflt(contact.getOtherState()));
 			addr.setCountry(deflt(contact.getOtherCountry()));
+			if (RecipientFieldCategory.OTHER.equals(preferredTarget)) {
+				addr.setPref(1);
+			}
 		}
 		return props;
 	}
 	
-	public static List<Telephone> toTelephones(Contact contact) {
+	public List<Telephone> toTelephones(Contact contact) {
 		List<Telephone> props = new ArrayList<>();
 		if (!StringUtils.isBlank(contact.getWorkTelephone())) {
 			Telephone tel = new Telephone(contact.getWorkTelephone());
-			tel.getTypes().add(TelephoneType.WORK);
-			tel.getTypes().add(TelephoneType.VOICE);
-			props.add(tel);
-		}
-		if (!StringUtils.isBlank(contact.getWorkMobile())) {
-			Telephone tel = new Telephone(contact.getWorkMobile());
-			tel.getTypes().add(TelephoneType.WORK);
-			tel.getTypes().add(TelephoneType.CELL);
-			props.add(tel);
-		}
-		if (!StringUtils.isBlank(contact.getWorkFax())) {
-			Telephone tel = new Telephone(contact.getWorkFax());
-			tel.getTypes().add(TelephoneType.WORK);
-			tel.getTypes().add(TelephoneType.FAX);
-			props.add(tel);
-		}
-		if (!StringUtils.isBlank(contact.getWorkPager())) {
-			Telephone tel = new Telephone(contact.getWorkPager());
-			tel.getTypes().add(TelephoneType.WORK);
-			tel.getTypes().add(TelephoneType.PAGER);
+			tel.addType(TelephoneType.WORK);
+			tel.addType(TelephoneType.VOICE);
+			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
+				tel.setPref(1);
+			}
 			props.add(tel);
 		}
 		if (!StringUtils.isBlank(contact.getWorkTelephone2())) {
 			Telephone tel = new Telephone(contact.getWorkTelephone2());
-			tel.getTypes().add(TelephoneType.WORK);
-			tel.getTypes().add(TelephoneType.TEXT);
+			tel.addType(TelephoneType.WORK);
+			tel.addType(TelephoneType.TEXT);
+			props.add(tel);
+		}
+		if (!StringUtils.isBlank(contact.getWorkMobile())) {
+			Telephone tel = new Telephone(contact.getWorkMobile());
+			tel.addType(TelephoneType.WORK);
+			tel.addType(TelephoneType.CELL);
+			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
+				tel.setPref(1);
+			}
+			props.add(tel);
+		}
+		if (!StringUtils.isBlank(contact.getWorkFax())) {
+			Telephone tel = new Telephone(contact.getWorkFax());
+			tel.addType(TelephoneType.WORK);
+			tel.addType(TelephoneType.FAX);
+			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
+				tel.setPref(1);
+			}
+			props.add(tel);
+		}
+		if (!StringUtils.isBlank(contact.getWorkPager())) {
+			Telephone tel = new Telephone(contact.getWorkPager());
+			tel.addType(TelephoneType.WORK);
+			tel.addType(TelephoneType.PAGER);
+			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
+				tel.setPref(1);
+			}
 			props.add(tel);
 		}
 		if (!StringUtils.isBlank(contact.getHomeTelephone())) {
 			Telephone tel = new Telephone(contact.getHomeTelephone());
-			tel.getTypes().add(TelephoneType.HOME);
-			tel.getTypes().add(TelephoneType.VOICE);
+			tel.addType(TelephoneType.HOME);
+			tel.addType(TelephoneType.VOICE);
+			if (RecipientFieldCategory.HOME.equals(preferredTarget)) {
+				tel.setPref(1);
+			}
 			props.add(tel);
 		}
 		if (!StringUtils.isBlank(contact.getHomeTelephone2())) {
 			Telephone tel = new Telephone(contact.getHomeTelephone2());
-			tel.getTypes().add(TelephoneType.HOME);
-			tel.getTypes().add(TelephoneType.TEXT);
+			tel.addType(TelephoneType.HOME);
+			tel.addType(TelephoneType.TEXT);
 			props.add(tel);
 		}
 		if (!StringUtils.isBlank(contact.getHomeFax())) {
 			Telephone tel = new Telephone(contact.getHomeFax());
-			tel.getTypes().add(TelephoneType.HOME);
-			tel.getTypes().add(TelephoneType.FAX);
+			tel.addType(TelephoneType.HOME);
+			tel.addType(TelephoneType.FAX);
+			if (RecipientFieldCategory.HOME.equals(preferredTarget)) {
+				tel.setPref(1);
+			}
 			props.add(tel);
 		}
 		if (!StringUtils.isBlank(contact.getHomePager())) {
 			Telephone tel = new Telephone(contact.getHomePager());
-			tel.getTypes().add(TelephoneType.HOME);
-			tel.getTypes().add(TelephoneType.PAGER);
+			tel.addType(TelephoneType.HOME);
+			tel.addType(TelephoneType.PAGER);
+			if (RecipientFieldCategory.HOME.equals(preferredTarget)) {
+				tel.setPref(1);
+			}
 			props.add(tel);
 		}
 		return props;
@@ -291,17 +328,26 @@ public class VCardOutput {
 		List<Email> props = new ArrayList<>();
 		if (!StringUtils.isBlank(contact.getWorkEmail())) {
 			Email em = new Email(contact.getWorkEmail());
-			em.getTypes().add(EmailType.WORK);
+			em.addType(EmailType.WORK);
+			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
+				em.setPref(1);
+			}
 			props.add(em);
 		}
 		if (!StringUtils.isBlank(contact.getHomeEmail())) {
 			Email em = new Email(contact.getHomeEmail());
-			em.getTypes().add(EmailType.HOME);
+			em.addType(EmailType.HOME);
+			if (RecipientFieldCategory.HOME.equals(preferredTarget)) {
+				em.setPref(1);
+			}
 			props.add(em);
 		}
 		if (!StringUtils.isBlank(contact.getOtherEmail())) {
 			Email em = new Email(contact.getOtherEmail());
-			em.getTypes().add(EmailType.AOL); //TODO: che tipo mettiamo?
+			em.addType(otherEmailType);
+			if (RecipientFieldCategory.OTHER.equals(preferredTarget)) {
+				em.setPref(1);
+			}
 			props.add(em);
 		}
 		return props;
@@ -311,17 +357,17 @@ public class VCardOutput {
 		List<Impp> props = new ArrayList<>();
 		if (!StringUtils.isBlank(contact.getWorkInstantMsg())) {
 			Impp impp = new Impp(contact.getWorkInstantMsg());
-			impp.getTypes().add(ImppType.WORK);
+			impp.addType(ImppType.WORK);
 			props.add(impp);
 		}
 		if (!StringUtils.isBlank(contact.getHomeInstantMsg())) {
 			Impp impp = new Impp(contact.getHomeInstantMsg());
-			impp.getTypes().add(ImppType.HOME);
+			impp.addType(ImppType.HOME);
 			props.add(impp);
 		}
 		if (!StringUtils.isBlank(contact.getOtherInstantMsg())) {
 			Impp impp = new Impp(contact.getOtherInstantMsg());
-			impp.getTypes().add(ImppType.PERSONAL); //TODO: che tipo mettiamo?
+			impp.addType(otherImppType);
 			props.add(impp);
 		}
 		return props;
@@ -331,15 +377,15 @@ public class VCardOutput {
 		Organization prop = null;
 		if (!StringUtils.isBlank(contact.getCompany()) || !StringUtils.isBlank(contact.getDepartment())) {
 			prop = new Organization();
-			prop.getValues().add(StringUtils.defaultString(contact.getCompany()));
-			prop.getValues().add(StringUtils.defaultString(contact.getDepartment()));
+			prop.getValues().add(deflt(contact.getCompany()));
+			prop.getValues().add(deflt(contact.getDepartment()));
 		}
 		return prop;
 	}
 	
 	public Role toRole(Contact contact) {
 		Role prop = null;
-		if (contact.getFunction() != null) {
+		if (!StringUtils.isBlank(contact.getFunction())) {
 			prop = new Role(contact.getFunction());
 		}
 		return prop;

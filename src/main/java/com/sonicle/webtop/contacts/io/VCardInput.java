@@ -258,7 +258,7 @@ public class VCardInput {
 		
 		// IMPP -> InstantMsg
 		if (!vCard.getImpps().isEmpty()) {
-			for(Impp im : vCard.getImpps()) {
+			for (Impp im : vCard.getImpps()) {
 				Set<ImppType> types = im.getTypes();
 				URI uri = im.getUri();
 				if (uri == null) continue;
@@ -275,9 +275,9 @@ public class VCardInput {
 		// ORG -> Company/Department
 		if (vCard.getOrganization() != null) {
 			List<String> values = vCard.getOrganization().getValues();
-			if(!values.isEmpty()) {
+			if (!values.isEmpty()) {
 				contact.setCompany(deflt(values.get(0)));
-				contact.setDepartment(deflt(values.get(1)));
+				if (values.size() > 1) contact.setDepartment(deflt(values.get(1)));
 			}
 		}
 		
@@ -316,7 +316,7 @@ public class VCardInput {
 		// NOTE
 		if (!vCard.getNotes().isEmpty()) {
 			StringBuilder sb = new StringBuilder();
-			for(Note no : vCard.getNotes()) {
+			for (Note no : vCard.getNotes()) {
 				sb.append(no.getValue());
 				sb.append("\n");
 			}

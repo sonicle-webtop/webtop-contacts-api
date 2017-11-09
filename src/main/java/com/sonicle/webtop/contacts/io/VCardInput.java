@@ -63,6 +63,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -88,29 +89,37 @@ public class VCardInput {
 	}
 	
 	public List<ContactInput> fromVCardFile(InputStream is, LogEntries log) throws WTException {
+		try {
+			final List<VCard> vCards = Ezvcard.parse(is).all();
+			return fromVCardFile(vCards, log);
+		} catch(IOException ex) {
+			throw new WTException(ex, "Unable to read stream");
+		}
+	}
+	
+	public List<ContactInput> fromVCardFile(Collection<VCard> vCards, LogEntries log) throws WTException {
 		// See https://tools.ietf.org/html/rfc6350
 		// See http://www.w3.org/TR/vcard-rdf/
 		ArrayList<ContactInput> results = new ArrayList<>();
 		
-		try {
-			List<VCard> vcards = Ezvcard.parse(is).all();
-			for (VCard vc : vcards) {
-				final LogEntries vclog = (log != null) ? new LogEntries() : null;
-				
-				try {
-					results.add(fromVCard(vc, vclog));
-					if ((log != null) && (vclog != null)) {
-						if (!vclog.isEmpty()) {
-							log.addMaster(new MessageLogEntry(LogEntry.Level.WARN, "VCARD ['{1}', {0}]", vc.getUid(), vc.getFormattedName()));
-							log.addAll(vclog);
-						}
-					}
-				} catch(Throwable t) {
-					if (log != null) log.addMaster(new MessageLogEntry(LogEntry.Level.ERROR, "VCARD ['{1}', {0}]. Reason: {3}", vc.getUid(), vc.getFormattedName(), t.getMessage()));
+		for (VCard vc : vCards) {
+			final LogEntries vclog = (log != null) ? new LogEntries() : null;
+
+			try {
+				final ContactInput result = fromVCard(vc, vclog);
+				if (result.contact.trimFieldLengths()) {
+					if (vclog != null) vclog.add(new MessageLogEntry(LogEntry.Level.WARN, "Some fields were truncated due to max-length"));
 				}
+				results.add(result);
+				if ((log != null) && (vclog != null)) {
+					if (!vclog.isEmpty()) {
+						log.addMaster(new MessageLogEntry(LogEntry.Level.WARN, "VCARD ['{1}', {0}]", vc.getUid(), vc.getFormattedName()));
+						log.addAll(vclog);
+					}
+				}
+			} catch(Throwable t) {
+				if (log != null) log.addMaster(new MessageLogEntry(LogEntry.Level.ERROR, "VCARD ['{1}', {0}]. Reason: {3}", vc.getUid(), vc.getFormattedName(), t.getMessage()));
 			}
-		} catch(IOException ex) {
-			throw new WTException(ex, "Unable to read stream");
 		}
 		return results;
 	}

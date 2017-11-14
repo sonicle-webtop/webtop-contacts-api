@@ -39,6 +39,8 @@ import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.core.util.LogEntries;
 import com.sonicle.webtop.core.util.LogEntry;
 import com.sonicle.webtop.core.util.MessageLogEntry;
+import eu.medsea.mimeutil.MimeException;
+import eu.medsea.mimeutil.MimeType;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.parameter.AddressType;
@@ -207,6 +209,10 @@ public class VCardInput {
 						contact.setWorkPager(deflt(tel.getText()));
 					} else if (types.contains(TelephoneType.TEXT)) {
 						contact.setWorkTelephone2(deflt(tel.getText()));
+					} else {
+						if (StringUtils.isBlank(contact.getWorkTelephone())) {
+							contact.setWorkTelephone(deflt(tel.getText()));
+						}
 					}
 				} else if (types.contains(TelephoneType.HOME)) {
 					if (types.contains(TelephoneType.VOICE)) {
@@ -219,6 +225,10 @@ public class VCardInput {
 						contact.setHomeTelephone2(deflt(tel.getText()));
 					} else if (types.contains(TelephoneType.TEXT)) {
 						contact.setHomeTelephone2(deflt(tel.getText()));
+					} else {
+						if (StringUtils.isBlank(contact.getHomeTelephone())) {
+							contact.setHomeTelephone(deflt(tel.getText()));
+						}
 					}
 				}
 			}
@@ -333,17 +343,31 @@ public class VCardInput {
 		}
 		
 		// PHOTO
+		contact.setHasPicture(false);
 		if (!vCard.getPhotos().isEmpty()) {
-			Photo po = vCard.getPhotos().get(0);
-			picture = new ContactPicture(po.getContentType().getMediaType(), po.getData());
 			if ((log != null) && (vCard.getPhotos().size() > 1)) {
 				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many PHOTO properties found"));
 			}
-		} else {
-			contact.setHasPicture(false);
+			final Photo pho = vCard.getPhotos().get(0);
+			final String mtype = getMediaType(pho);
+			if (mtype != null) {
+				picture = new ContactPicture(mtype, pho.getData());
+				contact.setHasPicture(true);
+			} else {
+				if (log != null) log.add(new MessageLogEntry(LogEntry.Level.WARN, "PHOTO skipped: unspecified content type"));
+			}
 		}
 		
 		return new ContactInput(contact, picture);
+	}
+	
+	private String getMediaType(Photo photo) {
+		if (photo.getContentType() == null) return null;
+		try {
+			return new MimeType(photo.getContentType().getValue()).toString();
+		} catch(MimeException ex) {
+			return null;
+		}
 	}
 	
 	public HashMap<RecipientFieldCategory, Email> fromEmails(List<Email> emails) {
@@ -368,6 +392,36 @@ public class VCardInput {
 				if (ObjectUtils.compare(map.get(key).getPref(), email.getPref()) > 0) {
 					map.put(key, email);
 				}
+			}
+		}
+		return map;
+	}
+	
+	public HashMap<RecipientFieldCategory, List<Telephone>> analyzeTelephones(List<Telephone> telephones) {
+		HashMap<RecipientFieldCategory, List<Telephone>> map = new HashMap<>();
+		for (Telephone telephone : telephones) {
+			final Set<TelephoneType> types = telephone.getTypes();
+			RecipientFieldCategory key = null;
+			if (types.contains(TelephoneType.WORK)) {
+				key = RecipientFieldCategory.WORK;
+			} else if (types.contains(TelephoneType.HOME)) {
+				key = RecipientFieldCategory.HOME;
+			} else {
+				key = preferredTarget;
+			}
+			
+			if (!map.containsKey(key)) {
+				map.put(key, Arrays.asList(telephone));
+			} else {
+				map.get(key).add(telephone);
+				Collections.sort(map.get(key), new Comparator<Telephone>() {
+					@Override
+					public int compare(final Telephone o1, final Telephone o2) {
+						int i1 = (o1.getPref() != null) ? o1.getPref() : 100;
+						int i2 = (o2.getPref() != null) ? o2.getPref() : 100;
+						return Integer.compare(i1, i2);
+					}
+				});
 			}
 		}
 		return map;

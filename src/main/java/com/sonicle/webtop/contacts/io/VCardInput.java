@@ -126,6 +126,54 @@ public class VCardInput {
 		return results;
 	}
 	
+	private void setFallbackTelephone(Contact contact, TelephoneType type, String value) {
+		if (TelephoneType.VOICE.equals(type)) {
+			if (StringUtils.isBlank(contact.getWorkTelephone())) {
+				contact.setWorkTelephone(value);
+				return;
+			}
+			if (StringUtils.isBlank(contact.getHomeTelephone())) {
+				contact.setHomeTelephone(value);
+			}
+		} else if (TelephoneType.FAX.equals(type)) {
+			if (StringUtils.isBlank(contact.getWorkFax())) {
+				contact.setWorkFax(value);
+				return;
+			}
+			if (StringUtils.isBlank(contact.getHomeFax())) {
+				contact.setHomeFax(value);
+			}
+		} else if (TelephoneType.PAGER.equals(type)) {
+			if (StringUtils.isBlank(contact.getWorkPager())) {
+				contact.setWorkPager(value);
+				return;
+			}
+			if (StringUtils.isBlank(contact.getHomePager())) {
+				contact.setHomePager(value);
+			}
+		} else if (TelephoneType.CELL.equals(type)) {
+			if (StringUtils.isBlank(contact.getWorkMobile())) {
+				contact.setWorkMobile(value);
+			}
+		} else if (TelephoneType.TEXT.equals(type)) {
+			if (StringUtils.isBlank(contact.getWorkTelephone2())) {
+				contact.setWorkTelephone2(value);
+				return;
+			}
+			if (StringUtils.isBlank(contact.getHomeTelephone2())) {
+				contact.setHomeTelephone2(value);
+			}
+		} else {
+			if (StringUtils.isBlank(contact.getWorkTelephone())) {
+				contact.setWorkTelephone(value);
+				return;
+			}
+			if (StringUtils.isBlank(contact.getHomeTelephone())) {
+				contact.setHomeTelephone(value);
+			}
+		}
+	}
+	
 	public ContactInput fromVCard(VCard vCard, LogEntries log) throws WTException {
 		Contact contact = new Contact();
 		ContactPicture picture = null;
@@ -229,6 +277,11 @@ public class VCardInput {
 						if (StringUtils.isBlank(contact.getHomeTelephone())) {
 							contact.setHomeTelephone(deflt(tel.getText()));
 						}
+					}
+				} else {
+					final String value = deflt(tel.getText());
+					for (TelephoneType type : types) {
+						setFallbackTelephone(contact, type, value);
 					}
 				}
 			}
@@ -444,7 +497,7 @@ public class VCardInput {
 			}
 			
 			if (!map.containsKey(key)) {
-				map.put(key, Arrays.asList(email));
+				map.put(key, new ArrayList<>(Arrays.asList(email)));
 			} else {
 				map.get(key).add(email);
 				Collections.sort(map.get(key), new Comparator<Email>() {

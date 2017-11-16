@@ -32,9 +32,9 @@
  */
 package com.sonicle.webtop.contacts.io;
 
+import com.google.gson.annotations.SerializedName;
 import com.sonicle.webtop.contacts.model.Contact;
 import com.sonicle.webtop.contacts.model.ContactPicture;
-import com.sonicle.webtop.core.model.RecipientFieldCategory;
 import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.core.util.LogEntries;
 import com.sonicle.webtop.core.util.LogEntry;
@@ -62,16 +62,16 @@ import ezvcard.property.Title;
 import ezvcard.property.Url;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 
@@ -80,14 +80,15 @@ import org.joda.time.LocalDate;
  * @author malbinola
  */
 public class VCardInput {
-	private final RecipientFieldCategory preferredTarget;
+	private final MatchCategory preferredMatch;
+	private final boolean relaxedMatching = true;
 	
 	public VCardInput() {
-		this(RecipientFieldCategory.WORK);
+		this(MatchCategory.WORK);
 	}
 	
-	public VCardInput(RecipientFieldCategory preferredTarget) {
-		this.preferredTarget = preferredTarget;
+	public VCardInput(MatchCategory preferredMatch) {
+		this.preferredMatch = preferredMatch;
 	}
 	
 	public List<ContactInput> fromVCardFile(InputStream is, LogEntries log) throws WTException {
@@ -218,31 +219,53 @@ public class VCardInput {
 		
 		// ADR
 		if (!vCard.getAddresses().isEmpty()) {
-			for (Address add : vCard.getAddresses()) {
-				Set<AddressType> types = add.getTypes();
-				if (types.contains(AddressType.WORK)) {
-					contact.setWorkAddress(deflt(add.getStreetAddress()));
-					contact.setWorkPostalCode(deflt(add.getPostalCode()));
-					contact.setWorkCity(deflt(add.getLocality()));
-					contact.setWorkState(deflt(add.getRegion()));
-					contact.setWorkCountry(deflt(add.getCountry()));
-				} else if (types.contains(AddressType.HOME)) {
-					contact.setHomeAddress(deflt(add.getStreetAddress()));
-					contact.setHomePostalCode(deflt(add.getPostalCode()));
-					contact.setHomeCity(deflt(add.getLocality()));
-					contact.setHomeState(deflt(add.getRegion()));
-					contact.setHomeCountry(deflt(add.getCountry()));
-				} else if (!types.contains(AddressType.WORK) && !types.contains(AddressType.HOME)) {
-					contact.setOtherAddress(deflt(add.getStreetAddress()));
-					contact.setOtherPostalCode(deflt(add.getPostalCode()));
-					contact.setOtherCity(deflt(add.getLocality()));
-					contact.setOtherState(deflt(add.getRegion()));
-					contact.setOtherCountry(deflt(add.getCountry()));
+			HashMap<MatchCategory, LinkedList<Address>> map = analyzeAddresses(vCard.getAddresses());
+			for (MatchCategory key : map.keySet()) { // Strict matching
+				if (MatchCategory.NONE.equals(key)) continue;
+				final Address address = map.get(key).pollFirst();
+				setAddress(contact, key, address);
+			}
+			if (relaxedMatching) {
+				for (MatchCategory key : map.keySet()) {
+					boolean shouldBreak = false;
+					final int count = map.get(key).size();
+					for (int i=1; i<=count; i++) {
+						final Address address = map.get(key).pollFirst();
+						if (!setAddressRelaxed(contact, address)) {
+							shouldBreak = true;
+							break;
+						}
+					}
+					if (shouldBreak) break;
 				}
 			}
 		}
 		
 		// TEL
+		if (!vCard.getTelephoneNumbers().isEmpty()) {
+			HashMap<MatchCategory, LinkedList<Telephone>> map = analyzeTelephones(vCard.getTelephoneNumbers());
+			for (MatchCategory key : map.keySet()) { // Strict matching
+				if (MatchCategory.NONE.equals(key)) continue;
+				final Telephone telephone = map.get(key).pollFirst();
+				setTelephone(contact, key, telephone);
+			}
+			if (relaxedMatching) {
+				for (MatchCategory key : map.keySet()) {
+					boolean shouldBreak = false;
+					final int count = map.get(key).size();
+					for (int i=1; i<=count; i++) {
+						final Telephone telephone = map.get(key).pollFirst();
+						if (!setTelephoneRelaxed(contact, telephone)) {
+							shouldBreak = true;
+							break;
+						}
+					}
+					if (shouldBreak) break;
+				}
+			}
+		}
+		
+		/*
 		if (!vCard.getTelephoneNumbers().isEmpty()) {
 			for (Telephone tel : vCard.getTelephoneNumbers()) {
 				Set<TelephoneType> types = tel.getTypes();
@@ -286,60 +309,52 @@ public class VCardInput {
 				}
 			}
 		}
+		*/
 		
 		// EMAIL
 		if (!vCard.getEmails().isEmpty()) {
-			HashMap<RecipientFieldCategory, List<Email>> map = analyzeEmails(vCard.getEmails());
-			for (RecipientFieldCategory key : map.keySet()) {
-				final Email email = map.get(key).get(0);
-				final String value = deflt(email.getValue());
-				if (RecipientFieldCategory.WORK.equals(key)) {
-					contact.setWorkEmail(value);
-				} else if (map.containsKey(RecipientFieldCategory.HOME)) {
-					contact.setHomeEmail(value);
-				} else {
-					contact.setOtherEmail(value);
+			HashMap<MatchCategory, LinkedList<Email>> map = analyzeEmails(vCard.getEmails());
+			for (MatchCategory key : map.keySet()) { // Strict matching
+				if (MatchCategory.NONE.equals(key)) continue;
+				final Email email = map.get(key).pollFirst();
+				setEmail(contact, key, email);
+			}
+			if (relaxedMatching) {
+				for (MatchCategory key : map.keySet()) {
+					boolean shouldBreak = false;
+					final int count = map.get(key).size();
+					for (int i=1; i<=count; i++) {
+						final Email email = map.get(key).pollFirst();
+						if (!setEmailRelaxed(contact, email)) {
+							shouldBreak = true;
+							break;
+						}
+					}
+					if (shouldBreak) break;
 				}
 			}
-			/*
-			HashMap<RecipientFieldCategory, Email> map = fromEmails(vCard.getEmails());
-			for (RecipientFieldCategory key : map.keySet()) {
-				final String email = deflt(map.get(key).getValue());
-				if (RecipientFieldCategory.WORK.equals(key)) {
-					contact.setWorkEmail(email);
-				} else if (map.containsKey(RecipientFieldCategory.HOME)) {
-					contact.setHomeEmail(email);
-				} else {
-					contact.setOtherEmail(email);
-				}
-			}
-			*/
-			/*
-			for(Email em : vCard.getEmails()) {
-				Set<EmailType> types = em.getTypes();
-				if (types.contains(EmailType.WORK)) {
-					contact.setWorkEmail(deflt(em.getValue()));
-				} else if (types.contains(EmailType.HOME)) {
-					contact.setHomeEmail(deflt(em.getValue()));
-				} else if (!types.contains(EmailType.WORK) && !types.contains(EmailType.HOME)) {
-					contact.setOtherEmail(deflt(em.getValue()));
-				}
-			}
-			*/
 		}
 		
 		// IMPP -> InstantMsg
 		if (!vCard.getImpps().isEmpty()) {
-			for (Impp im : vCard.getImpps()) {
-				Set<ImppType> types = im.getTypes();
-				URI uri = im.getUri();
-				if (uri == null) continue;
-				if (types.contains(ImppType.WORK)) {
-					contact.setWorkInstantMsg(deflt(uri.toString()));
-				} else if (types.contains(ImppType.HOME)) {
-					contact.setHomeInstantMsg(deflt(uri.toString()));
-				} else if (!types.contains(ImppType.WORK) && !types.contains(ImppType.HOME)) {
-					contact.setOtherInstantMsg(deflt(uri.toString()));
+			HashMap<MatchCategory, LinkedList<Impp>> map = analyzeIMPPs(vCard.getImpps());
+			for (MatchCategory key : map.keySet()) { // Strict matching
+				if (MatchCategory.NONE.equals(key)) continue;
+				final Impp impp = map.get(key).pollFirst();
+				setIMPP(contact, key, impp);
+			}
+			if (relaxedMatching) {
+				for (MatchCategory key : map.keySet()) {
+					boolean shouldBreak = false;
+					final int count = map.get(key).size();
+					for (int i=1; i<=count; i++) {
+						final Impp impp = map.get(key).pollFirst();
+						if (!setIMPPRelaxed(contact, impp)) {
+							shouldBreak = true;
+							break;
+						}
+					}
+					if (shouldBreak) break;
 				}
 			}
 		}
@@ -414,57 +429,53 @@ public class VCardInput {
 		return new ContactInput(contact, picture);
 	}
 	
-	private String getMediaType(Photo photo) {
-		if (photo.getContentType() == null) return null;
-		try {
-			return new MimeType(photo.getContentType().getValue()).toString();
-		} catch(MimeException ex) {
-			return null;
-		}
-	}
-	
-	public HashMap<RecipientFieldCategory, Email> fromEmails(List<Email> emails) {
-		HashMap<RecipientFieldCategory, Email> map = new HashMap<>();
+	public HashMap<MatchCategory, LinkedList<Address>> analyzeAddresses(List<Address> addresses) {
+		HashMap<MatchCategory, LinkedList<Address>> map = new LinkedHashMap<>();
 		
-		for (Email email : emails) {
-			final Set<EmailType> types = email.getTypes();
-			RecipientFieldCategory key = null;
-			if (types.contains(EmailType.WORK)) {
-				key = RecipientFieldCategory.WORK;
-			} else if (types.contains(EmailType.HOME)) {
-				key = RecipientFieldCategory.HOME;
-			} else if (types.contains(EmailType.INTERNET)) {
-				key = preferredTarget;
+		for (Address address : addresses) {
+			final Set<AddressType> types = address.getTypes();
+			MatchCategory key = null;
+			if (types.contains(AddressType.WORK)) {
+				key = MatchCategory.WORK;
+			} else if (types.contains(AddressType.HOME)) {
+				key = MatchCategory.HOME;
 			} else {
-				key = RecipientFieldCategory.OTHER;
+				key = MatchCategory.NONE;
 			}
 			
 			if (!map.containsKey(key)) {
-				map.put(key, email);
+				map.put(key, new LinkedList<>(Arrays.asList(address)));
 			} else {
-				if (ObjectUtils.compare(map.get(key).getPref(), email.getPref()) > 0) {
-					map.put(key, email);
-				}
+				map.get(key).add(address);
+				Collections.sort(map.get(key), new Comparator<Address>() {
+					@Override
+					public int compare(final Address o1, final Address o2) {
+						int i1 = (o1.getPref() != null) ? o1.getPref() : 100;
+						int i2 = (o2.getPref() != null) ? o2.getPref() : 100;
+						return Integer.compare(i1, i2);
+					}
+				});
 			}
 		}
 		return map;
 	}
 	
-	public HashMap<RecipientFieldCategory, List<Telephone>> analyzeTelephones(List<Telephone> telephones) {
-		HashMap<RecipientFieldCategory, List<Telephone>> map = new HashMap<>();
+	public HashMap<MatchCategory, LinkedList<Telephone>> analyzeTelephones(List<Telephone> telephones) {
+		HashMap<MatchCategory, LinkedList<Telephone>> map = new LinkedHashMap<>();
+		
 		for (Telephone telephone : telephones) {
 			final Set<TelephoneType> types = telephone.getTypes();
-			RecipientFieldCategory key = null;
+			MatchCategory key = null;
 			if (types.contains(TelephoneType.WORK)) {
-				key = RecipientFieldCategory.WORK;
+				key = MatchCategory.WORK;
 			} else if (types.contains(TelephoneType.HOME)) {
-				key = RecipientFieldCategory.HOME;
+				key = MatchCategory.HOME;
 			} else {
-				key = preferredTarget;
+				key = MatchCategory.NONE;
 			}
 			
 			if (!map.containsKey(key)) {
-				map.put(key, Arrays.asList(telephone));
+				map.put(key, new LinkedList<>(Arrays.asList(telephone)));
 			} else {
 				map.get(key).add(telephone);
 				Collections.sort(map.get(key), new Comparator<Telephone>() {
@@ -480,29 +491,60 @@ public class VCardInput {
 		return map;
 	}
 	
-	public HashMap<RecipientFieldCategory, List<Email>> analyzeEmails(List<Email> emails) {
-		HashMap<RecipientFieldCategory, List<Email>> map = new HashMap<>();
+	public HashMap<MatchCategory, LinkedList<Email>> analyzeEmails(List<Email> emails) {
+		HashMap<MatchCategory, LinkedList<Email>> map = new LinkedHashMap<>();
 		
 		for (Email email : emails) {
 			final Set<EmailType> types = email.getTypes();
-			RecipientFieldCategory key = null;
+			MatchCategory key = null;
 			if (types.contains(EmailType.WORK)) {
-				key = RecipientFieldCategory.WORK;
+				key = MatchCategory.WORK;
 			} else if (types.contains(EmailType.HOME)) {
-				key = RecipientFieldCategory.HOME;
+				key = MatchCategory.HOME;
 			} else if (types.contains(EmailType.INTERNET)) {
-				key = preferredTarget;
+				key = preferredMatch;
 			} else {
-				key = RecipientFieldCategory.OTHER;
+				key = MatchCategory.NONE;
 			}
 			
 			if (!map.containsKey(key)) {
-				map.put(key, new ArrayList<>(Arrays.asList(email)));
+				map.put(key, new LinkedList<>(Arrays.asList(email)));
 			} else {
 				map.get(key).add(email);
 				Collections.sort(map.get(key), new Comparator<Email>() {
 					@Override
 					public int compare(final Email o1, final Email o2) {
+						int i1 = (o1.getPref() != null) ? o1.getPref() : 100;
+						int i2 = (o2.getPref() != null) ? o2.getPref() : 100;
+						return Integer.compare(i1, i2);
+					}
+				});
+			}
+		}
+		return map;
+	}
+	
+	public HashMap<MatchCategory, LinkedList<Impp>> analyzeIMPPs(List<Impp> emails) {
+		HashMap<MatchCategory, LinkedList<Impp>> map = new LinkedHashMap<>();
+		
+		for (Impp email : emails) {
+			final Set<ImppType> types = email.getTypes();
+			MatchCategory key = null;
+			if (types.contains(ImppType.WORK)) {
+				key = MatchCategory.WORK;
+			} else if (types.contains(ImppType.HOME)) {
+				key = MatchCategory.HOME;
+			} else {
+				key = MatchCategory.NONE;
+			}
+			
+			if (!map.containsKey(key)) {
+				map.put(key, new LinkedList<>(Arrays.asList(email)));
+			} else {
+				map.get(key).add(email);
+				Collections.sort(map.get(key), new Comparator<Impp>() {
+					@Override
+					public int compare(final Impp o1, final Impp o2) {
 						int i1 = (o1.getPref() != null) ? o1.getPref() : 100;
 						int i2 = (o2.getPref() != null) ? o2.getPref() : 100;
 						return Integer.compare(i1, i2);
@@ -520,6 +562,211 @@ public class VCardInput {
 		return null;
 	}
 	
+	private void setAddress(Contact contact, MatchCategory category, Address address) {
+		if (MatchCategory.WORK.equals(category)) {
+			contact.setWorkAddress(deflt(address.getStreetAddress()));
+			contact.setWorkPostalCode(deflt(address.getPostalCode()));
+			contact.setWorkCity(deflt(address.getLocality()));
+			contact.setWorkState(deflt(address.getRegion()));
+			contact.setWorkCountry(deflt(address.getCountry()));
+		} else if (MatchCategory.HOME.equals(category)) {
+			contact.setHomeAddress(deflt(address.getStreetAddress()));
+			contact.setHomePostalCode(deflt(address.getPostalCode()));
+			contact.setHomeCity(deflt(address.getLocality()));
+			contact.setHomeState(deflt(address.getRegion()));
+			contact.setHomeCountry(deflt(address.getCountry()));
+		} else if (MatchCategory.OTHER.equals(category)) {
+			contact.setOtherAddress(deflt(address.getStreetAddress()));
+			contact.setOtherPostalCode(deflt(address.getPostalCode()));
+			contact.setOtherCity(deflt(address.getLocality()));
+			contact.setOtherState(deflt(address.getRegion()));
+			contact.setOtherCountry(deflt(address.getCountry()));
+		}
+	}
+	
+	private boolean setAddressRelaxed(Contact contact, Address address) {
+		if (contact.isWorkAddressEmpty()) {
+			contact.setWorkAddress(deflt(address.getStreetAddress()));
+			contact.setWorkPostalCode(deflt(address.getPostalCode()));
+			contact.setWorkCity(deflt(address.getLocality()));
+			contact.setWorkState(deflt(address.getRegion()));
+			contact.setWorkCountry(deflt(address.getCountry()));
+			return true;
+		} else if (contact.isHomeAddressEmpty()) {
+			contact.setHomeAddress(deflt(address.getStreetAddress()));
+			contact.setHomePostalCode(deflt(address.getPostalCode()));
+			contact.setHomeCity(deflt(address.getLocality()));
+			contact.setHomeState(deflt(address.getRegion()));
+			contact.setHomeCountry(deflt(address.getCountry()));
+			return true;
+		} else if (contact.isOtherAddressEmpty()) {
+			contact.setOtherAddress(deflt(address.getStreetAddress()));
+			contact.setOtherPostalCode(deflt(address.getPostalCode()));
+			contact.setOtherCity(deflt(address.getLocality()));
+			contact.setOtherState(deflt(address.getRegion()));
+			contact.setOtherCountry(deflt(address.getCountry()));
+			return true;
+		}
+		return false;
+	}
+	
+	private void setTelephone(Contact contact, MatchCategory category, Telephone telephone) {
+		final Set<TelephoneType> types = telephone.getTypes();
+		if (MatchCategory.WORK.equals(category)) {
+			if (types.contains(TelephoneType.VOICE)) {
+				contact.setWorkTelephone(deflt(telephone.getText()));
+			} else if (types.contains(TelephoneType.FAX)) {
+				contact.setWorkFax(deflt(telephone.getText()));
+			} else if (types.contains(TelephoneType.PAGER)) {
+				contact.setWorkPager(deflt(telephone.getText()));
+			} else if (types.contains(TelephoneType.CELL)) {
+				contact.setWorkMobile(deflt(telephone.getText()));
+			} else if (types.contains(TelephoneType.TEXT)) {
+				contact.setWorkTelephone2(deflt(telephone.getText()));
+			} else {
+				contact.setWorkTelephone(deflt(telephone.getText()));
+			}
+		} else if (MatchCategory.HOME.equals(category)) {
+			if (types.contains(TelephoneType.VOICE)) {
+				contact.setHomeTelephone(deflt(telephone.getText()));
+			} else if (types.contains(TelephoneType.FAX)) {
+				contact.setHomeFax(deflt(telephone.getText()));
+			} else if (types.contains(TelephoneType.PAGER)) {
+				contact.setHomePager(deflt(telephone.getText()));
+			} else if (types.contains(TelephoneType.TEXT)) {
+				contact.setHomeTelephone2(deflt(telephone.getText()));
+			} else {
+				contact.setHomeTelephone(deflt(telephone.getText()));
+			}
+		}
+	}
+	
+	private boolean setTelephoneRelaxed(Contact contact, Telephone telephone) {
+		final Set<TelephoneType> types = telephone.getTypes();
+		if (types.contains(TelephoneType.VOICE)) {
+			if (StringUtils.isBlank(contact.getWorkTelephone())) {
+				contact.setWorkTelephone(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getHomeTelephone())) {
+				contact.setHomeTelephone(deflt(telephone.getText()));
+				return true;
+			}
+		} else if (types.contains(TelephoneType.FAX)) {
+			if (StringUtils.isBlank(contact.getWorkFax())) {
+				contact.setWorkFax(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getHomeFax())) {
+				contact.setHomeFax(deflt(telephone.getText()));
+				return true;
+			}
+		} else if (types.contains(TelephoneType.PAGER)) {
+			if (StringUtils.isBlank(contact.getWorkPager())) {
+				contact.setWorkPager(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getHomePager())) {
+				contact.setHomePager(deflt(telephone.getText()));
+				return true;
+			}
+		} else if (types.contains(TelephoneType.CELL)) {
+			if (StringUtils.isBlank(contact.getWorkMobile())) {
+				contact.setWorkMobile(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getWorkTelephone())) {
+				contact.setWorkTelephone(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getWorkTelephone2())) {
+				contact.setWorkTelephone2(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getHomeTelephone())) {
+				contact.setHomeTelephone(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getHomeTelephone2())) {
+				contact.setHomeTelephone2(deflt(telephone.getText()));
+				return true;
+			}			
+		} else if (types.contains(TelephoneType.TEXT)) {
+			if (StringUtils.isBlank(contact.getWorkTelephone2())) {
+				contact.setWorkTelephone2(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getHomeTelephone2())) {
+				contact.setHomeTelephone2(deflt(telephone.getText()));
+				return true;
+			}
+		} else {
+			if (StringUtils.isBlank(contact.getWorkTelephone())) {
+				contact.setWorkTelephone(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getWorkTelephone2())) {
+				contact.setWorkTelephone2(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getHomeTelephone())) {
+				contact.setHomeTelephone(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getHomeTelephone2())) {
+				contact.setHomeTelephone2(deflt(telephone.getText()));
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void setEmail(Contact contact, MatchCategory category, Email email) {
+		if (MatchCategory.WORK.equals(category)) {
+			contact.setWorkEmail(deflt(email.getValue()));
+		} else if (MatchCategory.HOME.equals(category)) {
+			contact.setHomeEmail(deflt(email.getValue()));
+		} else if (MatchCategory.OTHER.equals(category)) {
+			contact.setOtherEmail(deflt(email.getValue()));
+		}
+	}
+	
+	private boolean setEmailRelaxed(Contact contact, Email email) {
+		if (StringUtils.isBlank(contact.getWorkEmail())) {
+			contact.setWorkEmail(deflt(email.getValue()));
+			return true;
+		} else if (StringUtils.isBlank(contact.getHomeEmail())) {
+			contact.setHomeEmail(deflt(email.getValue()));
+			return true;
+		} else if (StringUtils.isBlank(contact.getOtherEmail())) {
+			contact.setOtherEmail(deflt(email.getValue()));
+			return true;
+		}
+		return false;
+	}
+	
+	private void setIMPP(Contact contact, MatchCategory category, Impp impp) {
+		if (MatchCategory.WORK.equals(category)) {
+			contact.setWorkEmail(deflt(impp.getUri().toString()));
+		} else if (MatchCategory.HOME.equals(category)) {
+			contact.setHomeEmail(deflt(impp.getUri().toString()));
+		} else if (MatchCategory.OTHER.equals(category)) {
+			contact.setOtherEmail(deflt(impp.getUri().toString()));
+		}
+	}
+	
+	private boolean setIMPPRelaxed(Contact contact, Impp impp) {
+		if (StringUtils.isBlank(contact.getWorkEmail())) {
+			contact.setWorkEmail(deflt(impp.getUri().toString()));
+			return true;
+		} else if (StringUtils.isBlank(contact.getHomeEmail())) {
+			contact.setHomeEmail(deflt(impp.getUri().toString()));
+			return true;
+		} else if (StringUtils.isBlank(contact.getOtherEmail())) {
+			contact.setOtherEmail(deflt(impp.getUri().toString()));
+			return true;
+		}
+		return false;
+	}
+	
+	private String getMediaType(Photo photo) {
+		if (photo.getContentType() == null) return null;
+		try {
+			return new MimeType(photo.getContentType().getValue()).toString();
+		} catch(MimeException ex) {
+			return null;
+		}
+	}
+	
 	private String deflt(String s) {
 		return StringUtils.defaultIfEmpty(s, null);
 	}
@@ -530,5 +777,12 @@ public class VCardInput {
 	
 	private String flatten(TextListProperty textListProp, String separator) {
 		return StringUtils.join(textListProp.getValues(), separator);
+	}
+	
+	public static enum MatchCategory {
+		@SerializedName("work") WORK,
+		@SerializedName("home") HOME,
+		@SerializedName("other") OTHER,
+		@SerializedName("none") NONE
 	}
 }

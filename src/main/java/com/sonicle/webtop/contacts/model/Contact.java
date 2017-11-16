@@ -551,27 +551,27 @@ public class Contact {
 	}
 	
 	public boolean isWorkAddressEmpty() {
-		return StringUtils.isEmpty(getWorkAddress())
-			&& StringUtils.isEmpty(getWorkPostalCode())
-			&& StringUtils.isEmpty(getWorkCity())
-			&& StringUtils.isEmpty(getWorkState())
-			&& StringUtils.isEmpty(getWorkCountry());
+		return StringUtils.isBlank(getWorkAddress())
+			&& StringUtils.isBlank(getWorkPostalCode())
+			&& StringUtils.isBlank(getWorkCity())
+			&& StringUtils.isBlank(getWorkState())
+			&& StringUtils.isBlank(getWorkCountry());
 	}
 	
 	public boolean isHomeAddressEmpty() {
-		return StringUtils.isEmpty(getHomeAddress())
-			&& StringUtils.isEmpty(getHomePostalCode())
-			&& StringUtils.isEmpty(getHomeCity())
-			&& StringUtils.isEmpty(getHomeState())
-			&& StringUtils.isEmpty(getHomeCountry());
+		return StringUtils.isBlank(getHomeAddress())
+			&& StringUtils.isBlank(getHomePostalCode())
+			&& StringUtils.isBlank(getHomeCity())
+			&& StringUtils.isBlank(getHomeState())
+			&& StringUtils.isBlank(getHomeCountry());
 	}
 	
 	public boolean isOtherAddressEmpty() {
-		return StringUtils.isEmpty(getOtherAddress())
-			&& StringUtils.isEmpty(getOtherPostalCode())
-			&& StringUtils.isEmpty(getOtherCity())
-			&& StringUtils.isEmpty(getOtherState())
-			&& StringUtils.isEmpty(getOtherCountry());
+		return StringUtils.isBlank(getOtherAddress())
+			&& StringUtils.isBlank(getOtherPostalCode())
+			&& StringUtils.isBlank(getOtherCity())
+			&& StringUtils.isBlank(getOtherState())
+			&& StringUtils.isBlank(getOtherCountry());
 	}
 	
 	public boolean trimFieldLengths() {

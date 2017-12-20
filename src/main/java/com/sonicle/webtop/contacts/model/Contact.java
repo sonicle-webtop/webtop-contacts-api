@@ -34,6 +34,7 @@ package com.sonicle.webtop.contacts.model;
 
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.joda.time.LocalDate;
 
@@ -576,51 +577,60 @@ public class Contact {
 	
 	public boolean trimFieldLengths() {
 		MutableBoolean trimmed = new MutableBoolean(false);
-		setTitle(trimStringLength(getTitle(), 30, trimmed));
-		setFirstName(trimStringLength(getFirstName(), 255, trimmed));
-		setLastName(trimStringLength(getLastName(), 255, trimmed));
-		setNickname(trimStringLength(getNickname(), 60, trimmed));
-		setCompany(trimStringLength(getCompany(), 60, trimmed));
-		setFunction(trimStringLength(getFunction(), 50, trimmed));
-		setWorkAddress(trimStringLength(getWorkAddress(), 100, trimmed));
-		setWorkCity(trimStringLength(getWorkCity(), 50, trimmed));
-		setWorkState(trimStringLength(getWorkState(), 30, trimmed));
-		setWorkPostalCode(trimStringLength(getWorkPostalCode(), 20, trimmed));
-		setWorkCountry(trimStringLength(getWorkCountry(), 30, trimmed));
-		setWorkTelephone(trimStringLength(getWorkTelephone(), 50, trimmed));
-		setWorkTelephone2(trimStringLength(getWorkTelephone2(), 50, trimmed));
-		setWorkFax(trimStringLength(getWorkFax(), 50, trimmed));
-		setWorkMobile(trimStringLength(getWorkMobile(), 50, trimmed));
-		setWorkPager(trimStringLength(getWorkPager(), 50, trimmed));
-		setWorkEmail(trimStringLength(getWorkEmail(), 320, trimmed));
-		setWorkInstantMsg(trimStringLength(getWorkInstantMsg(), 200, trimmed));
-		setAssistant(trimStringLength(getAssistant(), 30, trimmed));
-		setAssistantTelephone(trimStringLength(getAssistantTelephone(), 50, trimmed));
-		setDepartment(trimStringLength(getDepartment(), 200, trimmed));
-		setManager(trimStringLength(getManager(), 200, trimmed));
-		setHomeAddress(trimStringLength(getHomeAddress(), 100, trimmed));
-		setHomeCity(trimStringLength(getHomeCity(), 50, trimmed));
-		setHomeState(trimStringLength(getHomeState(), 30, trimmed));
-		setHomePostalCode(trimStringLength(getHomePostalCode(), 20, trimmed));
-		setHomeCountry(trimStringLength(getHomeCountry(), 30, trimmed));
-		setHomeTelephone(trimStringLength(getHomeTelephone(), 50, trimmed));
-		setHomeTelephone2(trimStringLength(getHomeTelephone2(), 50, trimmed));
-		setHomeFax(trimStringLength(getHomeFax(), 50, trimmed));
-		setHomePager(trimStringLength(getHomePager(), 50, trimmed));
-		setHomeEmail(trimStringLength(getHomeEmail(), 320, trimmed));
-		setHomeInstantMsg(trimStringLength(getHomeInstantMsg(), 200, trimmed));
-		setPartner(trimStringLength(getPartner(), 200, trimmed));
-		setOtherAddress(trimStringLength(getOtherAddress(), 100, trimmed));
-		setOtherCity(trimStringLength(getOtherCity(), 50, trimmed));
-		setOtherState(trimStringLength(getOtherState(), 30, trimmed));
-		setOtherPostalCode(trimStringLength(getOtherPostalCode(), 20, trimmed));
-		setOtherCountry(trimStringLength(getOtherCountry(), 30, trimmed));
-		setOtherEmail(trimStringLength(getOtherEmail(), 320, trimmed));
-		setOtherInstantMsg(trimStringLength(getOtherInstantMsg(), 200, trimmed));
+		setTitle(trimStringLength(trimmed, getTitle(), 30));
+		setFirstName(trimStringLength(trimmed, getFirstName(), 255));
+		setLastName(trimStringLength(trimmed, getLastName(), 255));
+		setNickname(trimStringLength(trimmed, getNickname(), 60));
+		setCompany(trimStringLength(trimmed, getCompany(), 60));
+		setFunction(trimStringLength(trimmed, getFunction(), 50));
+		setWorkAddress(trimStringLength(trimmed, getWorkAddress(), 100));
+		setWorkCity(trimStringLength(trimmed, getWorkCity(), 50));
+		setWorkState(trimStringLength(trimmed, getWorkState(), 30));
+		setWorkPostalCode(trimStringLength(trimmed, getWorkPostalCode(), 20));
+		setWorkCountry(trimStringLength(trimmed, getWorkCountry(), 30));
+		setWorkTelephone(trimStringLength(trimmed, getWorkTelephone(), 50));
+		setWorkTelephone2(trimStringLength(trimmed, getWorkTelephone2(), 50));
+		setWorkFax(trimStringLength(trimmed, getWorkFax(), 50));
+		setWorkMobile(trimStringLength(trimmed, getWorkMobile(), 50));
+		setWorkPager(trimStringLength(trimmed, getWorkPager(), 50));
+		setWorkEmail(trimStringLength(trimmed, getWorkEmail(), 320));
+		setWorkInstantMsg(trimStringLength(trimmed, getWorkInstantMsg(), 200));
+		setAssistant(trimStringLength(trimmed, getAssistant(), 30));
+		setAssistantTelephone(trimStringLength(trimmed, getAssistantTelephone(), 50));
+		setDepartment(trimStringLength(trimmed, getDepartment(), 200));
+		setManager(trimStringLength(trimmed, getManager(), 200));
+		setHomeAddress(trimStringLength(trimmed, getHomeAddress(), 100));
+		setHomeCity(trimStringLength(trimmed, getHomeCity(), 50));
+		setHomeState(trimStringLength(trimmed, getHomeState(), 30));
+		setHomePostalCode(trimStringLength(trimmed, getHomePostalCode(), 20));
+		setHomeCountry(trimStringLength(trimmed, getHomeCountry(), 30));
+		setHomeTelephone(trimStringLength(trimmed, getHomeTelephone(), 50));
+		setHomeTelephone2(trimStringLength(trimmed, getHomeTelephone2(), 50));
+		setHomeFax(trimStringLength(trimmed, getHomeFax(), 50));
+		setHomePager(trimStringLength(trimmed, getHomePager(), 50));
+		setHomeEmail(trimStringLength(trimmed, getHomeEmail(), 320));
+		setHomeInstantMsg(trimStringLength(trimmed, getHomeInstantMsg(), 200));
+		setPartner(trimStringLength(trimmed, getPartner(), 200));
+		setOtherAddress(trimStringLength(trimmed, getOtherAddress(), 100));
+		setOtherCity(trimStringLength(trimmed, getOtherCity(), 50));
+		setOtherState(trimStringLength(trimmed, getOtherState(), 30));
+		setOtherPostalCode(trimStringLength(trimmed, getOtherPostalCode(), 20));
+		setOtherCountry(trimStringLength(trimmed, getOtherCountry(), 30));
+		setOtherEmail(trimStringLength(trimmed, getOtherEmail(), 320));
+		setOtherInstantMsg(trimStringLength(trimmed, getOtherInstantMsg(), 200));
 		return trimmed.booleanValue();
 	}
 	
-	private static String trimStringLength(String value, int maxLength, MutableBoolean trimmed) {
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+				.append(getContactId())
+				.append(getFirstName())
+				.append(getLastName())
+				.toString();
+	}
+	
+	private static String trimStringLength(MutableBoolean trimmed, String value, int maxLength) {
 		if (StringUtils.length(value) > maxLength) {
 			trimmed.setTrue();
 			return StringUtils.left(value, maxLength);

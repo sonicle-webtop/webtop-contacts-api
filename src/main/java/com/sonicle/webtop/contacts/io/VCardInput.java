@@ -39,6 +39,7 @@ import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.core.util.LogEntries;
 import com.sonicle.webtop.core.util.LogEntry;
 import com.sonicle.webtop.core.util.MessageLogEntry;
+import com.sonicle.webtop.core.util.VCardUtils;
 import eu.medsea.mimeutil.MimeException;
 import eu.medsea.mimeutil.MimeType;
 import ezvcard.Ezvcard;
@@ -100,6 +101,7 @@ public class VCardInput {
 		}
 	}
 	
+	/*
 	public List<ContactInput> fromVCardFile(Collection<VCard> vCards, LogEntries log) throws WTException {
 		// See https://tools.ietf.org/html/rfc6350
 		// See http://www.w3.org/TR/vcard-rdf/
@@ -116,15 +118,48 @@ public class VCardInput {
 				results.add(result);
 				if ((log != null) && (vclog != null)) {
 					if (!vclog.isEmpty()) {
-						log.addMaster(new MessageLogEntry(LogEntry.Level.WARN, "VCARD ['{1}', {0}]", vc.getUid(), vc.getFormattedName()));
+						log.addMaster(new MessageLogEntry(LogEntry.Level.WARN, "VCARD [{0}]", VCardUtils.print(vc)));
 						log.addAll(vclog);
 					}
 				}
 			} catch(Throwable t) {
-				if (log != null) log.addMaster(new MessageLogEntry(LogEntry.Level.ERROR, "VCARD ['{1}', {0}]. Reason: {3}", vc.getUid(), vc.getFormattedName(), t.getMessage()));
+				if (log != null) log.addMaster(new MessageLogEntry(LogEntry.Level.ERROR, "VCARD [{0}]. Reason: {1}", VCardUtils.print(vc), t.getMessage()));
 			}
 		}
 		return results;
+	}
+	*/
+	
+	public List<ContactInput> fromVCardFile(Collection<VCard> vCards, LogEntries log) throws WTException {
+		ArrayList<ContactInput> results = new ArrayList<>();
+		
+		for (VCard vc : vCards) {
+			final LogEntries vclog = (log != null) ? new LogEntries() : null;
+			try {
+				final ContactInput result = fromVCardFile(vc, vclog);
+				results.add(result);
+				if ((log != null) && (vclog != null)) {
+					if (!vclog.isEmpty()) {
+						log.addMaster(new MessageLogEntry(LogEntry.Level.WARN, "VCARD [{0}]", VCardUtils.print(vc)));
+						log.addAll(vclog);
+					}
+				}
+			} catch(Throwable t) {
+				if (log != null) log.addMaster(new MessageLogEntry(LogEntry.Level.ERROR, "VCARD [{0}]. Reason: {1}", VCardUtils.print(vc), t.getMessage()));
+			}
+		}
+		return results;
+	}
+	
+	public ContactInput fromVCardFile(VCard vCard, LogEntries log) throws WTException {
+		// See https://tools.ietf.org/html/rfc6350
+		// See http://www.w3.org/TR/vcard-rdf/
+		
+		final ContactInput result = fromVCard(vCard, log);
+		if (result.contact.trimFieldLengths()) {
+			if (log != null) log.add(new MessageLogEntry(LogEntry.Level.WARN, "Some fields were truncated due to max-length"));
+		}
+		return result;
 	}
 	
 	private void setFallbackTelephone(Contact contact, TelephoneType type, String value) {
@@ -184,20 +219,17 @@ public class VCardInput {
 			contact.setPublicUid(deflt(vCard.getUid().getValue()));
 		}
 		
-		// TITLE
-		if (!vCard.getTitles().isEmpty()) {
-			Title ti = vCard.getTitles().get(0);
-			contact.setTitle(deflt(ti.getValue()));
-			if ((log != null) && (vCard.getTitles().size() > 1)) {
-				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many TITLE properties found"));
-			}
-		}
-		
 		// N -> FirstName/LastName
 		if (!vCard.getStructuredNames().isEmpty()) {
 			StructuredName sn = vCard.getStructuredNames().get(0);
 			contact.setFirstName(deflt(sn.getGiven()));
 			contact.setLastName(deflt(sn.getFamily()));
+			if (!sn.getPrefixes().isEmpty()) {
+				contact.setTitle(sn.getPrefixes().get(0));
+				if ((log != null) && (sn.getPrefixes().size() > 1)) {
+					log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many N(prefix) properties found"));
+				}
+			}
 			if ((log != null) && (vCard.getStructuredNames().size() > 1)) {
 				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many N properties found"));
 			}
@@ -367,6 +399,17 @@ public class VCardInput {
 				if (values.size() > 1) contact.setDepartment(deflt(values.get(1)));
 			}
 		}
+		
+		// TITLE -> ??????
+		/*
+		if (!vCard.getTitles().isEmpty()) {
+			Title ti = vCard.getTitles().get(0);
+			contact.setTitle(deflt(ti.getValue()));
+			if ((log != null) && (vCard.getTitles().size() > 1)) {
+				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many TITLE properties found"));
+			}
+		}
+		*/
 		
 		// ROLE -> Function
 		if (!vCard.getRoles().isEmpty()) {

@@ -32,22 +32,31 @@
  */
 package com.sonicle.webtop.contacts.model;
 
-import com.sonicle.webtop.core.model.IncomingShareRoot;
-import com.sonicle.webtop.core.model.SharePermsRoot;
-import com.sonicle.webtop.core.model.ShareRoot;
-import com.sonicle.webtop.core.sdk.UserProfileId;
+import com.sonicle.webtop.core.model.ShareFolder;
+import com.sonicle.webtop.core.model.SharePermsFolder;
+import com.sonicle.webtop.core.model.SharePermsElements;
 
 /**
  *
  * @author malbinola
  */
-public class CategoryRoot extends ShareRoot {
+public class ShareFolderCategory extends ShareFolder {
+	private Object data;
 	
-	public CategoryRoot(String shareId, SharePermsRoot perms, UserProfileId ownerProfileId, String description) {
-		super(shareId, perms, ownerProfileId, description);
+	public ShareFolderCategory(String shareId, SharePermsFolder perms, SharePermsElements elsPerms, Category category) {
+		super(shareId, perms, category.isRemoteProvider() ? new SharePermsElements() : elsPerms, category);
+		data = null;
+	}
+
+	public Category getCategory() {
+		return (Category)object;
 	}
 	
-	public CategoryRoot(IncomingShareRoot share, SharePermsRoot perms) {
-		super(share, perms);
+	public Object getData() {
+		return data;
+	}
+	
+	public void setData(Object data) {
+		this.data = data;
 	}
 }

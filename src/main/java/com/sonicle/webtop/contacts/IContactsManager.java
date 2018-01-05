@@ -33,8 +33,8 @@
 package com.sonicle.webtop.contacts;
 
 import com.sonicle.webtop.contacts.model.Category;
-import com.sonicle.webtop.contacts.model.CategoryFolder;
-import com.sonicle.webtop.contacts.model.CategoryRoot;
+import com.sonicle.webtop.contacts.model.ShareFolderCategory;
+import com.sonicle.webtop.contacts.model.ShareRootCategory;
 import com.sonicle.webtop.contacts.model.Contact;
 import com.sonicle.webtop.contacts.model.ContactPicture;
 import com.sonicle.webtop.contacts.model.ContactsList;
@@ -43,6 +43,7 @@ import com.sonicle.webtop.core.sdk.WTException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -55,8 +56,8 @@ public interface IContactsManager {
 	public static final String RCPT_ORIGIN_LIST = "list";
 	public static final String RCPT_ORIGIN_LISTITEM = "listitem";
 	
-	public List<CategoryRoot> listIncomingCategoryRoots() throws WTException;
-	public HashMap<Integer, CategoryFolder> listIncomingCategoryFolders(String rootShareId) throws WTException;
+	public List<ShareRootCategory> listIncomingCategoryRoots() throws WTException;
+	public Map<Integer, ShareFolderCategory> listIncomingCategoryFolders(String rootShareId) throws WTException;
 	public List<Integer> listCategoryIds() throws WTException;
 	public List<Integer> listIncomingCategoryIds() throws WTException;
 	public List<Category> listCategories() throws WTException;

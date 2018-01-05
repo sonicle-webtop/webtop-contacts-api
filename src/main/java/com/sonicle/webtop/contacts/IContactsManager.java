@@ -33,6 +33,7 @@
 package com.sonicle.webtop.contacts;
 
 import com.sonicle.webtop.contacts.model.Category;
+import com.sonicle.webtop.contacts.model.CategoryPropSet;
 import com.sonicle.webtop.contacts.model.ShareFolderCategory;
 import com.sonicle.webtop.contacts.model.ShareRootCategory;
 import com.sonicle.webtop.contacts.model.Contact;
@@ -41,7 +42,6 @@ import com.sonicle.webtop.contacts.model.ContactsList;
 import com.sonicle.webtop.contacts.model.FolderContacts;
 import com.sonicle.webtop.core.sdk.WTException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,6 +67,9 @@ public interface IContactsManager {
 	public Category addBuiltInCategory() throws WTException;
 	public Category updateCategory(Category cat) throws WTException;
 	public boolean deleteCategory(int categoryId) throws WTException;
+	public CategoryPropSet getCategoryCustomProps(int categoryId) throws WTException;
+	public Map<Integer, CategoryPropSet> getCategoryCustomProps(Collection<Integer> categoryIds) throws WTException;
+	public CategoryPropSet updateCategoryCustomProps(int categoryId, CategoryPropSet propertySet) throws WTException;
 	public List<FolderContacts> listFolderContacts(Collection<Integer> categoryFolderIds, String searchMode, String pattern) throws WTException;
 	public Contact getContact(int contactId) throws WTException;
 	public void addContact(Contact contact) throws WTException;

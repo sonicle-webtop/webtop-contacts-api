@@ -480,7 +480,7 @@ public class VCardInput {
 		HashMap<MatchCategory, LinkedList<Address>> map = new LinkedHashMap<>();
 		
 		for (Address address : addresses) {
-			final Set<AddressType> types = address.getTypes();
+			final List<AddressType> types = address.getTypes();
 			MatchCategory key = null;
 			if (types.contains(AddressType.WORK)) {
 				key = MatchCategory.WORK;
@@ -511,7 +511,7 @@ public class VCardInput {
 		HashMap<MatchCategory, LinkedList<Telephone>> map = new LinkedHashMap<>();
 		
 		for (Telephone telephone : telephones) {
-			final Set<TelephoneType> types = telephone.getTypes();
+			final List<TelephoneType> types = telephone.getTypes();
 			MatchCategory key = null;
 			if (types.contains(TelephoneType.WORK)) {
 				key = MatchCategory.WORK;
@@ -542,7 +542,7 @@ public class VCardInput {
 		HashMap<MatchCategory, LinkedList<Email>> map = new LinkedHashMap<>();
 		
 		for (Email email : emails) {
-			final Set<EmailType> types = email.getTypes();
+			final List<EmailType> types = email.getTypes();
 			MatchCategory key = null;
 			if (types.contains(EmailType.WORK)) {
 				key = MatchCategory.WORK;
@@ -575,7 +575,7 @@ public class VCardInput {
 		HashMap<MatchCategory, LinkedList<Impp>> map = new LinkedHashMap<>();
 		
 		for (Impp email : emails) {
-			final Set<ImppType> types = email.getTypes();
+			final List<ImppType> types = email.getTypes();
 			MatchCategory key = null;
 			if (types.contains(ImppType.WORK)) {
 				key = MatchCategory.WORK;
@@ -658,7 +658,7 @@ public class VCardInput {
 	}
 	
 	private void setTelephone(Contact contact, MatchCategory category, Telephone telephone) {
-		final Set<TelephoneType> types = telephone.getTypes();
+		final List<TelephoneType> types = telephone.getTypes();
 		if (MatchCategory.WORK.equals(category)) {
 			if (types.contains(TelephoneType.VOICE)) {
 				contact.setWorkTelephone(deflt(telephone.getText()));
@@ -689,7 +689,7 @@ public class VCardInput {
 	}
 	
 	private boolean setTelephoneRelaxed(Contact contact, Telephone telephone) {
-		final Set<TelephoneType> types = telephone.getTypes();
+		final List<TelephoneType> types = telephone.getTypes();
 		if (types.contains(TelephoneType.VOICE)) {
 			if (StringUtils.isBlank(contact.getWorkTelephone())) {
 				contact.setWorkTelephone(deflt(telephone.getText()));

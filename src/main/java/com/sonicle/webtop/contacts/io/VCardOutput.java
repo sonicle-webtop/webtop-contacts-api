@@ -61,6 +61,7 @@ import ezvcard.property.Telephone;
 import ezvcard.property.Uid;
 import ezvcard.property.Url;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
@@ -191,7 +192,7 @@ public class VCardOutput {
 			prop.setGiven(deflt(contact.getFirstName()));
 			prop.setFamily(deflt(contact.getLastName()));
 			if (!StringUtils.isBlank(contact.getTitle())) {
-				prop.addPrefix(contact.getTitle());
+				prop.getPrefixes().add(contact.getTitle());
 			}
 		}
 		return prop;
@@ -222,7 +223,7 @@ public class VCardOutput {
 		List<Address> props = new ArrayList<>();
 		if (!contact.isWorkAddressEmpty()) {
 			Address addr = new Address();
-			addr.addType(AddressType.WORK);
+			addr.getTypes().add(AddressType.WORK);
 			addr.setStreetAddress(deflt(contact.getWorkAddress()));
 			addr.setPostalCode(deflt(contact.getWorkPostalCode()));
 			addr.setLocality(deflt(contact.getWorkCity()));
@@ -234,7 +235,7 @@ public class VCardOutput {
 		}
 		if (!contact.isHomeAddressEmpty()) {
 			Address addr = new Address();
-			addr.addType(AddressType.HOME);
+			addr.getTypes().add(AddressType.HOME);
 			addr.setStreetAddress(deflt(contact.getHomeAddress()));
 			addr.setPostalCode(deflt(contact.getHomePostalCode()));
 			addr.setLocality(deflt(contact.getHomeCity()));
@@ -246,7 +247,7 @@ public class VCardOutput {
 		}
 		if (!contact.isOtherAddressEmpty()) {
 			Address addr = new Address();
-			addr.addType(otherAddressType);
+			addr.getTypes().add(otherAddressType);
 			addr.setStreetAddress(deflt(contact.getOtherAddress()));
 			addr.setPostalCode(deflt(contact.getOtherPostalCode()));
 			addr.setLocality(deflt(contact.getOtherCity()));
@@ -263,8 +264,7 @@ public class VCardOutput {
 		List<Telephone> props = new ArrayList<>();
 		if (!StringUtils.isBlank(contact.getWorkTelephone())) {
 			Telephone tel = new Telephone(contact.getWorkTelephone());
-			tel.addType(TelephoneType.WORK);
-			tel.addType(TelephoneType.VOICE);
+			tel.getTypes().addAll(Arrays.asList(TelephoneType.WORK, TelephoneType.VOICE));
 			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
 				tel.setPref(1);
 			}
@@ -272,14 +272,12 @@ public class VCardOutput {
 		}
 		if (!StringUtils.isBlank(contact.getWorkTelephone2())) {
 			Telephone tel = new Telephone(contact.getWorkTelephone2());
-			tel.addType(TelephoneType.WORK);
-			tel.addType(TelephoneType.TEXT);
+			tel.getTypes().addAll(Arrays.asList(TelephoneType.WORK, TelephoneType.TEXT));
 			props.add(tel);
 		}
 		if (!StringUtils.isBlank(contact.getWorkMobile())) {
 			Telephone tel = new Telephone(contact.getWorkMobile());
-			tel.addType(TelephoneType.WORK);
-			tel.addType(TelephoneType.CELL);
+			tel.getTypes().addAll(Arrays.asList(TelephoneType.WORK, TelephoneType.CELL));
 			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
 				tel.setPref(1);
 			}
@@ -287,8 +285,7 @@ public class VCardOutput {
 		}
 		if (!StringUtils.isBlank(contact.getWorkFax())) {
 			Telephone tel = new Telephone(contact.getWorkFax());
-			tel.addType(TelephoneType.WORK);
-			tel.addType(TelephoneType.FAX);
+			tel.getTypes().addAll(Arrays.asList(TelephoneType.WORK, TelephoneType.FAX));
 			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
 				tel.setPref(1);
 			}
@@ -296,8 +293,7 @@ public class VCardOutput {
 		}
 		if (!StringUtils.isBlank(contact.getWorkPager())) {
 			Telephone tel = new Telephone(contact.getWorkPager());
-			tel.addType(TelephoneType.WORK);
-			tel.addType(TelephoneType.PAGER);
+			tel.getTypes().addAll(Arrays.asList(TelephoneType.WORK, TelephoneType.PAGER));
 			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
 				tel.setPref(1);
 			}
@@ -305,8 +301,7 @@ public class VCardOutput {
 		}
 		if (!StringUtils.isBlank(contact.getHomeTelephone())) {
 			Telephone tel = new Telephone(contact.getHomeTelephone());
-			tel.addType(TelephoneType.HOME);
-			tel.addType(TelephoneType.VOICE);
+			tel.getTypes().addAll(Arrays.asList(TelephoneType.HOME, TelephoneType.VOICE));
 			if (RecipientFieldCategory.HOME.equals(preferredTarget)) {
 				tel.setPref(1);
 			}
@@ -314,14 +309,12 @@ public class VCardOutput {
 		}
 		if (!StringUtils.isBlank(contact.getHomeTelephone2())) {
 			Telephone tel = new Telephone(contact.getHomeTelephone2());
-			tel.addType(TelephoneType.HOME);
-			tel.addType(TelephoneType.TEXT);
+			tel.getTypes().addAll(Arrays.asList(TelephoneType.HOME, TelephoneType.TEXT));
 			props.add(tel);
 		}
 		if (!StringUtils.isBlank(contact.getHomeFax())) {
 			Telephone tel = new Telephone(contact.getHomeFax());
-			tel.addType(TelephoneType.HOME);
-			tel.addType(TelephoneType.FAX);
+			tel.getTypes().addAll(Arrays.asList(TelephoneType.HOME, TelephoneType.FAX));
 			if (RecipientFieldCategory.HOME.equals(preferredTarget)) {
 				tel.setPref(1);
 			}
@@ -329,8 +322,7 @@ public class VCardOutput {
 		}
 		if (!StringUtils.isBlank(contact.getHomePager())) {
 			Telephone tel = new Telephone(contact.getHomePager());
-			tel.addType(TelephoneType.HOME);
-			tel.addType(TelephoneType.PAGER);
+			tel.getTypes().addAll(Arrays.asList(TelephoneType.HOME, TelephoneType.PAGER));
 			if (RecipientFieldCategory.HOME.equals(preferredTarget)) {
 				tel.setPref(1);
 			}
@@ -343,7 +335,7 @@ public class VCardOutput {
 		List<Email> props = new ArrayList<>();
 		if (!StringUtils.isBlank(contact.getWorkEmail())) {
 			Email em = new Email(contact.getWorkEmail());
-			em.addType(EmailType.WORK);
+			em.getTypes().add(EmailType.WORK);
 			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
 				em.setPref(1);
 			}
@@ -351,7 +343,7 @@ public class VCardOutput {
 		}
 		if (!StringUtils.isBlank(contact.getHomeEmail())) {
 			Email em = new Email(contact.getHomeEmail());
-			em.addType(EmailType.HOME);
+			em.getTypes().add(EmailType.HOME);
 			if (RecipientFieldCategory.HOME.equals(preferredTarget)) {
 				em.setPref(1);
 			}
@@ -359,7 +351,7 @@ public class VCardOutput {
 		}
 		if (!StringUtils.isBlank(contact.getOtherEmail())) {
 			Email em = new Email(contact.getOtherEmail());
-			em.addType(otherEmailType);
+			em.getTypes().add(otherEmailType);
 			if (RecipientFieldCategory.OTHER.equals(preferredTarget)) {
 				em.setPref(1);
 			}
@@ -372,17 +364,17 @@ public class VCardOutput {
 		List<Impp> props = new ArrayList<>();
 		if (!StringUtils.isBlank(contact.getWorkInstantMsg())) {
 			Impp impp = new Impp(contact.getWorkInstantMsg());
-			impp.addType(ImppType.WORK);
+			impp.getTypes().add(ImppType.WORK);
 			props.add(impp);
 		}
 		if (!StringUtils.isBlank(contact.getHomeInstantMsg())) {
 			Impp impp = new Impp(contact.getHomeInstantMsg());
-			impp.addType(ImppType.HOME);
+			impp.getTypes().add(ImppType.HOME);
 			props.add(impp);
 		}
 		if (!StringUtils.isBlank(contact.getOtherInstantMsg())) {
 			Impp impp = new Impp(contact.getOtherInstantMsg());
-			impp.addType(otherImppType);
+			impp.getTypes().add(otherImppType);
 			props.add(impp);
 		}
 		return props;

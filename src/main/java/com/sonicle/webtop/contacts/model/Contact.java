@@ -95,7 +95,6 @@ public class Contact {
 	protected String notes;
 	protected String href;
 	protected String etag;
-	protected boolean hasPicture;
 	
 	public Contact() {}
 	
@@ -513,14 +512,6 @@ public class Contact {
 
 	public void setEtag(String etag) {
 		this.etag = etag;
-	}
-	
-	public boolean getHasPicture() {
-		return hasPicture;
-	}
-
-	public void setHasPicture(boolean hasPicture) {
-		this.hasPicture = hasPicture;
 	}
 	
 	public String getFullName() {

@@ -79,13 +79,26 @@ public class VCardOutput {
 		this(VCardVersion.V4_0, RecipientFieldCategory.WORK);
 	}
 	
+	public VCardOutput(VCardVersion version) {
+		this(version, RecipientFieldCategory.WORK);
+	}
+	
 	public VCardOutput(VCardVersion version, RecipientFieldCategory preferredTarget) {
 		this.version = version;
 		this.preferredTarget = preferredTarget;
 	}
 	
 	public String write(VCard vCard) {
-		return Ezvcard.write(vCard).version(version).go();
+		return write(vCard, false);
+	}
+	
+	public String write(VCard vCard, boolean keepFileVersion) {
+		if (vCard == null) return null;
+		VCardVersion targetVersion = version;
+		if (keepFileVersion && (vCard.getVersion() != null)) {
+			targetVersion = vCard.getVersion();
+		}
+		return Ezvcard.write(vCard).version(targetVersion).go();
 	}
 	
 	public VCard toVCard(Contact contact, ContactPicture picture) throws WTException {
@@ -154,7 +167,7 @@ public class VCardOutput {
 		if (note != null) vCard.addNote(note);
 		
 		// PHOTO(*)
-		if (contact.getHasPicture()) {
+		if (picture != null) {
 			Photo photo = toPhoto(picture);
 			if (photo != null) vCard.addPhoto(photo);
 		}

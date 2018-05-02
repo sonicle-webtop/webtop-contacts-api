@@ -37,6 +37,7 @@ import com.sonicle.webtop.contacts.model.CategoryPropSet;
 import com.sonicle.webtop.contacts.model.ShareFolderCategory;
 import com.sonicle.webtop.contacts.model.ShareRootCategory;
 import com.sonicle.webtop.contacts.model.Contact;
+import com.sonicle.webtop.contacts.model.ContactItem;
 import com.sonicle.webtop.contacts.model.ContactPicture;
 import com.sonicle.webtop.contacts.model.ContactsList;
 import com.sonicle.webtop.contacts.model.FolderContacts;
@@ -44,6 +45,7 @@ import com.sonicle.webtop.core.sdk.WTException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -60,22 +62,23 @@ public interface IContactsManager {
 	public Map<Integer, ShareFolderCategory> listIncomingCategoryFolders(String rootShareId) throws WTException;
 	public List<Integer> listCategoryIds() throws WTException;
 	public List<Integer> listIncomingCategoryIds() throws WTException;
-	public List<Category> listCategories() throws WTException;
+	public Map<Integer, Category> listCategories() throws WTException;
+	public Map<Integer, DateTime> getCategoriesLastRevision(Collection<Integer> categoryIds) throws WTException;
 	public Category getCategory(int categoryId) throws WTException;
 	public Category getBuiltInCategory() throws WTException;
 	public Category addCategory(Category cat) throws WTException;
 	public Category addBuiltInCategory() throws WTException;
 	public Category updateCategory(Category cat) throws WTException;
-	public boolean deleteCategory(int categoryId) throws WTException;
+	public void deleteCategory(int categoryId) throws WTException;
 	public CategoryPropSet getCategoryCustomProps(int categoryId) throws WTException;
 	public Map<Integer, CategoryPropSet> getCategoryCustomProps(Collection<Integer> categoryIds) throws WTException;
 	public CategoryPropSet updateCategoryCustomProps(int categoryId, CategoryPropSet propertySet) throws WTException;
 	public List<FolderContacts> listFolderContacts(Collection<Integer> categoryFolderIds, String searchMode, String pattern) throws WTException;
-	public Contact getContact(int contactId) throws WTException;
-	public void addContact(Contact contact) throws WTException;
-	public void addContact(Contact contact, ContactPicture picture) throws WTException;
+	public ContactItem getContact(int contactId) throws WTException;
+	public Contact addContact(Contact contact) throws WTException;
+	public Contact addContact(Contact contact, ContactPicture picture) throws WTException;
 	public void updateContact(Contact contact) throws WTException;
-	public void updateContact(Contact contact, ContactPicture picture) throws WTException;
+	public void updateContact(Contact contact, ContactPicture picture, boolean deletePictureIfNull) throws WTException;
 	public ContactPicture getContactPicture(int contactId) throws WTException;
 	public void updateContactPicture(int contactId, ContactPicture picture) throws WTException;
 	public void deleteContact(int contactId) throws WTException;

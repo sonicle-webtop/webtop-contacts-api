@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Sonicle S.r.l.
+ * Copyright (C) 2018 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,22 +28,87 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2017 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2018 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.contacts.model;
 
-import java.util.List;
+import org.joda.time.DateTime;
 
 /**
  *
  * @author malbinola
  */
-public class FolderContacts {
-	public final Category folder;
-	public final List<ContactItemEx> contacts;
+public class ContactCard {
+	protected Integer contactId;
+	protected Integer categoryId;
+	protected Contact.RevisionStatus revisionStatus;
+	protected DateTime revisionTimestamp;
+	protected String publicUid;
+	protected String href;
+	protected Integer size;
+	protected String vcard;
 
-	public FolderContacts(Category folder, List<ContactItemEx> contacts) {
-		this.folder = folder;
-		this.contacts = contacts;
+	public Integer getContactId() {
+		return contactId;
+	}
+
+	public void setContactId(Integer contactId) {
+		this.contactId = contactId;
+	}
+
+	public Integer getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public Contact.RevisionStatus getRevisionStatus() {
+		return revisionStatus;
+	}
+
+	public void setRevisionStatus(Contact.RevisionStatus revisionStatus) {
+		this.revisionStatus = revisionStatus;
+	}
+
+	public DateTime getRevisionTimestamp() {
+		return revisionTimestamp;
+	}
+
+	public void setRevisionTimestamp(DateTime revisionTimestamp) {
+		this.revisionTimestamp = revisionTimestamp;
+	}
+
+	public String getPublicUid() {
+		return publicUid;
+	}
+
+	public void setPublicUid(String publicUid) {
+		this.publicUid = publicUid;
+	}
+
+	public String getHref() {
+		return href;
+	}
+
+	public void setHref(String href) {
+		this.href = href;
+	}
+
+	public Integer getSize() {
+		return size;
+	}
+
+	public void setSize(Integer size) {
+		this.size = size;
+	}
+
+	public String getVcard() {
+		return vcard;
+	}
+
+	public void setVcard(String vcard) {
+		this.vcard = vcard;
 	}
 }

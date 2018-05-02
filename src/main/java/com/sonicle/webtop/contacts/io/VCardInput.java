@@ -63,6 +63,7 @@ import ezvcard.property.Title;
 import ezvcard.property.Url;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -149,6 +150,11 @@ public class VCardInput {
 			}
 		}
 		return results;
+	}
+	
+	public ContactInput fromVCardString(String s, LogEntries log) throws IOException, WTException {
+		VCard vCard = Ezvcard.parse(new StringReader(s)).first();
+		return fromVCardFile(vCard, log);
 	}
 	
 	public ContactInput fromVCardFile(VCard vCard, LogEntries log) throws WTException {
@@ -454,7 +460,6 @@ public class VCardInput {
 		}
 		
 		// PHOTO
-		contact.setHasPicture(false);
 		if (!vCard.getPhotos().isEmpty()) {
 			if ((log != null) && (vCard.getPhotos().size() > 1)) {
 				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many PHOTO properties found"));
@@ -463,7 +468,6 @@ public class VCardInput {
 			final String mtype = getMediaType(pho);
 			if (mtype != null) {
 				picture = new ContactPicture(mtype, pho.getData());
-				contact.setHasPicture(true);
 			} else {
 				if (log != null) log.add(new MessageLogEntry(LogEntry.Level.WARN, "PHOTO skipped: unspecified content type"));
 			}

@@ -38,7 +38,7 @@ import com.sonicle.webtop.core.sdk.UserProfileId;
  *
  * @author malbinola
  */
-public class ContactEx extends Contact {
+public class ContactItemEx extends ContactItem {
 	private Boolean isList;
 	private String companyAsMasterDataId;
 	private String categoryDomainId;

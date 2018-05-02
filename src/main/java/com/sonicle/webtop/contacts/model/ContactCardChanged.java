@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Sonicle S.r.l.
+ * Copyright (C) 2018 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,22 +28,43 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2017 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2018 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.contacts.model;
 
-import java.util.List;
+import org.joda.time.DateTime;
 
 /**
  *
  * @author malbinola
  */
-public class FolderContacts {
-	public final Category folder;
-	public final List<ContactItemEx> contacts;
+public class ContactCardChanged {
+	protected final Integer contactId;
+	protected final DateTime revisionTimestamp;
+	//protected final String publicUid;
+	protected final String href;
+	
+	public ContactCardChanged(int contactId, DateTime revisionTimestamp, String href) {
+		this.contactId = contactId;
+		this.revisionTimestamp = revisionTimestamp;
+		this.href = href;
+	}
 
-	public FolderContacts(Category folder, List<ContactItemEx> contacts) {
-		this.folder = folder;
-		this.contacts = contacts;
+	public Integer getContactId() {
+		return contactId;
+	}
+
+	public DateTime getRevisionTimestamp() {
+		return revisionTimestamp;
+	}
+
+	/*
+	public String getPublicUid() {
+		return publicUid;
+	}
+	*/
+
+	public String getHref() {
+		return href;
 	}
 }

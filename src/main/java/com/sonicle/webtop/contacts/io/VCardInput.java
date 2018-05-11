@@ -59,7 +59,6 @@ import ezvcard.property.Role;
 import ezvcard.property.StructuredName;
 import ezvcard.property.Telephone;
 import ezvcard.property.TextListProperty;
-import ezvcard.property.Title;
 import ezvcard.property.Url;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,7 +72,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 

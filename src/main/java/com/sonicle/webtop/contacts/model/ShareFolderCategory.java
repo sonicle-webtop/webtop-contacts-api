@@ -44,7 +44,7 @@ public class ShareFolderCategory extends ShareFolder {
 	private Object data;
 	
 	public ShareFolderCategory(String shareId, SharePermsFolder perms, SharePermsElements elsPerms, Category category) {
-		super(shareId, perms, category.isRemoteProvider() ? new SharePermsElements() : elsPerms, category);
+		super(shareId, perms, category.isProviderRemote() ? new SharePermsElements() : elsPerms, category);
 		data = null;
 	}
 

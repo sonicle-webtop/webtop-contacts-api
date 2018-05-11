@@ -33,6 +33,7 @@
 package com.sonicle.webtop.contacts.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.sonicle.commons.EnumUtils;
 import com.sonicle.webtop.core.sdk.UserProfileId;
 import org.apache.commons.lang3.StringUtils;
 
@@ -159,8 +160,16 @@ public class Category {
 		setUserId(pid.getUser());
 	}
 	
-	public boolean isRemoteProvider() {
-		return Provider.CARDDAV.equals(getProvider());
+	public boolean isProviderRemote() {
+		return Category.isProviderRemote(getProvider());
+	}
+	
+	public static boolean isProviderRemote(String provider) {
+		return Category.isProviderRemote(EnumUtils.forSerializedName(provider, Provider.class));
+	}
+	
+	public static boolean isProviderRemote(Provider provider) {
+		return Provider.CARDDAV.equals(provider);
 	}
 	
 	public static String getHexColor(String color) {

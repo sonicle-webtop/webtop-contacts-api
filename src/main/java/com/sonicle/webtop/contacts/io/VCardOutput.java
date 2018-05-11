@@ -70,21 +70,23 @@ import org.apache.commons.lang3.StringUtils;
  * @author malbinola
  */
 public class VCardOutput {
+	private final String prodId;
 	private final VCardVersion version;
 	private final RecipientFieldCategory preferredTarget;
 	private final EmailType otherEmailType = EmailType.AOL;
 	private final ImppType otherImppType = ImppType.PERSONAL;
 	private final AddressType otherAddressType = AddressType.POSTAL;
 	
-	public VCardOutput() {
-		this(VCardVersion.V4_0, RecipientFieldCategory.WORK);
+	public VCardOutput(String prodId) {
+		this(prodId, VCardVersion.V4_0, RecipientFieldCategory.WORK);
 	}
 	
-	public VCardOutput(VCardVersion version) {
-		this(version, RecipientFieldCategory.WORK);
+	public VCardOutput(String prodId, VCardVersion version) {
+		this(prodId, version, RecipientFieldCategory.WORK);
 	}
 	
-	public VCardOutput(VCardVersion version, RecipientFieldCategory preferredTarget) {
+	public VCardOutput(String prodId, VCardVersion version, RecipientFieldCategory preferredTarget) {
+		this.prodId = prodId;
 		this.version = version;
 		this.preferredTarget = preferredTarget;
 	}

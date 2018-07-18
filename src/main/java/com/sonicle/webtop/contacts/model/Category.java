@@ -34,8 +34,10 @@ package com.sonicle.webtop.contacts.model;
 
 import com.google.gson.annotations.SerializedName;
 import com.sonicle.commons.EnumUtils;
+import com.sonicle.commons.LangUtils;
 import com.sonicle.webtop.core.sdk.UserProfileId;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -54,6 +56,9 @@ public class Category {
 	private Boolean isDefault;
 	private Boolean isPrivate;
 	private String parameters;
+	private Short remoteSyncFrequency;
+	private DateTime remoteSyncTimestamp;
+	private String remoteSyncTag;
 
 	public Integer getCategoryId() {
 		return categoryId;
@@ -151,6 +156,30 @@ public class Category {
 		this.parameters = parameters;
 	}
 	
+	public Short getRemoteSyncFrequency() {
+		return remoteSyncFrequency;
+	}
+
+	public void setRemoteSyncFrequency(Short remoteSyncFrequency) {
+		this.remoteSyncFrequency = remoteSyncFrequency;
+	}
+	
+	public DateTime getRemoteSyncTimestamp() {
+		return remoteSyncTimestamp;
+	}
+
+	public void setRemoteSyncTimestamp(DateTime remoteSyncTimestamp) {
+		this.remoteSyncTimestamp = remoteSyncTimestamp;
+	}
+	
+	public String getRemoteSyncTag() {
+		return remoteSyncTag;
+	}
+
+	public void setRemoteSyncTag(String remoteSyncTag) {
+		this.remoteSyncTag = remoteSyncTag;
+	}
+	
 	public UserProfileId getProfileId() {
 		return new UserProfileId(getDomainId(), getUserId());
 	}
@@ -158,6 +187,14 @@ public class Category {
 	public void setProfileId(UserProfileId pid) {
 		setDomainId(pid.getDomain());
 		setUserId(pid.getUser());
+	}
+	
+	public <T> T getParametersAsObject(T defaultValue, Class<T> type) {
+		return LangUtils.deserialize(getParameters(), defaultValue, type);
+	}
+	
+	public <T> void setParametersAsObject(T value, Class<T> type) {
+		setParameters(LangUtils.serialize(value, type));
 	}
 	
 	public boolean isProviderRemote() {

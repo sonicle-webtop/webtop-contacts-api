@@ -86,6 +86,7 @@ public interface IContactsManager {
 	public void moveContact(boolean copy, int contactId, int targetCategoryId) throws WTException;
 	public ContactsList getContactsList(int contactId) throws WTException;
 	public void addContactsList(ContactsList list) throws WTException;
+	public void addToContactsList(int contactsListId, ContactsList list) throws WTException;
 	public void updateContactsList(ContactsList list) throws WTException;
 	public void deleteContactsList(int contactsListId) throws WTException;
 	public void deleteContactsList(Collection<Integer> contactsListIds) throws WTException;

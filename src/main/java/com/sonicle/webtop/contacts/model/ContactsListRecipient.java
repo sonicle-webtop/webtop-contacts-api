@@ -40,6 +40,7 @@ public class ContactsListRecipient {
 	protected Integer listRecipientId;
 	protected String recipient;
 	protected String recipientType;
+	protected Integer recipientContactId;
 	
 	public ContactsListRecipient() {}
 
@@ -66,4 +67,14 @@ public class ContactsListRecipient {
 	public void setRecipientType(String recipientType) {
 		this.recipientType = recipientType;
 	}
+	
+	public Integer getRecipientContactId() {
+		return recipientContactId;
+	}
+
+	public void setRecipientContactId(Integer recipientContactId) {
+		this.recipientContactId = recipientContactId;
+	}
+
+	
 }

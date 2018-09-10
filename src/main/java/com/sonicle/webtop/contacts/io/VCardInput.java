@@ -34,7 +34,8 @@ package com.sonicle.webtop.contacts.io;
 
 import com.google.gson.annotations.SerializedName;
 import com.sonicle.webtop.contacts.model.Contact;
-import com.sonicle.webtop.contacts.model.ContactPicture;
+import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
+import com.sonicle.webtop.contacts.model.ContactPictureWithBytesOld;
 import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.core.util.LogEntries;
 import com.sonicle.webtop.core.util.LogEntry;
@@ -216,7 +217,6 @@ public class VCardInput {
 	
 	public ContactInput fromVCard(VCard vCard, LogEntries log) throws WTException {
 		Contact contact = new Contact();
-		ContactPicture picture = null;
 		
 		// UID
 		if (vCard.getUid() != null) {
@@ -465,13 +465,15 @@ public class VCardInput {
 			final Photo pho = vCard.getPhotos().get(0);
 			final String mtype = getMediaType(pho);
 			if (mtype != null) {
-				picture = new ContactPicture(mtype, pho.getData());
+				ContactPictureWithBytes picture = new ContactPictureWithBytes(pho.getData());
+				picture.setMediaType(mtype);
+				contact.setPicture(picture);
 			} else {
 				if (log != null) log.add(new MessageLogEntry(LogEntry.Level.WARN, "PHOTO skipped: unspecified content type"));
 			}
 		}
 		
-		return new ContactInput(contact, picture);
+		return new ContactInput(contact);
 	}
 	
 	public HashMap<MatchCategory, LinkedList<Address>> analyzeAddresses(List<Address> addresses) {

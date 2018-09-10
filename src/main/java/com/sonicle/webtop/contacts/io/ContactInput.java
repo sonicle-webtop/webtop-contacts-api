@@ -33,7 +33,6 @@
 package com.sonicle.webtop.contacts.io;
 
 import com.sonicle.webtop.contacts.model.Contact;
-import com.sonicle.webtop.contacts.model.ContactPicture;
 
 /**
  *
@@ -41,10 +40,8 @@ import com.sonicle.webtop.contacts.model.ContactPicture;
  */
 public class ContactInput {
 	public final Contact contact;
-	public final ContactPicture picture;
 
-	public ContactInput(Contact contact, ContactPicture picture) {
+	public ContactInput(Contact contact) {
 		this.contact = contact;
-		this.picture = picture;
 	}
 }

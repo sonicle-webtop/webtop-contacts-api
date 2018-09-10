@@ -34,7 +34,7 @@ package com.sonicle.webtop.contacts.io;
 
 
 import com.sonicle.webtop.contacts.model.Contact;
-import com.sonicle.webtop.contacts.model.ContactPicture;
+import com.sonicle.webtop.contacts.model.ContactPictureWithBytesOld;
 import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.core.util.LogEntries;
 import org.joda.time.LocalDate;
@@ -50,7 +50,6 @@ public class LDIFInput {
 	
 public ContactInput fromLDIF(LdapEntry ldapEntry, LogEntries log) throws WTException {
 		Contact contact = new Contact();
-		ContactPicture picture = null;
 //		// UID
 //		if (vCard.getUid() != null) {
 //			contact.setPublicUid(deflt(vCard.getUid().getValue()));
@@ -160,7 +159,7 @@ public ContactInput fromLDIF(LdapEntry ldapEntry, LogEntries log) throws WTExcep
 
 		
 		
-		return new ContactInput(contact, picture);
+		return new ContactInput(contact);
 	}
 	
 }

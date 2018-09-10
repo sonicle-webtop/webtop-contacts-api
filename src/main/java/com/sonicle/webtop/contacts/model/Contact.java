@@ -33,6 +33,8 @@
 package com.sonicle.webtop.contacts.model;
 
 import com.google.gson.annotations.SerializedName;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -95,6 +97,8 @@ public class Contact {
 	protected String notes;
 	protected String href;
 	protected String etag;
+	protected ContactPicture picture;
+	protected List<ContactAttachment> attachments = new ArrayList<>();
 	
 	public Contact() {}
 	
@@ -512,6 +516,26 @@ public class Contact {
 
 	public void setEtag(String etag) {
 		this.etag = etag;
+	}
+	
+	public ContactPicture getPicture() {
+		return picture;
+	}
+
+	public void setPicture(ContactPicture picture) {
+		this.picture = picture;
+	}
+	
+	public List<ContactAttachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<ContactAttachment> attachments) {
+		this.attachments = attachments;
+	}
+	
+	public boolean hasPicture() {
+		return picture != null;
 	}
 	
 	public String getFullName() {

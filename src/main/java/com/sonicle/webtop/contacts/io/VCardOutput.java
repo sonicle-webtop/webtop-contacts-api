@@ -34,6 +34,7 @@ package com.sonicle.webtop.contacts.io;
 
 import com.sonicle.webtop.contacts.model.Contact;
 import com.sonicle.webtop.contacts.model.ContactPicture;
+import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
 import com.sonicle.webtop.core.model.RecipientFieldCategory;
 import com.sonicle.webtop.core.sdk.WTException;
 import ezvcard.Ezvcard;
@@ -104,7 +105,7 @@ public class VCardOutput {
 		return Ezvcard.write(vCard).version(targetVersion).go();
 	}
 	
-	public VCard toVCard(Contact contact, ContactPicture picture) throws WTException {
+	public VCard toVCard(Contact contact) throws WTException {
 		VCard vCard = new VCard();
 		
 		// UID(?)
@@ -170,9 +171,12 @@ public class VCardOutput {
 		if (note != null) vCard.addNote(note);
 		
 		// PHOTO(*)
-		if (picture != null) {
-			Photo photo = toPhoto(picture);
-			if (photo != null) vCard.addPhoto(photo);
+		if (contact.hasPicture()) {
+			ContactPicture picture = contact.getPicture();
+			if (picture instanceof ContactPictureWithBytes) {
+				Photo photo = toPhoto((ContactPictureWithBytes)picture);
+				if (photo != null) vCard.addPhoto(photo);
+			}
 		}
 		
 		return vCard;
@@ -432,7 +436,7 @@ public class VCardOutput {
 		return prop;
 	}
 	
-	public Photo toPhoto(ContactPicture picture) {
+	public Photo toPhoto(ContactPictureWithBytes picture) {
 		Photo prop = null;
 		if (picture != null) {
 			ImageType it = null;

@@ -36,32 +36,14 @@ package com.sonicle.webtop.contacts.model;
  *
  * @author malbinola
  */
-public class ContactPicture {
-	protected String mediaType;
-	protected int width;
-	protected int height;
+public class ContactAttachmentWithBytes extends ContactAttachment {
+	protected byte[] bytes;
 	
-	public String getMediaType() {
-		return mediaType;
-	}
-
-	public void setMediaType(String mediaType) {
-		this.mediaType = mediaType;
+	public ContactAttachmentWithBytes(byte[] bytes) {
+		this.bytes = bytes;
 	}
 	
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
+	public byte[] getBytes() {
+		return bytes;
 	}
 }

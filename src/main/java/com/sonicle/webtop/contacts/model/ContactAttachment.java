@@ -32,15 +32,62 @@
  */
 package com.sonicle.webtop.contacts.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.joda.time.DateTime;
+
 /**
  *
  * @author malbinola
  */
-public class ContactPicture {
-	protected String mediaType;
-	protected int width;
-	protected int height;
-	
+public class ContactAttachment {
+	private String attachmentId;
+	private DateTime revisionTimestamp;
+	private Short revisionSequence;
+	private String filename;
+	private Long size;
+	private String mediaType;
+
+	public String getAttachmentId() {
+		return attachmentId;
+	}
+
+	public void setAttachmentId(String attachmentId) {
+		this.attachmentId = attachmentId;
+	}
+
+	public DateTime getRevisionTimestamp() {
+		return revisionTimestamp;
+	}
+
+	public void setRevisionTimestamp(DateTime revisionTimestamp) {
+		this.revisionTimestamp = revisionTimestamp;
+	}
+
+	public Short getRevisionSequence() {
+		return revisionSequence;
+	}
+
+	public void setRevisionSequence(Short revisionSequence) {
+		this.revisionSequence = revisionSequence;
+	}
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	public Long getSize() {
+		return size;
+	}
+
+	public void setSize(Long size) {
+		this.size = size;
+	}
+
 	public String getMediaType() {
 		return mediaType;
 	}
@@ -49,19 +96,23 @@ public class ContactPicture {
 		this.mediaType = mediaType;
 	}
 	
-	public int getWidth() {
-		return width;
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(getAttachmentId())
+			.append(getFilename())
+			.append(getSize())
+			.append(getMediaType())
+			.toHashCode();
 	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ContactAttachment == false) return false;
+		if (this == obj) return true;
+		final ContactAttachment otherObject = (ContactAttachment)obj;
+		return new EqualsBuilder()
+			.append(getAttachmentId(), otherObject.getAttachmentId())
+			.isEquals();
 	}
 }

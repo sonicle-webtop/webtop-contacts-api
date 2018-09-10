@@ -32,36 +32,27 @@
  */
 package com.sonicle.webtop.contacts.model;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 /**
  *
  * @author malbinola
  */
-public class ContactPicture {
-	protected String mediaType;
-	protected int width;
-	protected int height;
+public class ContactAttachmentWithStream extends ContactAttachment {
+	private InputStream stream;
 	
-	public String getMediaType() {
-		return mediaType;
-	}
-
-	public void setMediaType(String mediaType) {
-		this.mediaType = mediaType;
+	public ContactAttachmentWithStream(File file) throws FileNotFoundException {
+		this(new FileInputStream(file));
 	}
 	
-	public int getWidth() {
-		return width;
+	public ContactAttachmentWithStream(InputStream stream) {
+		this.stream = stream;
 	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
+	
+	public InputStream getStream() {
+		return stream;
 	}
 }

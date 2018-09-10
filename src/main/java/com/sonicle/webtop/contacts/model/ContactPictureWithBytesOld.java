@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2018 Sonicle S.r.l.
+/* 
+ * Copyright (C) 2014 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,7 +28,7 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2018 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2014 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.contacts.model;
 
@@ -36,17 +36,33 @@ package com.sonicle.webtop.contacts.model;
  *
  * @author malbinola
  */
-public class ContactPicture {
+public class ContactPictureWithBytesOld {
 	protected String mediaType;
+	protected byte[] bytes;
 	protected int width;
 	protected int height;
 	
+	public ContactPictureWithBytesOld() {}
+	
+	public ContactPictureWithBytesOld(String mediaType, byte[] bytes) {
+		this.mediaType = mediaType;
+		this.bytes = bytes;
+	}
+
 	public String getMediaType() {
 		return mediaType;
 	}
 
 	public void setMediaType(String mediaType) {
 		this.mediaType = mediaType;
+	}
+
+	public byte[] getBytes() {
+		return bytes;
+	}
+
+	public void setBytes(byte[] bytes) {
+		this.bytes = bytes;
 	}
 	
 	public int getWidth() {

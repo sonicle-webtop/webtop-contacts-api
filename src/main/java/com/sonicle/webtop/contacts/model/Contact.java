@@ -33,6 +33,7 @@
 package com.sonicle.webtop.contacts.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.sonicle.commons.LangUtils;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -548,6 +549,33 @@ public class Contact {
 		} else {
 			return StringUtils.join(getTitle(), " ", getFirstName(), " ", getLastName()).trim();
 		}
+	}
+	
+	public String getWorkFullAddress() {
+		return LangUtils.joinStrings(
+				", ",
+				getWorkAddress(),
+				LangUtils.joinStrings(" ", getWorkPostalCode(), getWorkCity(), getWorkState()),
+				getWorkCountry()
+		);
+	}
+	
+	public String getHomeFullAddress() {
+		return LangUtils.joinStrings(
+				", ",
+				getHomeAddress(),
+				LangUtils.joinStrings(" ", getHomePostalCode(), getHomeCity(), getHomeState()),
+				getHomeCountry()
+		);
+	}
+	
+	public String getOtherFullAddress() {
+		return LangUtils.joinStrings(
+				", ",
+				getOtherAddress(),
+				LangUtils.joinStrings(" ", getOtherPostalCode(), getOtherCity(), getOtherState()),
+				getOtherCountry()
+		);
 	}
 	
 	public boolean areNamesBlank(boolean firstLastOnly) {

@@ -36,10 +36,110 @@ package com.sonicle.webtop.contacts.model;
  *
  * @author malbinola
  */
-public class ContactItem extends Contact {
-	protected boolean hasPicture;
+public class ContactItem extends BaseContact {
+	protected Boolean isList;
+	protected String company;
+	protected String function;
+	protected String workCity;
+	protected String workTelephone;
+	protected String workMobile;
+	protected String workEmail;
+	protected String homeTelephone;
+	protected String homeEmail;
+	protected String categoryDomainId;
+	protected String categoryUserId;
 	
-	public boolean getHasPicture() {
+	protected boolean hasPicture;
+
+	public Boolean getIsList() {
+		return isList;
+	}
+
+	public void setIsList(Boolean isList) {
+		this.isList = isList;
+	}
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
+
+	public String getFunction() {
+		return function;
+	}
+
+	public void setFunction(String function) {
+		this.function = function;
+	}
+
+	public String getWorkCity() {
+		return workCity;
+	}
+
+	public void setWorkCity(String workCity) {
+		this.workCity = workCity;
+	}
+
+	public String getWorkTelephone() {
+		return workTelephone;
+	}
+
+	public void setWorkTelephone(String workTelephone) {
+		this.workTelephone = workTelephone;
+	}
+
+	public String getWorkMobile() {
+		return workMobile;
+	}
+
+	public void setWorkMobile(String workMobile) {
+		this.workMobile = workMobile;
+	}
+
+	public String getWorkEmail() {
+		return workEmail;
+	}
+
+	public void setWorkEmail(String workEmail) {
+		this.workEmail = workEmail;
+	}
+
+	public String getHomeTelephone() {
+		return homeTelephone;
+	}
+
+	public void setHomeTelephone(String homeTelephone) {
+		this.homeTelephone = homeTelephone;
+	}
+
+	public String getHomeEmail() {
+		return homeEmail;
+	}
+
+	public void setHomeEmail(String homeEmail) {
+		this.homeEmail = homeEmail;
+	}
+
+	public String getCategoryDomainId() {
+		return categoryDomainId;
+	}
+
+	public void setCategoryDomainId(String categoryDomainId) {
+		this.categoryDomainId = categoryDomainId;
+	}
+
+	public String getCategoryUserId() {
+		return categoryUserId;
+	}
+
+	public void setCategoryUserId(String categoryUserId) {
+		this.categoryUserId = categoryUserId;
+	}
+
+	public boolean isHasPicture() {
 		return hasPicture;
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Sonicle S.r.l.
+ * Copyright (C) 2018 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,55 +28,31 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2014 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2018 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.contacts.model;
-
-import com.sonicle.webtop.core.sdk.UserProfileId;
 
 /**
  *
  * @author malbinola
  */
-public class ContactItemEx extends ContactItem {
-	private Boolean isList;
-	private String companyAsMasterDataId;
-	private String categoryDomainId;
-	private String categoryUserId;
-	
-	public Boolean getIsList() {
-		return isList;
+public class ContactCompany {
+	protected String companyId;
+	protected String companyDescription;
+
+	public String getCompanyId() {
+		return companyId;
 	}
 
-	public void setIsList(Boolean isList) {
-		this.isList = isList;
-	}
-	
-	public String getCompanyAsMasterDataId() {
-		return companyAsMasterDataId;
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
 	}
 
-	public void setCompanyAsMasterDataId(String companyAsMasterDataId) {
-		this.companyAsMasterDataId = companyAsMasterDataId;
-	}
-	
-	public String getCategoryDomainId() {
-		return categoryDomainId;
+	public String getCompanyDescription() {
+		return companyDescription;
 	}
 
-	public void setCategoryDomainId(String categoryDomainId) {
-		this.categoryDomainId = categoryDomainId;
-	}
-	
-	public String getCategoryUserId() {
-		return categoryUserId;
-	}
-
-	public void setCategoryUserId(String categoryUserId) {
-		this.categoryUserId = categoryUserId;
-	}
-	
-	public UserProfileId getCategoryProfileId() {
-		return new UserProfileId(categoryDomainId, categoryUserId);
+	public void setCompanyDescription(String companyDescription) {
+		this.companyDescription = companyDescription;
 	}
 }

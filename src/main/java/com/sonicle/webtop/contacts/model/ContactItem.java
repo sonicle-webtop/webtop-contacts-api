@@ -32,6 +32,8 @@
  */
 package com.sonicle.webtop.contacts.model;
 
+import com.sonicle.webtop.core.sdk.UserProfileId;
+
 /**
  *
  * @author malbinola
@@ -145,5 +147,9 @@ public class ContactItem extends BaseContact {
 
 	public void setHasPicture(boolean hasPicture) {
 		this.hasPicture = hasPicture;
+	}
+	
+	public UserProfileId getCategoryProfileId() {
+		return new UserProfileId(getCategoryDomainId(), getCategoryUserId());
 	}
 }

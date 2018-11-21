@@ -48,6 +48,7 @@ public class ContactItem extends BaseContact {
 	protected String workEmail;
 	protected String homeTelephone;
 	protected String homeEmail;
+	protected String categoryName;
 	protected String categoryDomainId;
 	protected String categoryUserId;
 	
@@ -123,6 +124,14 @@ public class ContactItem extends BaseContact {
 
 	public void setHomeEmail(String homeEmail) {
 		this.homeEmail = homeEmail;
+	}
+	
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
 	}
 
 	public String getCategoryDomainId() {

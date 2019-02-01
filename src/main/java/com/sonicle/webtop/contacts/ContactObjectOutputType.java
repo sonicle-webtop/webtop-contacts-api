@@ -30,20 +30,12 @@
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
  * display the words "Copyright (C) 2018 Sonicle S.r.l.".
  */
-package com.sonicle.webtop.contacts.model;
-
-import java.util.List;
+package com.sonicle.webtop.contacts;
 
 /**
  *
  * @author malbinola
  */
-public class ListContactsResult {
-	public final List<ContactLookup> items;
-	public final Integer fullCount;
-	
-	public ListContactsResult(List<ContactLookup> items, Integer fullCount) {
-		this.items = items;
-		this.fullCount = fullCount;
-	}
+public enum ContactObjectOutputType {
+	STAT, VCARD, BEAN;
 }

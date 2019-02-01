@@ -38,7 +38,7 @@ import com.sonicle.webtop.core.sdk.UserProfileId;
  *
  * @author malbinola
  */
-public class ContactItem extends BaseContact {
+public class ContactLookup extends BaseContact {
 	protected Boolean isList;
 	protected String company;
 	protected String function;
@@ -156,6 +156,14 @@ public class ContactItem extends BaseContact {
 
 	public void setHasPicture(boolean hasPicture) {
 		this.hasPicture = hasPicture;
+	}
+	
+	public String getMobile() {
+		return getWorkMobile();
+	}
+	
+	public void setMobile(String mobile) {
+		setWorkMobile(mobile);
 	}
 	
 	public UserProfileId getCategoryProfileId() {

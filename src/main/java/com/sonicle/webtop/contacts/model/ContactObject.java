@@ -38,33 +38,59 @@ import org.joda.time.DateTime;
  *
  * @author malbinola
  */
-public class ContactCardChanged {
-	protected final Integer contactId;
-	protected final DateTime revisionTimestamp;
-	//protected final String publicUid;
-	protected final String href;
-	
-	public ContactCardChanged(int contactId, DateTime revisionTimestamp, String href) {
-		this.contactId = contactId;
-		this.revisionTimestamp = revisionTimestamp;
-		this.href = href;
-	}
+public class ContactObject {
+	protected Integer contactId;
+	protected Integer categoryId;
+	protected Contact.RevisionStatus revisionStatus;
+	protected DateTime revisionTimestamp;
+	protected String publicUid;
+	protected String href;
 
 	public Integer getContactId() {
 		return contactId;
+	}
+
+	public void setContactId(Integer contactId) {
+		this.contactId = contactId;
+	}
+
+	public Integer getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public Contact.RevisionStatus getRevisionStatus() {
+		return revisionStatus;
+	}
+
+	public void setRevisionStatus(Contact.RevisionStatus revisionStatus) {
+		this.revisionStatus = revisionStatus;
 	}
 
 	public DateTime getRevisionTimestamp() {
 		return revisionTimestamp;
 	}
 
-	/*
+	public void setRevisionTimestamp(DateTime revisionTimestamp) {
+		this.revisionTimestamp = revisionTimestamp;
+	}
+
 	public String getPublicUid() {
 		return publicUid;
 	}
-	*/
+
+	public void setPublicUid(String publicUid) {
+		this.publicUid = publicUid;
+	}
 
 	public String getHref() {
 		return href;
+	}
+
+	public void setHref(String href) {
+		this.href = href;
 	}
 }

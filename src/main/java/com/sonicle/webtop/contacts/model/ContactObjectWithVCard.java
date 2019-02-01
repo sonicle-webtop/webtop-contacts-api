@@ -32,18 +32,24 @@
  */
 package com.sonicle.webtop.contacts.model;
 
-import java.util.List;
+import org.apache.commons.io.Charsets;
 
 /**
  *
  * @author malbinola
  */
-public class ListContactsResult {
-	public final List<ContactLookup> items;
-	public final Integer fullCount;
+public class ContactObjectWithVCard extends ContactObject {
+	protected String vcard;
 	
-	public ListContactsResult(List<ContactLookup> items, Integer fullCount) {
-		this.items = items;
-		this.fullCount = fullCount;
+	public String getVcard() {
+		return vcard;
+	}
+
+	public void setVcard(String vcard) {
+		this.vcard = vcard;
+	}
+	
+	public int getSize() {
+		return (vcard == null) ? -1 : vcard.getBytes(Charsets.UTF_8).length;
 	}
 }

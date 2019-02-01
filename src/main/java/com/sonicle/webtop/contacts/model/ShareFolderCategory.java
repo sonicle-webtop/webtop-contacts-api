@@ -59,4 +59,20 @@ public class ShareFolderCategory extends ShareFolder {
 	public void setData(Object data) {
 		this.data = data;
 	}
+
+	public SharePermsElements getRealElementsPerms(Category.Sync sync) {
+		return realElementsPerms(getElementsPerms(), sync);
+	}
+	
+	public static SharePermsElements realElementsPerms(Category.Sync sync) {
+		return realElementsPerms(SharePermsElements.full(), sync);
+	}
+	
+	public static SharePermsElements realElementsPerms(SharePermsElements origPerms, Category.Sync sync) {
+		if (Category.Sync.READ.equals(sync)) {
+			return new SharePermsElements();
+		} else {
+			return origPerms;
+		}
+	}
 }

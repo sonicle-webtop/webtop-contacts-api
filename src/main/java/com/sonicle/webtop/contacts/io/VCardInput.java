@@ -167,14 +167,15 @@ public class VCardInput {
 		return result;
 	}
 	
+	/*
 	private void setFallbackTelephone(Contact contact, TelephoneType type, String value) {
 		if (TelephoneType.VOICE.equals(type)) {
-			if (StringUtils.isBlank(contact.getWorkTelephone())) {
-				contact.setWorkTelephone(value);
+			if (StringUtils.isBlank(contact.getWorkTelephone1())) {
+				contact.setWorkTelephone1(value);
 				return;
 			}
-			if (StringUtils.isBlank(contact.getHomeTelephone())) {
-				contact.setHomeTelephone(value);
+			if (StringUtils.isBlank(contact.getHomeTelephone1())) {
+				contact.setHomeTelephone1(value);
 			}
 		} else if (TelephoneType.FAX.equals(type)) {
 			if (StringUtils.isBlank(contact.getWorkFax())) {
@@ -185,16 +186,16 @@ public class VCardInput {
 				contact.setHomeFax(value);
 			}
 		} else if (TelephoneType.PAGER.equals(type)) {
-			if (StringUtils.isBlank(contact.getWorkPager())) {
-				contact.setWorkPager(value);
+			if (StringUtils.isBlank(contact.getPager1())) {
+				contact.setPager1(value);
 				return;
 			}
-			if (StringUtils.isBlank(contact.getHomePager())) {
-				contact.setHomePager(value);
+			if (StringUtils.isBlank(contact.getPager2())) {
+				contact.setPager2(value);
 			}
 		} else if (TelephoneType.CELL.equals(type)) {
-			if (StringUtils.isBlank(contact.getWorkMobile())) {
-				contact.setWorkMobile(value);
+			if (StringUtils.isBlank(contact.getMobile())) {
+				contact.setMobile(value);
 			}
 		} else if (TelephoneType.TEXT.equals(type)) {
 			if (StringUtils.isBlank(contact.getWorkTelephone2())) {
@@ -205,15 +206,16 @@ public class VCardInput {
 				contact.setHomeTelephone2(value);
 			}
 		} else {
-			if (StringUtils.isBlank(contact.getWorkTelephone())) {
-				contact.setWorkTelephone(value);
+			if (StringUtils.isBlank(contact.getWorkTelephone1())) {
+				contact.setWorkTelephone1(value);
 				return;
 			}
-			if (StringUtils.isBlank(contact.getHomeTelephone())) {
-				contact.setHomeTelephone(value);
+			if (StringUtils.isBlank(contact.getHomeTelephone1())) {
+				contact.setHomeTelephone1(value);
 			}
 		}
 	}
+	*/
 	
 	public ContactInput fromVCard(VCard vCard, LogEntries log) throws WTException {
 		Contact contact = new Contact();
@@ -661,29 +663,29 @@ public class VCardInput {
 		final List<TelephoneType> types = telephone.getTypes();
 		if (MatchCategory.WORK.equals(category)) {
 			if (types.contains(TelephoneType.VOICE)) {
-				contact.setWorkTelephone(deflt(telephone.getText()));
+				contact.setWorkTelephone1(deflt(telephone.getText()));
 			} else if (types.contains(TelephoneType.FAX)) {
 				contact.setWorkFax(deflt(telephone.getText()));
 			} else if (types.contains(TelephoneType.PAGER)) {
-				contact.setWorkPager(deflt(telephone.getText()));
+				contact.setPager1(deflt(telephone.getText()));
 			} else if (types.contains(TelephoneType.CELL)) {
-				contact.setWorkMobile(deflt(telephone.getText()));
+				contact.setMobile(deflt(telephone.getText()));
 			} else if (types.contains(TelephoneType.TEXT)) {
 				contact.setWorkTelephone2(deflt(telephone.getText()));
 			} else {
-				contact.setWorkTelephone(deflt(telephone.getText()));
+				contact.setWorkTelephone1(deflt(telephone.getText()));
 			}
 		} else if (MatchCategory.HOME.equals(category)) {
 			if (types.contains(TelephoneType.VOICE)) {
-				contact.setHomeTelephone(deflt(telephone.getText()));
+				contact.setHomeTelephone1(deflt(telephone.getText()));
 			} else if (types.contains(TelephoneType.FAX)) {
 				contact.setHomeFax(deflt(telephone.getText()));
 			} else if (types.contains(TelephoneType.PAGER)) {
-				contact.setHomePager(deflt(telephone.getText()));
+				contact.setPager2(deflt(telephone.getText()));
 			} else if (types.contains(TelephoneType.TEXT)) {
 				contact.setHomeTelephone2(deflt(telephone.getText()));
 			} else {
-				contact.setHomeTelephone(deflt(telephone.getText()));
+				contact.setHomeTelephone1(deflt(telephone.getText()));
 			}
 		}
 	}
@@ -691,11 +693,11 @@ public class VCardInput {
 	private boolean setTelephoneRelaxed(Contact contact, Telephone telephone) {
 		final List<TelephoneType> types = telephone.getTypes();
 		if (types.contains(TelephoneType.VOICE)) {
-			if (StringUtils.isBlank(contact.getWorkTelephone())) {
-				contact.setWorkTelephone(deflt(telephone.getText()));
+			if (StringUtils.isBlank(contact.getWorkTelephone1())) {
+				contact.setWorkTelephone1(deflt(telephone.getText()));
 				return true;
-			} else if (StringUtils.isBlank(contact.getHomeTelephone())) {
-				contact.setHomeTelephone(deflt(telephone.getText()));
+			} else if (StringUtils.isBlank(contact.getHomeTelephone1())) {
+				contact.setHomeTelephone1(deflt(telephone.getText()));
 				return true;
 			}
 		} else if (types.contains(TelephoneType.FAX)) {
@@ -707,25 +709,25 @@ public class VCardInput {
 				return true;
 			}
 		} else if (types.contains(TelephoneType.PAGER)) {
-			if (StringUtils.isBlank(contact.getWorkPager())) {
-				contact.setWorkPager(deflt(telephone.getText()));
+			if (StringUtils.isBlank(contact.getPager1())) {
+				contact.setPager1(deflt(telephone.getText()));
 				return true;
-			} else if (StringUtils.isBlank(contact.getHomePager())) {
-				contact.setHomePager(deflt(telephone.getText()));
+			} else if (StringUtils.isBlank(contact.getPager2())) {
+				contact.setPager2(deflt(telephone.getText()));
 				return true;
 			}
 		} else if (types.contains(TelephoneType.CELL)) {
-			if (StringUtils.isBlank(contact.getWorkMobile())) {
-				contact.setWorkMobile(deflt(telephone.getText()));
+			if (StringUtils.isBlank(contact.getMobile())) {
+				contact.setMobile(deflt(telephone.getText()));
 				return true;
-			} else if (StringUtils.isBlank(contact.getWorkTelephone())) {
-				contact.setWorkTelephone(deflt(telephone.getText()));
+			} else if (StringUtils.isBlank(contact.getWorkTelephone1())) {
+				contact.setWorkTelephone1(deflt(telephone.getText()));
 				return true;
 			} else if (StringUtils.isBlank(contact.getWorkTelephone2())) {
 				contact.setWorkTelephone2(deflt(telephone.getText()));
 				return true;
-			} else if (StringUtils.isBlank(contact.getHomeTelephone())) {
-				contact.setHomeTelephone(deflt(telephone.getText()));
+			} else if (StringUtils.isBlank(contact.getHomeTelephone1())) {
+				contact.setHomeTelephone1(deflt(telephone.getText()));
 				return true;
 			} else if (StringUtils.isBlank(contact.getHomeTelephone2())) {
 				contact.setHomeTelephone2(deflt(telephone.getText()));
@@ -740,14 +742,14 @@ public class VCardInput {
 				return true;
 			}
 		} else {
-			if (StringUtils.isBlank(contact.getWorkTelephone())) {
-				contact.setWorkTelephone(deflt(telephone.getText()));
+			if (StringUtils.isBlank(contact.getWorkTelephone1())) {
+				contact.setWorkTelephone1(deflt(telephone.getText()));
 				return true;
 			} else if (StringUtils.isBlank(contact.getWorkTelephone2())) {
 				contact.setWorkTelephone2(deflt(telephone.getText()));
 				return true;
-			} else if (StringUtils.isBlank(contact.getHomeTelephone())) {
-				contact.setHomeTelephone(deflt(telephone.getText()));
+			} else if (StringUtils.isBlank(contact.getHomeTelephone1())) {
+				contact.setHomeTelephone1(deflt(telephone.getText()));
 				return true;
 			} else if (StringUtils.isBlank(contact.getHomeTelephone2())) {
 				contact.setHomeTelephone2(deflt(telephone.getText()));
@@ -759,23 +761,23 @@ public class VCardInput {
 	
 	private void setEmail(Contact contact, MatchCategory category, Email email) {
 		if (MatchCategory.WORK.equals(category)) {
-			contact.setWorkEmail(deflt(email.getValue()));
+			contact.setEmail1(deflt(email.getValue()));
 		} else if (MatchCategory.HOME.equals(category)) {
-			contact.setHomeEmail(deflt(email.getValue()));
+			contact.setEmail2(deflt(email.getValue()));
 		} else if (MatchCategory.OTHER.equals(category)) {
-			contact.setOtherEmail(deflt(email.getValue()));
+			contact.setEmail3(deflt(email.getValue()));
 		}
 	}
 	
 	private boolean setEmailRelaxed(Contact contact, Email email) {
-		if (StringUtils.isBlank(contact.getWorkEmail())) {
-			contact.setWorkEmail(deflt(email.getValue()));
+		if (StringUtils.isBlank(contact.getEmail1())) {
+			contact.setEmail1(deflt(email.getValue()));
 			return true;
-		} else if (StringUtils.isBlank(contact.getHomeEmail())) {
-			contact.setHomeEmail(deflt(email.getValue()));
+		} else if (StringUtils.isBlank(contact.getEmail2())) {
+			contact.setEmail2(deflt(email.getValue()));
 			return true;
-		} else if (StringUtils.isBlank(contact.getOtherEmail())) {
-			contact.setOtherEmail(deflt(email.getValue()));
+		} else if (StringUtils.isBlank(contact.getEmail3())) {
+			contact.setEmail3(deflt(email.getValue()));
 			return true;
 		}
 		return false;
@@ -783,23 +785,23 @@ public class VCardInput {
 	
 	private void setIMPP(Contact contact, MatchCategory category, Impp impp) {
 		if (MatchCategory.WORK.equals(category)) {
-			contact.setWorkEmail(deflt(impp.getUri().toString()));
+			contact.setInstantMsg1(deflt(impp.getUri().toString()));
 		} else if (MatchCategory.HOME.equals(category)) {
-			contact.setHomeEmail(deflt(impp.getUri().toString()));
+			contact.setInstantMsg2(deflt(impp.getUri().toString()));
 		} else if (MatchCategory.OTHER.equals(category)) {
-			contact.setOtherEmail(deflt(impp.getUri().toString()));
+			contact.setInstantMsg3(deflt(impp.getUri().toString()));
 		}
 	}
 	
 	private boolean setIMPPRelaxed(Contact contact, Impp impp) {
-		if (StringUtils.isBlank(contact.getWorkEmail())) {
-			contact.setWorkEmail(deflt(impp.getUri().toString()));
+		if (StringUtils.isBlank(contact.getInstantMsg1())) {
+			contact.setInstantMsg1(deflt(impp.getUri().toString()));
 			return true;
-		} else if (StringUtils.isBlank(contact.getHomeEmail())) {
-			contact.setHomeEmail(deflt(impp.getUri().toString()));
+		} else if (StringUtils.isBlank(contact.getInstantMsg2())) {
+			contact.setInstantMsg2(deflt(impp.getUri().toString()));
 			return true;
-		} else if (StringUtils.isBlank(contact.getOtherEmail())) {
-			contact.setOtherEmail(deflt(impp.getUri().toString()));
+		} else if (StringUtils.isBlank(contact.getInstantMsg3())) {
+			contact.setInstantMsg3(deflt(impp.getUri().toString()));
 			return true;
 		}
 		return false;

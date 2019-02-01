@@ -55,36 +55,36 @@ public class Contact {
 	protected String lastName;
 	protected String nickname;
 	protected Gender gender;
+	protected String mobile;
+	protected String pager1;
+	protected String pager2;
+	protected String email1;
+	protected String email2;
+	protected String email3;
+	protected String instantMsg1;
+	protected String instantMsg2;
+	protected String instantMsg3;
 	protected String workAddress;
 	protected String workPostalCode;
 	protected String workCity;
 	protected String workState;
 	protected String workCountry;
-	protected String workTelephone;
+	protected String workTelephone1;
 	protected String workTelephone2;
-	protected String workMobile;
 	protected String workFax;
-	protected String workPager;
-	protected String workEmail;
-	protected String workInstantMsg;
 	protected String homeAddress;
 	protected String homePostalCode;
 	protected String homeCity;
 	protected String homeState;
 	protected String homeCountry;
-	protected String homeTelephone;
+	protected String homeTelephone1;
 	protected String homeTelephone2;
 	protected String homeFax;
-	protected String homePager;
-	protected String homeEmail;
-	protected String homeInstantMsg;
 	protected String otherAddress;
 	protected String otherPostalCode;
 	protected String otherCity;
 	protected String otherState;
 	protected String otherCountry;
-	protected String otherEmail;
-	protected String otherInstantMsg;
 	protected String company;
 	protected String function;
 	protected String department;
@@ -174,6 +174,78 @@ public class Contact {
 	public void setGender(Gender gender) {
 		this.gender = gender;
 	}
+	
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+	
+	public String getPager1() {
+		return pager1;
+	}
+
+	public void setPager1(String pager1) {
+		this.pager1 = pager1;
+	}
+	
+	public String getPager2() {
+		return pager2;
+	}
+
+	public void setPager2(String pager2) {
+		this.pager2 = pager2;
+	}
+	
+	public String getEmail1() {
+		return email1;
+	}
+
+	public void setEmail1(String email1) {
+		this.email1 = email1;
+	}
+	
+	public String getEmail2() {
+		return email2;
+	}
+
+	public void setEmail2(String email2) {
+		this.email2 = email2;
+	}
+	
+	public String getEmail3() {
+		return email3;
+	}
+
+	public void setEmail3(String email3) {
+		this.email3 = email3;
+	}
+	
+	public String getInstantMsg1() {
+		return instantMsg1;
+	}
+
+	public void setInstantMsg1(String instantMsg1) {
+		this.instantMsg1 = instantMsg1;
+	}
+	
+	public String getInstantMsg2() {
+		return instantMsg2;
+	}
+
+	public void setInstantMsg2(String instantMsg2) {
+		this.instantMsg2 = instantMsg2;
+	}
+	
+	public String getInstantMsg3() {
+		return instantMsg3;
+	}
+
+	public void setInstantMsg3(String instantMsg3) {
+		this.instantMsg3 = instantMsg3;
+	}
 
 	public String getWorkAddress() {
 		return workAddress;
@@ -214,13 +286,13 @@ public class Contact {
 	public void setWorkCountry(String workCountry) {
 		this.workCountry = workCountry;
 	}
-
-	public String getWorkTelephone() {
-		return workTelephone;
+	
+	public String getWorkTelephone1() {
+		return workTelephone1;
 	}
 
-	public void setWorkTelephone(String workTelephone) {
-		this.workTelephone = workTelephone;
+	public void setWorkTelephone1(String workTelephone1) {
+		this.workTelephone1 = workTelephone1;
 	}
 
 	public String getWorkTelephone2() {
@@ -231,44 +303,12 @@ public class Contact {
 		this.workTelephone2 = workTelephone2;
 	}
 
-	public String getWorkMobile() {
-		return workMobile;
-	}
-
-	public void setWorkMobile(String workMobile) {
-		this.workMobile = workMobile;
-	}
-
 	public String getWorkFax() {
 		return workFax;
 	}
 
 	public void setWorkFax(String workFax) {
 		this.workFax = workFax;
-	}
-
-	public String getWorkPager() {
-		return workPager;
-	}
-
-	public void setWorkPager(String workPager) {
-		this.workPager = workPager;
-	}
-
-	public String getWorkEmail() {
-		return workEmail;
-	}
-
-	public void setWorkEmail(String workEmail) {
-		this.workEmail = workEmail;
-	}
-
-	public String getWorkInstantMsg() {
-		return workInstantMsg;
-	}
-
-	public void setWorkInstantMsg(String workInstantMsg) {
-		this.workInstantMsg = workInstantMsg;
 	}
 
 	public String getHomeAddress() {
@@ -311,12 +351,12 @@ public class Contact {
 		this.homeCountry = homeCountry;
 	}
 
-	public String getHomeTelephone() {
-		return homeTelephone;
+	public String getHomeTelephone1() {
+		return homeTelephone1;
 	}
 
-	public void setHomeTelephone(String homeTelephone) {
-		this.homeTelephone = homeTelephone;
+	public void setHomeTelephone1(String homeTelephone1) {
+		this.homeTelephone1 = homeTelephone1;
 	}
 
 	public String getHomeTelephone2() {
@@ -333,30 +373,6 @@ public class Contact {
 
 	public void setHomeFax(String homeFax) {
 		this.homeFax = homeFax;
-	}
-
-	public String getHomePager() {
-		return homePager;
-	}
-
-	public void setHomePager(String homePager) {
-		this.homePager = homePager;
-	}
-
-	public String getHomeEmail() {
-		return homeEmail;
-	}
-
-	public void setHomeEmail(String homeEmail) {
-		this.homeEmail = homeEmail;
-	}
-
-	public String getHomeInstantMsg() {
-		return homeInstantMsg;
-	}
-
-	public void setHomeInstantMsg(String homeInstantMsg) {
-		this.homeInstantMsg = homeInstantMsg;
 	}
 
 	public String getOtherAddress() {
@@ -397,22 +413,6 @@ public class Contact {
 
 	public void setOtherCountry(String otherCountry) {
 		this.otherCountry = otherCountry;
-	}
-
-	public String getOtherEmail() {
-		return otherEmail;
-	}
-
-	public void setOtherEmail(String otherEmail) {
-		this.otherEmail = otherEmail;
-	}
-
-	public String getOtherInstantMsg() {
-		return otherInstantMsg;
-	}
-
-	public void setOtherInstantMsg(String otherInstantMsg) {
-		this.otherInstantMsg = otherInstantMsg;
 	}
 
 	public String getCompany() {
@@ -624,43 +624,43 @@ public class Contact {
 		setFirstName(trimStringLength(trimmed, getFirstName(), 255));
 		setLastName(trimStringLength(trimmed, getLastName(), 255));
 		setNickname(trimStringLength(trimmed, getNickname(), 60));
-		setCompany(trimStringLength(trimmed, getCompany(), 60));
-		setFunction(trimStringLength(trimmed, getFunction(), 50));
+		setMobile(trimStringLength(trimmed, getMobile(), 50));
+		setPager1(trimStringLength(trimmed, getPager1(), 50));
+		setPager2(trimStringLength(trimmed, getPager2(), 50));
+		setEmail1(trimStringLength(trimmed, getEmail1(), 320));
+		setEmail2(trimStringLength(trimmed, getEmail2(), 320));
+		setEmail3(trimStringLength(trimmed, getEmail3(), 320));
+		setInstantMsg1(trimStringLength(trimmed, getInstantMsg1(), 200));
+		setInstantMsg2(trimStringLength(trimmed, getInstantMsg2(), 200));
+		setInstantMsg3(trimStringLength(trimmed, getInstantMsg3(), 200));
 		setWorkAddress(trimStringLength(trimmed, getWorkAddress(), 100));
 		setWorkCity(trimStringLength(trimmed, getWorkCity(), 50));
 		setWorkState(trimStringLength(trimmed, getWorkState(), 30));
 		setWorkPostalCode(trimStringLength(trimmed, getWorkPostalCode(), 20));
 		setWorkCountry(trimStringLength(trimmed, getWorkCountry(), 30));
-		setWorkTelephone(trimStringLength(trimmed, getWorkTelephone(), 50));
+		setWorkTelephone1(trimStringLength(trimmed, getWorkTelephone1(), 50));
 		setWorkTelephone2(trimStringLength(trimmed, getWorkTelephone2(), 50));
 		setWorkFax(trimStringLength(trimmed, getWorkFax(), 50));
-		setWorkMobile(trimStringLength(trimmed, getWorkMobile(), 50));
-		setWorkPager(trimStringLength(trimmed, getWorkPager(), 50));
-		setWorkEmail(trimStringLength(trimmed, getWorkEmail(), 320));
-		setWorkInstantMsg(trimStringLength(trimmed, getWorkInstantMsg(), 200));
-		setAssistant(trimStringLength(trimmed, getAssistant(), 30));
-		setAssistantTelephone(trimStringLength(trimmed, getAssistantTelephone(), 50));
-		setDepartment(trimStringLength(trimmed, getDepartment(), 200));
-		setManager(trimStringLength(trimmed, getManager(), 200));
 		setHomeAddress(trimStringLength(trimmed, getHomeAddress(), 100));
 		setHomeCity(trimStringLength(trimmed, getHomeCity(), 50));
 		setHomeState(trimStringLength(trimmed, getHomeState(), 30));
 		setHomePostalCode(trimStringLength(trimmed, getHomePostalCode(), 20));
 		setHomeCountry(trimStringLength(trimmed, getHomeCountry(), 30));
-		setHomeTelephone(trimStringLength(trimmed, getHomeTelephone(), 50));
+		setHomeTelephone1(trimStringLength(trimmed, getHomeTelephone1(), 50));
 		setHomeTelephone2(trimStringLength(trimmed, getHomeTelephone2(), 50));
 		setHomeFax(trimStringLength(trimmed, getHomeFax(), 50));
-		setHomePager(trimStringLength(trimmed, getHomePager(), 50));
-		setHomeEmail(trimStringLength(trimmed, getHomeEmail(), 320));
-		setHomeInstantMsg(trimStringLength(trimmed, getHomeInstantMsg(), 200));
-		setPartner(trimStringLength(trimmed, getPartner(), 200));
 		setOtherAddress(trimStringLength(trimmed, getOtherAddress(), 100));
 		setOtherCity(trimStringLength(trimmed, getOtherCity(), 50));
 		setOtherState(trimStringLength(trimmed, getOtherState(), 30));
 		setOtherPostalCode(trimStringLength(trimmed, getOtherPostalCode(), 20));
 		setOtherCountry(trimStringLength(trimmed, getOtherCountry(), 30));
-		setOtherEmail(trimStringLength(trimmed, getOtherEmail(), 320));
-		setOtherInstantMsg(trimStringLength(trimmed, getOtherInstantMsg(), 200));
+		setCompany(trimStringLength(trimmed, getCompany(), 60));
+		setFunction(trimStringLength(trimmed, getFunction(), 50));
+		setAssistant(trimStringLength(trimmed, getAssistant(), 30));
+		setAssistantTelephone(trimStringLength(trimmed, getAssistantTelephone(), 50));
+		setDepartment(trimStringLength(trimmed, getDepartment(), 200));
+		setManager(trimStringLength(trimmed, getManager(), 200));
+		setPartner(trimStringLength(trimmed, getPartner(), 200));
 		return trimmed.booleanValue();
 	}
 	

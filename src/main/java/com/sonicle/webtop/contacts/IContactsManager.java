@@ -32,6 +32,7 @@
  */
 package com.sonicle.webtop.contacts;
 
+import com.sonicle.commons.LangUtils;
 import com.sonicle.webtop.contacts.model.Category;
 import com.sonicle.webtop.contacts.model.CategoryPropSet;
 import com.sonicle.webtop.contacts.model.ShareFolderCategory;
@@ -39,6 +40,9 @@ import com.sonicle.webtop.contacts.model.ShareRootCategory;
 import com.sonicle.webtop.contacts.model.Contact;
 import com.sonicle.webtop.contacts.model.ContactAttachmentWithBytes;
 import com.sonicle.webtop.contacts.model.ContactCompany;
+import com.sonicle.webtop.contacts.model.ContactObject;
+import com.sonicle.webtop.contacts.model.ContactObjectChanged;
+import com.sonicle.webtop.contacts.model.ContactObjectWithVCard;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytesOld;
 import com.sonicle.webtop.contacts.model.ContactsList;
@@ -46,6 +50,7 @@ import com.sonicle.webtop.contacts.model.Grouping;
 import com.sonicle.webtop.contacts.model.ListContactsResult;
 import com.sonicle.webtop.contacts.model.ShowBy;
 import com.sonicle.webtop.core.sdk.WTException;
+import ezvcard.VCard;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +82,14 @@ public interface IContactsManager {
 	public CategoryPropSet getCategoryCustomProps(int categoryId) throws WTException;
 	public Map<Integer, CategoryPropSet> getCategoryCustomProps(Collection<Integer> categoryIds) throws WTException;
 	public CategoryPropSet updateCategoryCustomProps(int categoryId, CategoryPropSet propertySet) throws WTException;
+	public List<ContactObject> listContactObjects(int categoryId, ContactObjectOutputType outputType) throws WTException;
+	public LangUtils.CollectionChangeSet<ContactObjectChanged> listContactObjectsChanges(int categoryId, DateTime since, Integer limit) throws WTException;
+	public ContactObjectWithVCard getContactObjectWithVCard(int categoryId, String href) throws WTException;
+	public List<ContactObjectWithVCard> getContactObjectsWithVCard(int categoryId, Collection<String> hrefs) throws WTException;
+	public ContactObject getContactObject(int categoryId, int contactId, ContactObjectOutputType outputType) throws WTException;
+	public void addContactObject(int categoryId, String href, VCard vCard) throws WTException;
+	public void updateContactObject(int categoryId, String href, VCard vCard) throws WTException;
+	public void deleteContactObject(int categoryId, String href) throws WTException;
 	public ListContactsResult listContacts(Collection<Integer> categoryIds, boolean listOnly, Grouping groupBy, ShowBy showBy, String pattern) throws WTException;
 	public ListContactsResult listContacts(Collection<Integer> categoryIds, boolean listOnly, Grouping groupBy, ShowBy showBy, String pattern, int page, int limit, boolean returnFullCount) throws WTException;
 	public Contact getContact(int contactId) throws WTException;

@@ -32,83 +32,27 @@
  */
 package com.sonicle.webtop.contacts.model;
 
-import org.joda.time.DateTime;
-
 /**
  *
  * @author malbinola
  */
-public class ContactCard {
-	protected Integer contactId;
-	protected Integer categoryId;
-	protected Contact.RevisionStatus revisionStatus;
-	protected DateTime revisionTimestamp;
-	protected String publicUid;
-	protected String href;
-	protected Integer size;
-	protected String vcard;
-
-	public Integer getContactId() {
-		return contactId;
+public class ContactObjectWithBean extends ContactObject {
+	protected Contact contact;
+	protected ContactCompany contactCompany;
+	
+	public Contact getContact() {
+		return contact;
 	}
 
-	public void setContactId(Integer contactId) {
-		this.contactId = contactId;
+	public void setContact(Contact contact) {
+		this.contact = contact;
+	}
+	
+	public ContactCompany getContactCompany() {
+		return contactCompany;
 	}
 
-	public Integer getCategoryId() {
-		return categoryId;
-	}
-
-	public void setCategoryId(Integer categoryId) {
-		this.categoryId = categoryId;
-	}
-
-	public Contact.RevisionStatus getRevisionStatus() {
-		return revisionStatus;
-	}
-
-	public void setRevisionStatus(Contact.RevisionStatus revisionStatus) {
-		this.revisionStatus = revisionStatus;
-	}
-
-	public DateTime getRevisionTimestamp() {
-		return revisionTimestamp;
-	}
-
-	public void setRevisionTimestamp(DateTime revisionTimestamp) {
-		this.revisionTimestamp = revisionTimestamp;
-	}
-
-	public String getPublicUid() {
-		return publicUid;
-	}
-
-	public void setPublicUid(String publicUid) {
-		this.publicUid = publicUid;
-	}
-
-	public String getHref() {
-		return href;
-	}
-
-	public void setHref(String href) {
-		this.href = href;
-	}
-
-	public Integer getSize() {
-		return size;
-	}
-
-	public void setSize(Integer size) {
-		this.size = size;
-	}
-
-	public String getVcard() {
-		return vcard;
-	}
-
-	public void setVcard(String vcard) {
-		this.vcard = vcard;
+	public void setContactCompany(ContactCompany contactCompany) {
+		this.contactCompany = contactCompany;
 	}
 }

@@ -74,9 +74,9 @@ public class VCardOutput {
 	private final String prodId;
 	private final VCardVersion version;
 	private final RecipientFieldCategory preferredTarget;
-	private final EmailType otherEmailType = EmailType.AOL;
-	private final ImppType otherImppType = ImppType.PERSONAL;
 	private final AddressType otherAddressType = AddressType.POSTAL;
+	private EmailType[] emailTypeMap = new EmailType[]{EmailType.WORK, EmailType.HOME, EmailType.AOL};
+	private ImppType[] imppTypeMap = new ImppType[]{ImppType.WORK, ImppType.HOME, ImppType.PERSONAL};
 	
 	public VCardOutput(String prodId) {
 		this(prodId, VCardVersion.V4_0, RecipientFieldCategory.WORK);
@@ -268,8 +268,29 @@ public class VCardOutput {
 	
 	public List<Telephone> toTelephones(Contact contact) {
 		List<Telephone> props = new ArrayList<>();
-		if (!StringUtils.isBlank(contact.getWorkTelephone())) {
-			Telephone tel = new Telephone(contact.getWorkTelephone());
+		if (!StringUtils.isBlank(contact.getMobile())) {
+			Telephone tel = new Telephone(contact.getMobile());
+			tel.getTypes().addAll(Arrays.asList(TelephoneType.CELL));
+			tel.setPref(1);
+			props.add(tel);
+		}
+		int pagerCount = 0;
+		if (!StringUtils.isBlank(contact.getPager1())) {
+			Telephone tel = new Telephone(contact.getPager1());
+			tel.getTypes().addAll(Arrays.asList(TelephoneType.PAGER));
+			tel.setPref(1);
+			props.add(tel);
+			pagerCount++;
+		}
+		if (!StringUtils.isBlank(contact.getPager2())) {
+			Telephone tel = new Telephone(contact.getPager2());
+			tel.getTypes().addAll(Arrays.asList(TelephoneType.PAGER));
+			if (pagerCount == 0) tel.setPref(1);
+			props.add(tel);
+			pagerCount++;
+		}
+		if (!StringUtils.isBlank(contact.getWorkTelephone1())) {
+			Telephone tel = new Telephone(contact.getWorkTelephone1());
 			tel.getTypes().addAll(Arrays.asList(TelephoneType.WORK, TelephoneType.VOICE));
 			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
 				tel.setPref(1);
@@ -281,14 +302,6 @@ public class VCardOutput {
 			tel.getTypes().addAll(Arrays.asList(TelephoneType.WORK, TelephoneType.TEXT));
 			props.add(tel);
 		}
-		if (!StringUtils.isBlank(contact.getWorkMobile())) {
-			Telephone tel = new Telephone(contact.getWorkMobile());
-			tel.getTypes().addAll(Arrays.asList(TelephoneType.WORK, TelephoneType.CELL));
-			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
-				tel.setPref(1);
-			}
-			props.add(tel);
-		}
 		if (!StringUtils.isBlank(contact.getWorkFax())) {
 			Telephone tel = new Telephone(contact.getWorkFax());
 			tel.getTypes().addAll(Arrays.asList(TelephoneType.WORK, TelephoneType.FAX));
@@ -297,16 +310,8 @@ public class VCardOutput {
 			}
 			props.add(tel);
 		}
-		if (!StringUtils.isBlank(contact.getWorkPager())) {
-			Telephone tel = new Telephone(contact.getWorkPager());
-			tel.getTypes().addAll(Arrays.asList(TelephoneType.WORK, TelephoneType.PAGER));
-			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
-				tel.setPref(1);
-			}
-			props.add(tel);
-		}
-		if (!StringUtils.isBlank(contact.getHomeTelephone())) {
-			Telephone tel = new Telephone(contact.getHomeTelephone());
+		if (!StringUtils.isBlank(contact.getHomeTelephone1())) {
+			Telephone tel = new Telephone(contact.getHomeTelephone1());
 			tel.getTypes().addAll(Arrays.asList(TelephoneType.HOME, TelephoneType.VOICE));
 			if (RecipientFieldCategory.HOME.equals(preferredTarget)) {
 				tel.setPref(1);
@@ -326,41 +331,29 @@ public class VCardOutput {
 			}
 			props.add(tel);
 		}
-		if (!StringUtils.isBlank(contact.getHomePager())) {
-			Telephone tel = new Telephone(contact.getHomePager());
-			tel.getTypes().addAll(Arrays.asList(TelephoneType.HOME, TelephoneType.PAGER));
-			if (RecipientFieldCategory.HOME.equals(preferredTarget)) {
-				tel.setPref(1);
-			}
-			props.add(tel);
-		}
 		return props;
 	}
 	
 	public List<Email> toEmails(Contact contact) {
 		List<Email> props = new ArrayList<>();
-		if (!StringUtils.isBlank(contact.getWorkEmail())) {
-			Email em = new Email(contact.getWorkEmail());
-			em.getTypes().add(EmailType.WORK);
-			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
-				em.setPref(1);
-			}
+		
+		int count = 0;
+		if (!StringUtils.isBlank(contact.getEmail1())) {
+			Email em = new Email(contact.getEmail1());
+			//em.getTypes().add(emailTypeMap[0]);
+			if (count == 0) em.setPref(1);
 			props.add(em);
 		}
-		if (!StringUtils.isBlank(contact.getHomeEmail())) {
-			Email em = new Email(contact.getHomeEmail());
-			em.getTypes().add(EmailType.HOME);
-			if (RecipientFieldCategory.HOME.equals(preferredTarget)) {
-				em.setPref(1);
-			}
+		if (!StringUtils.isBlank(contact.getEmail2())) {
+			Email em = new Email(contact.getEmail2());
+			//em.getTypes().add(emailTypeMap[1]);
+			if (count == 0) em.setPref(1);
 			props.add(em);
 		}
-		if (!StringUtils.isBlank(contact.getOtherEmail())) {
-			Email em = new Email(contact.getOtherEmail());
-			em.getTypes().add(otherEmailType);
-			if (RecipientFieldCategory.OTHER.equals(preferredTarget)) {
-				em.setPref(1);
-			}
+		if (!StringUtils.isBlank(contact.getEmail3())) {
+			Email em = new Email(contact.getEmail3());
+			//em.getTypes().add(emailTypeMap[2]);
+			if (count == 0) em.setPref(1);
 			props.add(em);
 		}
 		return props;
@@ -368,19 +361,24 @@ public class VCardOutput {
 	
 	public List<Impp> toImpps(Contact contact) {
 		List<Impp> props = new ArrayList<>();
-		if (!StringUtils.isBlank(contact.getWorkInstantMsg())) {
-			Impp impp = new Impp(contact.getWorkInstantMsg());
-			impp.getTypes().add(ImppType.WORK);
+		
+		int count = 0;
+		if (!StringUtils.isBlank(contact.getInstantMsg1())) {
+			Impp impp = new Impp(contact.getInstantMsg1());
+			impp.getTypes().add(imppTypeMap[0]);
+			if (count == 0) impp.setPref(1);
 			props.add(impp);
 		}
-		if (!StringUtils.isBlank(contact.getHomeInstantMsg())) {
-			Impp impp = new Impp(contact.getHomeInstantMsg());
-			impp.getTypes().add(ImppType.HOME);
+		if (!StringUtils.isBlank(contact.getInstantMsg2())) {
+			Impp impp = new Impp(contact.getInstantMsg2());
+			impp.getTypes().add(imppTypeMap[1]);
+			if (count == 0) impp.setPref(1);
 			props.add(impp);
 		}
-		if (!StringUtils.isBlank(contact.getOtherInstantMsg())) {
-			Impp impp = new Impp(contact.getOtherInstantMsg());
-			impp.getTypes().add(otherImppType);
+		if (!StringUtils.isBlank(contact.getInstantMsg3())) {
+			Impp impp = new Impp(contact.getInstantMsg3());
+			impp.getTypes().add(imppTypeMap[2]);
+			if (count == 0) impp.setPref(1);
 			props.add(impp);
 		}
 		return props;

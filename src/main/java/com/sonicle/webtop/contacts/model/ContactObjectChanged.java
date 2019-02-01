@@ -32,18 +32,39 @@
  */
 package com.sonicle.webtop.contacts.model;
 
-import java.util.List;
+import org.joda.time.DateTime;
 
 /**
  *
  * @author malbinola
  */
-public class ListContactsResult {
-	public final List<ContactLookup> items;
-	public final Integer fullCount;
+public class ContactObjectChanged {
+	protected final Integer contactId;
+	protected final DateTime revisionTimestamp;
+	//protected final String publicUid;
+	protected final String href;
 	
-	public ListContactsResult(List<ContactLookup> items, Integer fullCount) {
-		this.items = items;
-		this.fullCount = fullCount;
+	public ContactObjectChanged(int contactId, DateTime revisionTimestamp, String href) {
+		this.contactId = contactId;
+		this.revisionTimestamp = revisionTimestamp;
+		this.href = href;
+	}
+
+	public Integer getContactId() {
+		return contactId;
+	}
+
+	public DateTime getRevisionTimestamp() {
+		return revisionTimestamp;
+	}
+
+	/*
+	public String getPublicUid() {
+		return publicUid;
+	}
+	*/
+
+	public String getHref() {
+		return href;
 	}
 }

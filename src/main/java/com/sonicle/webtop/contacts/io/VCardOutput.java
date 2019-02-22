@@ -44,6 +44,7 @@ import ezvcard.parameter.AddressType;
 import ezvcard.parameter.EmailType;
 import ezvcard.parameter.ImageType;
 import ezvcard.parameter.ImppType;
+import ezvcard.parameter.RelatedType;
 import ezvcard.parameter.TelephoneType;
 import ezvcard.property.Address;
 import ezvcard.property.Anniversary;
@@ -56,6 +57,7 @@ import ezvcard.property.Nickname;
 import ezvcard.property.Note;
 import ezvcard.property.Organization;
 import ezvcard.property.Photo;
+import ezvcard.property.Related;
 import ezvcard.property.Role;
 import ezvcard.property.StructuredName;
 import ezvcard.property.Telephone;
@@ -155,6 +157,10 @@ public class VCardOutput {
 		//TODO: come riempiamo il campo manager?
 		//TODO: come riempiamo il campo assistant?
 		//TODO: come riempiamo il campo telephoneAssistant?
+		
+		// RELATED(*)
+		Related spouse = toSpouse(contact);
+		if (spouse != null) vCard.addRelated(spouse);
 		
 		// BDAY(*)
 		vCard.setBirthday(toBirthday(contact));
@@ -406,6 +412,15 @@ public class VCardOutput {
 		Role prop = null;
 		if (!StringUtils.isBlank(contact.getFunction())) {
 			prop = new Role(contact.getFunction());
+		}
+		return prop;
+	}
+	
+	public Related toSpouse(Contact contact) {
+		Related prop = null;
+		if (!StringUtils.isBlank(contact.getPartner())) {
+			prop = new Related(contact.getPartner());
+			prop.getTypes().add(RelatedType.SPOUSE);
 		}
 		return prop;
 	}

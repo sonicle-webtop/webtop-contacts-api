@@ -216,11 +216,11 @@ public class VCardOutput {
 	public Gender toGender(Contact contact) {
 		Gender prop = null;
 		if (Contact.Gender.MALE.equals(contact.getGender())) {
-			prop = new Gender("MALE");
+			prop = new Gender(Gender.MALE);
 		} else if (Contact.Gender.FEMALE.equals(contact.getGender())) {
-			prop = new Gender("FEMALE");
+			prop = new Gender(Gender.FEMALE);
 		} else if (Contact.Gender.OTHER.equals(contact.getGender())) {
-			prop = new Gender("OTHER");
+			prop = new Gender(Gender.OTHER);
 		}
 		return prop;
 	}
@@ -238,6 +238,7 @@ public class VCardOutput {
 			if (RecipientFieldCategory.WORK.equals(preferredTarget)) {
 				addr.setPref(1);
 			}
+			props.add(addr);
 		}
 		if (!contact.isHomeAddressEmpty()) {
 			Address addr = new Address();
@@ -250,6 +251,7 @@ public class VCardOutput {
 			if (RecipientFieldCategory.HOME.equals(preferredTarget)) {
 				addr.setPref(1);
 			}
+			props.add(addr);
 		}
 		if (!contact.isOtherAddressEmpty()) {
 			Address addr = new Address();
@@ -262,6 +264,7 @@ public class VCardOutput {
 			if (RecipientFieldCategory.OTHER.equals(preferredTarget)) {
 				addr.setPref(1);
 			}
+			props.add(addr);
 		}
 		return props;
 	}
@@ -385,11 +388,16 @@ public class VCardOutput {
 	}
 	
 	public Organization toOrganization(Contact contact) {
+		// The property value is a structured type consisting of the 
+		// organization name, followed by zero or more levels of organizational 
+		// unit names.
 		Organization prop = null;
-		if (!StringUtils.isBlank(contact.getCompany()) || !StringUtils.isBlank(contact.getDepartment())) {
+		boolean company = !StringUtils.isBlank(contact.getCompany());
+		boolean department = !StringUtils.isBlank(contact.getDepartment());
+		if (company || department) {
 			prop = new Organization();
-			prop.getValues().add(deflt(contact.getCompany()));
-			prop.getValues().add(deflt(contact.getDepartment()));
+			prop.getValues().add(StringUtils.defaultString(contact.getCompany()));
+			if (department) prop.getValues().add(contact.getDepartment());
 		}
 		return prop;
 	}

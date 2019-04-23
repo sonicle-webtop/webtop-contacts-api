@@ -32,6 +32,7 @@
  */
 package com.sonicle.webtop.contacts;
 
+import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.sonicle.commons.LangUtils;
 import com.sonicle.webtop.contacts.model.Category;
 import com.sonicle.webtop.contacts.model.CategoryPropSet;
@@ -45,6 +46,7 @@ import com.sonicle.webtop.contacts.model.ContactObjectChanged;
 import com.sonicle.webtop.contacts.model.ContactObjectWithVCard;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytesOld;
+import com.sonicle.webtop.contacts.model.ContactQuery;
 import com.sonicle.webtop.contacts.model.ContactsList;
 import com.sonicle.webtop.contacts.model.Grouping;
 import com.sonicle.webtop.contacts.model.ListContactsResult;
@@ -91,7 +93,9 @@ public interface IContactsManager {
 	public void updateContactObject(int categoryId, String href, VCard vCard) throws WTException;
 	public void deleteContactObject(int categoryId, String href) throws WTException;
 	public ListContactsResult listContacts(Collection<Integer> categoryIds, boolean listOnly, Grouping groupBy, ShowBy showBy, String pattern) throws WTException;
+	@Deprecated
 	public ListContactsResult listContacts(Collection<Integer> categoryIds, boolean listOnly, Grouping groupBy, ShowBy showBy, String pattern, int page, int limit, boolean returnFullCount) throws WTException;
+	public ListContactsResult listContacts(Collection<Integer> categoryIds, boolean listOnly, Grouping groupBy, ShowBy showBy, Condition<ContactQuery> conditionPredicate, int page, int limit, boolean returnFullCount) throws WTException;
 	public Contact getContact(int contactId) throws WTException;
 	public ContactAttachmentWithBytes getContactAttachment(int contactId, String attachmentId) throws WTException;
 	public ContactCompany getContactCompany(int contactId) throws WTException;

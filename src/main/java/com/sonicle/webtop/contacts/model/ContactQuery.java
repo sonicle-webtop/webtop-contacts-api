@@ -60,8 +60,8 @@ public class ContactQuery extends QBuilder<ContactQuery> {
 		return string("phone");
 	}
 
-	public StringProperty<ContactQuery> everywhere() {
-		return string("everywhere");
+	public StringProperty<ContactQuery> any() {
+		return string("any");
 	}
 	
 	/**
@@ -76,7 +76,7 @@ public class ContactQuery extends QBuilder<ContactQuery> {
 		Condition<ContactQuery> result = null;
 		if (!StringUtils.isBlank(pattern)) {
 			ContactQuery q = (result == null) ? new ContactQuery() : result.and();
-			result = q.everywhere().eq(StringUtils.replace(pattern, "%", "*"));
+			result = q.any().eq(StringUtils.replace(pattern, "%", "*"));
 		}
 		return result;
 	}
@@ -105,7 +105,7 @@ public class ContactQuery extends QBuilder<ContactQuery> {
 		
 		if (!StringUtils.isBlank(query.allText)) {
 			ContactQuery q = (result == null) ? new ContactQuery() : result.and();
-			result = q.everywhere().eq(query.allText);
+			result = q.any().eq(query.allText);
 		}
 		
 		return result;

@@ -51,6 +51,7 @@ import com.sonicle.webtop.contacts.model.ContactsList;
 import com.sonicle.webtop.contacts.model.Grouping;
 import com.sonicle.webtop.contacts.model.ListContactsResult;
 import com.sonicle.webtop.contacts.model.ShowBy;
+import com.sonicle.webtop.contacts.model.ContactType;
 import com.sonicle.webtop.core.sdk.WTException;
 import ezvcard.VCard;
 import java.util.Collection;
@@ -92,10 +93,17 @@ public interface IContactsManager {
 	public void addContactObject(int categoryId, String href, VCard vCard) throws WTException;
 	public void updateContactObject(int categoryId, String href, VCard vCard) throws WTException;
 	public void deleteContactObject(int categoryId, String href) throws WTException;
-	public ListContactsResult listContacts(Collection<Integer> categoryIds, boolean listOnly, Grouping groupBy, ShowBy showBy, String pattern) throws WTException;
+	public boolean existContact(Collection<Integer> categoryIds, Condition<ContactQuery> conditionPredicate) throws WTException;
+	
+	/**
+	 * @deprecated
+	 */
 	@Deprecated
 	public ListContactsResult listContacts(Collection<Integer> categoryIds, boolean listOnly, Grouping groupBy, ShowBy showBy, String pattern, int page, int limit, boolean returnFullCount) throws WTException;
-	public ListContactsResult listContacts(Collection<Integer> categoryIds, boolean listOnly, Grouping groupBy, ShowBy showBy, Condition<ContactQuery> conditionPredicate, int page, int limit, boolean returnFullCount) throws WTException;
+	
+	public ListContactsResult listContacts(Collection<Integer> categoryIds, ContactType type, Grouping groupBy, ShowBy showBy, String pattern) throws WTException;
+	public ListContactsResult listContacts(Collection<Integer> categoryIds, ContactType type, Grouping groupBy, ShowBy showBy, Condition<ContactQuery> conditionPredicate) throws WTException;
+	public ListContactsResult listContacts(Collection<Integer> categoryIds, ContactType type, Grouping groupBy, ShowBy showBy, Condition<ContactQuery> conditionPredicate, int page, int limit, boolean returnFullCount) throws WTException;
 	public Contact getContact(int contactId) throws WTException;
 	public ContactAttachmentWithBytes getContactAttachment(int contactId, String attachmentId) throws WTException;
 	public ContactCompany getContactCompany(int contactId) throws WTException;

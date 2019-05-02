@@ -65,11 +65,10 @@ public class ContactQuery extends QBuilder<ContactQuery> {
 	}
 	
 	/**
-	 * Only for backward compatibility: it make possible to use like pattern 
-	 * as query source. (remove when transition to new code is done)
+	 * @deprecated
+	 * Only for backward compatibility: it make possible to use like pattern as query source.
 	 * @param pattern
 	 * @return
-	 * @deprecated
 	 */
 	@Deprecated
 	public static Condition<ContactQuery> toCondition(String pattern) {

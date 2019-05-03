@@ -64,20 +64,12 @@ public class ContactQuery extends QBuilder<ContactQuery> {
 		return string("any");
 	}
 	
-	/**
-	 * @deprecated
-	 * Only for backward compatibility: it make possible to use like pattern as query source.
-	 * @param pattern
-	 * @return
-	 */
-	@Deprecated
 	public static Condition<ContactQuery> toCondition(String pattern) {
-		Condition<ContactQuery> result = null;
 		if (!StringUtils.isBlank(pattern)) {
-			ContactQuery q = (result == null) ? new ContactQuery() : result.and();
-			result = q.any().eq(StringUtils.replace(pattern, "%", "*"));
+			return new ContactQuery().any().eq(StringUtils.replace(pattern, "%", "*"));
+		} else {
+			return null;
 		}
-		return result;
 	}
 	
 	public static Condition<ContactQuery> toCondition(QueryObj query) {

@@ -39,6 +39,7 @@ import com.google.gson.annotations.SerializedName;
  * @author malbinola
  */
 public enum ShowBy {
-	@SerializedName("firstName") FIRSTNAME,
-	@SerializedName("lastName") LASTNAME,
+	@SerializedName("fnln") FIRST_LAST,
+	@SerializedName("lnfn") LAST_FIRST,
+	@SerializedName("dn") DISPLAY,
 }

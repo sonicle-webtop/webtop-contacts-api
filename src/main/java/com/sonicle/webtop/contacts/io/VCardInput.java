@@ -51,6 +51,7 @@ import ezvcard.parameter.ImppType;
 import ezvcard.parameter.TelephoneType;
 import ezvcard.property.Address;
 import ezvcard.property.Email;
+import ezvcard.property.FormattedName;
 import ezvcard.property.Gender;
 import ezvcard.property.Impp;
 import ezvcard.property.Nickname;
@@ -223,6 +224,15 @@ public class VCardInput {
 		// UID
 		if (vCard.getUid() != null) {
 			contact.setPublicUid(deflt(vCard.getUid().getValue()));
+		}
+		
+		// FN -> displayName
+		if (!vCard.getFormattedNames().isEmpty()) {
+			FormattedName fn = vCard.getFormattedNames().get(0);
+			contact.setDisplayName(deflt(fn.getValue()));
+			if ((log != null) && (vCard.getFormattedNames().size() > 1)) {
+				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many FN properties found"));
+			}
 		}
 		
 		// N -> FirstName/LastName

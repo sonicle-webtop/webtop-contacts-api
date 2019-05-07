@@ -116,6 +116,9 @@ public class VCardOutput {
 		// FN(+) -> Formatted Name (full name)
 		vCard.setFormattedName(toFormattedName(contact));
 		
+		// FN(+) -> Formatted Name (display name)
+		vCard.setFormattedName(toFormattedName(contact));
+		
 		// N(?) -> Structured Name (name components)
 		vCard.setStructuredName(toStructuredName(contact));
 		
@@ -194,7 +197,7 @@ public class VCardOutput {
 	}
 	
 	public FormattedName toFormattedName(Contact contact) {
-		return new FormattedName(contact.getFullName(false));
+		return new FormattedName(contact.getDisplayName(true));
 	}
 	
 	public StructuredName toStructuredName(Contact contact) {
@@ -203,6 +206,7 @@ public class VCardOutput {
 			prop = new StructuredName();
 			prop.setGiven(deflt(contact.getFirstName()));
 			prop.setFamily(deflt(contact.getLastName()));
+			prop.addParameter("displayName", contact.getDisplayName());
 			if (!StringUtils.isBlank(contact.getTitle())) {
 				prop.getPrefixes().add(contact.getTitle());
 			}

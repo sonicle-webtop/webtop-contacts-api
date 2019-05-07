@@ -50,6 +50,7 @@ public class Contact {
 	protected Integer categoryId;
 	protected RevisionStatus revisionStatus;
 	protected String publicUid;
+	protected String displayName;
 	protected String title;
 	protected String firstName;
 	protected String lastName;
@@ -133,6 +134,14 @@ public class Contact {
 
 	public void setPublicUid(String publicUid) {
 		this.publicUid = publicUid;
+	}
+	
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 
 	public String getTitle() {
@@ -539,13 +548,34 @@ public class Contact {
 		return picture != null;
 	}
 	
+	public String getDisplayName(boolean fallback) {
+		String dn = getDisplayName();
+		if (fallback) {
+			return !StringUtils.isBlank(dn) ? dn : getFullName(true);
+		} else {
+			return dn;
+		}
+	}
+	
+	public String getComputedDisplayName(ShowBy showBy) {
+		if (ShowBy.FIRST_LAST.equals(showBy)) {
+			return BaseContact.buildFullName(getFirstName(), getLastName());
+		} else if (ShowBy.LAST_FIRST.equals(showBy)) {
+			return BaseContact.buildFullName(getLastName(), getFirstName());
+		} else if (ShowBy.DISPLAY.equals(showBy)) {
+			return getDisplayName(true);
+		} else {
+			return null;
+		}
+	}
+	
 	public String getFullName() {
 		return getFullName(true);
 	}
 	
 	public String getFullName(boolean firstLastOnly) {
 		if (firstLastOnly) {
-			return StringUtils.join(getFirstName(), " ", getLastName()).trim();
+			return BaseContact.buildFullName(getFirstName(), getLastName());
 		} else {
 			return StringUtils.join(getTitle(), " ", getFirstName(), " ", getLastName()).trim();
 		}
@@ -684,10 +714,6 @@ public class Contact {
 	
 	public static String buildUid(Object contactId) {
 		return contactId.toString();
-	}
-	
-	public static String buildFullName(String firstName, String lastName) {
-		return StringUtils.trim(StringUtils.defaultString(firstName) + " " + StringUtils.defaultString(lastName));
 	}
 	
 	public static enum RevisionStatus {

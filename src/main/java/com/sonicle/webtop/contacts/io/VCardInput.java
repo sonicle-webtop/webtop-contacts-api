@@ -34,8 +34,8 @@ package com.sonicle.webtop.contacts.io;
 
 import com.google.gson.annotations.SerializedName;
 import com.sonicle.webtop.contacts.model.Contact;
+import com.sonicle.webtop.contacts.model.ContactCompany;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
-import com.sonicle.webtop.contacts.model.ContactPictureWithBytesOld;
 import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.core.util.LogEntries;
 import com.sonicle.webtop.core.util.LogEntry;
@@ -411,7 +411,8 @@ public class VCardInput {
 		if (vCard.getOrganization() != null) {
 			List<String> values = vCard.getOrganization().getValues();
 			if (!values.isEmpty()) {
-				contact.setCompany(deflt(values.get(0)));
+				String value = deflt(values.get(0));
+				contact.setCompany(new ContactCompany(value, value));
 				if (values.size() > 1) contact.setDepartment(deflt(values.get(1)));
 			}
 		}

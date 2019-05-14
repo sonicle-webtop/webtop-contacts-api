@@ -38,7 +38,7 @@ package com.sonicle.webtop.contacts.model;
  */
 public class ContactObjectWithBean extends ContactObject {
 	protected Contact contact;
-	protected ContactCompany contactCompany;
+	//protected ContactCompany contactCompany;
 	
 	public Contact getContact() {
 		return contact;
@@ -48,6 +48,7 @@ public class ContactObjectWithBean extends ContactObject {
 		this.contact = contact;
 	}
 	
+	/*
 	public ContactCompany getContactCompany() {
 		return contactCompany;
 	}
@@ -55,4 +56,5 @@ public class ContactObjectWithBean extends ContactObject {
 	public void setContactCompany(ContactCompany contactCompany) {
 		this.contactCompany = contactCompany;
 	}
+	*/
 }

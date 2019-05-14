@@ -89,7 +89,7 @@ public interface IContactsManager {
 	public LangUtils.CollectionChangeSet<ContactObjectChanged> listContactObjectsChanges(int categoryId, DateTime since, Integer limit) throws WTException;
 	public ContactObjectWithVCard getContactObjectWithVCard(int categoryId, String href) throws WTException;
 	public List<ContactObjectWithVCard> getContactObjectsWithVCard(int categoryId, Collection<String> hrefs) throws WTException;
-	public ContactObject getContactObject(int categoryId, int contactId, ContactObjectOutputType outputType) throws WTException;
+	public ContactObject getContactObject(int contactId, ContactObjectOutputType outputType) throws WTException;
 	public void addContactObject(int categoryId, String href, VCard vCard) throws WTException;
 	public void updateContactObject(int categoryId, String href, VCard vCard) throws WTException;
 	public void deleteContactObject(int categoryId, String href) throws WTException;

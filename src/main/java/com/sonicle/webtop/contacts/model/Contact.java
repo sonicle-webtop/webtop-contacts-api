@@ -86,7 +86,6 @@ public class Contact {
 	protected String otherCity;
 	protected String otherState;
 	protected String otherCountry;
-	protected String company;
 	protected String function;
 	protected String department;
 	protected String manager;
@@ -99,6 +98,7 @@ public class Contact {
 	protected String notes;
 	protected String href;
 	protected String etag;
+	protected ContactCompany company;
 	protected ContactPicture picture;
 	protected List<ContactAttachment> attachments = new ArrayList<>();
 	
@@ -424,6 +424,7 @@ public class Contact {
 		this.otherCountry = otherCountry;
 	}
 
+	/*
 	public String getCompany() {
 		return company;
 	}
@@ -431,6 +432,7 @@ public class Contact {
 	public void setCompany(String company) {
 		this.company = company;
 	}
+	*/
 
 	public String getFunction() {
 		return function;
@@ -528,6 +530,14 @@ public class Contact {
 		this.etag = etag;
 	}
 	
+	public ContactCompany getCompany() {
+		return company;
+	}
+
+	public void setCompany(ContactCompany company) {
+		this.company = company;
+	}
+	
 	public ContactPicture getPicture() {
 		return picture;
 	}
@@ -542,6 +552,10 @@ public class Contact {
 
 	public void setAttachments(List<ContactAttachment> attachments) {
 		this.attachments = attachments;
+	}
+	
+	public boolean hasCompany() {
+		return company != null;
 	}
 	
 	public boolean hasPicture() {
@@ -684,7 +698,7 @@ public class Contact {
 		setOtherState(trimStringLength(trimmed, getOtherState(), 30));
 		setOtherPostalCode(trimStringLength(trimmed, getOtherPostalCode(), 20));
 		setOtherCountry(trimStringLength(trimmed, getOtherCountry(), 30));
-		setCompany(trimStringLength(trimmed, getCompany(), 60));
+		//setCompanyDescription(trimStringLength(trimmed, getCompanyDescription(), 60));
 		setFunction(trimStringLength(trimmed, getFunction(), 50));
 		setAssistant(trimStringLength(trimmed, getAssistant(), 30));
 		setAssistantTelephone(trimStringLength(trimmed, getAssistantTelephone(), 50));

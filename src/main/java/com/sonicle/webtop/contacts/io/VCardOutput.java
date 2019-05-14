@@ -33,6 +33,8 @@
 package com.sonicle.webtop.contacts.io;
 
 import com.sonicle.webtop.contacts.model.Contact;
+import com.sonicle.webtop.contacts.model.ContactCompany;
+import com.sonicle.webtop.contacts.model.ContactCompanyJoined;
 import com.sonicle.webtop.contacts.model.ContactPicture;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
 import com.sonicle.webtop.core.model.RecipientFieldCategory;
@@ -402,12 +404,12 @@ public class VCardOutput {
 		// organization name, followed by zero or more levels of organizational 
 		// unit names.
 		Organization prop = null;
-		boolean company = !StringUtils.isBlank(contact.getCompany());
-		boolean department = !StringUtils.isBlank(contact.getDepartment());
-		if (company || department) {
+		boolean hasCompany = contact.hasCompany();
+		boolean hasDept = !StringUtils.isBlank(contact.getDepartment());
+		if (hasCompany || hasDept) {
 			prop = new Organization();
-			prop.getValues().add(StringUtils.defaultString(contact.getCompany()));
-			if (department) prop.getValues().add(contact.getDepartment());
+			if (hasCompany) prop.getValues().add(StringUtils.defaultString(contact.getCompany().getCompanyDescription()));
+			if (hasDept) prop.getValues().add(contact.getDepartment());
 		}
 		return prop;
 	}

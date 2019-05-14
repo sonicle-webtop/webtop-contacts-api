@@ -36,46 +36,41 @@ package com.sonicle.webtop.contacts.model;
  *
  * @author malbinola
  */
-public class ContactCompany {
-	protected String value;
-	protected String valueId;
+public class ContactCompanyJoined extends ContactCompany {
+	protected String masterDataId;
+	protected String masterDataDescription;
 	
-	public ContactCompany() {}
+	public ContactCompanyJoined() {}
 	
-	public ContactCompany(String value, String valueId) {
-		this.value = value;
-		this.valueId = valueId;
+	public ContactCompanyJoined(String value, String valueId, String joinedMasterDataId, String joinedMasterDataDescription) {
+		super(value, valueId);
+		this.masterDataId = joinedMasterDataId;
+		this.masterDataDescription = joinedMasterDataDescription;
 	}
 	
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-	
-	public String getValueId() {
-		return valueId;
+	public String getMasterDataId() {
+		return masterDataId;
 	}
 
-	public void setValueId(String valueId) {
-		this.valueId = valueId;
+	public void setMasterDataId(String masterDataId) {
+		this.masterDataId = masterDataId;
+	}
+
+	public String getMasterDataDescription() {
+		return masterDataDescription;
+	}
+
+	public void setMasterDataDescription(String masterDataDescription) {
+		this.masterDataDescription = masterDataDescription;
 	}
 	
-	public boolean hasValueId() {
-		return valueId != null;
-	}
-	
+	@Override
 	public String getCompanyId() {
-		return valueId;
+		return masterDataId;
 	}
 	
+	@Override
 	public String getCompanyDescription() {
-		return value;
-	}
-	
-	public String getIdOrValue() {
-		return (valueId != null) ? valueId : value;
+		return (masterDataId != null) ? getMasterDataDescription() : super.getCompanyDescription();
 	}
 }

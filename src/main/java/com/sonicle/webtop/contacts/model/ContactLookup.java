@@ -40,7 +40,8 @@ import com.sonicle.webtop.core.sdk.UserProfileId;
  */
 public class ContactLookup extends BaseContact {
 	protected Boolean isList;
-	protected String company;
+	protected String companyId;
+	protected String companyDescription;
 	protected String function;
 	protected String workCity;
 	protected String workTelephone;
@@ -62,12 +63,20 @@ public class ContactLookup extends BaseContact {
 		this.isList = isList;
 	}
 
-	public String getCompany() {
-		return company;
+	public String getCompanyId() {
+		return companyId;
 	}
 
-	public void setCompany(String company) {
-		this.company = company;
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
+	}
+	
+	public String getCompanyDescription() {
+		return companyDescription;
+	}
+
+	public void setCompanyDescription(String companyDescription) {
+		this.companyDescription = companyDescription;
 	}
 
 	public String getFunction() {
@@ -164,6 +173,11 @@ public class ContactLookup extends BaseContact {
 	
 	public void setMobile(String mobile) {
 		setWorkMobile(mobile);
+	}
+	
+	public void setCompany(ContactCompany company) {
+		setCompanyId((company != null) ? company.getValueId() : null);
+		setCompanyDescription((company != null) ? company.getCompanyDescription(): null);
 	}
 	
 	public UserProfileId getCategoryProfileId() {

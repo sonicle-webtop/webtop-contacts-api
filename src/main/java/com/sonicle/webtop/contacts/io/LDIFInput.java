@@ -32,95 +32,102 @@
  */
 package com.sonicle.webtop.contacts.io;
 
-
 import com.sonicle.commons.time.DateTimeUtils;
 import com.sonicle.webtop.contacts.model.Contact;
 import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.core.util.LogEntries;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 
 /**
  *
- * @author Dorian Haxhiaj
+ * @author malbinola
  */
 public class LDIFInput {
-	
-public ContactInput fromLDIF(LdapEntry ldapEntry, LogEntries log) throws WTException {
+
+	public ContactInput fromLDIF(LdapEntry ldapEntry, LogEntries log) throws WTException {
 		Contact contact = new Contact();
-		
+
 		if (ldapEntry.getAttribute("givenName") != null) { // FirstName
-			contact.setFirstName(ldapEntry.getAttribute("givenName").getStringValue());
+			contact.setFirstName(getAttributeValueAsString(ldapEntry.getAttribute("givenName")));
 		}
 		if (ldapEntry.getAttribute("sn") != null) { // LastName
-			contact.setLastName(ldapEntry.getAttribute("sn").getStringValue());
+			contact.setLastName(getAttributeValueAsString(ldapEntry.getAttribute("sn")));
 		}
 		if (ldapEntry.getAttribute("mozillaNickname") != null) { // Nickname
-			contact.setNickname((ldapEntry.getAttribute("mozillaNickname").getStringValue()));
+			contact.setNickname(getAttributeValueAsString(ldapEntry.getAttribute("mozillaNickname")));
 		}
 		if (ldapEntry.getAttribute("mobile") != null) {
-			contact.setMobile((ldapEntry.getAttribute("mobile").getStringValue()));
+			contact.setMobile(getAttributeValueAsString(ldapEntry.getAttribute("mobile")));
 		}
 		if (ldapEntry.getAttribute("mail") != null) {
-			contact.setEmail1((ldapEntry.getAttribute("mail").getStringValue()));
+			contact.setEmail1(getAttributeValueAsString(ldapEntry.getAttribute("mail")));
 		}
 		if (ldapEntry.getAttribute("mozillaSecondEmail") != null) {
-			contact.setEmail2((ldapEntry.getAttribute("mozillaSecondEmail").getStringValue()));
+			contact.setEmail2(getAttributeValueAsString(ldapEntry.getAttribute("mozillaSecondEmail")));
 		}
 		if (ldapEntry.getAttribute("street") != null) { // Address
-			contact.setWorkAddress((ldapEntry.getAttribute("street").getStringValue()));
+			contact.setWorkAddress(getAttributeValueAsString(ldapEntry.getAttribute("street")));
 		}
 		if (ldapEntry.getAttribute("postalCode") != null) { // Postal Code
-			contact.setWorkPostalCode((ldapEntry.getAttribute("postalCode").getStringValue()));
+			contact.setWorkPostalCode(getAttributeValueAsString(ldapEntry.getAttribute("postalCode")));
 		}
 		if (ldapEntry.getAttribute("l") != null) { // City
-			contact.setWorkCity((ldapEntry.getAttribute("l").getStringValue()));
+			contact.setWorkCity(getAttributeValueAsString(ldapEntry.getAttribute("l")));
 		}
 		if (ldapEntry.getAttribute("st") != null) { // State/province
-			contact.setWorkState(ldapEntry.getAttribute("st").getStringValue());
+			contact.setWorkState(getAttributeValueAsString(ldapEntry.getAttribute("st")));
 		}
 		if (ldapEntry.getAttribute("c") != null) { // Country
-			contact.setWorkCountry((ldapEntry.getAttribute("c").getStringValue()));
+			contact.setWorkCountry(getAttributeValueAsString(ldapEntry.getAttribute("c")));
 		}
 		if (ldapEntry.getAttribute("telephoneNumber") != null) {
-			contact.setWorkTelephone1((ldapEntry.getAttribute("telephoneNumber").getStringValue()));
+			contact.setWorkTelephone1(getAttributeValueAsString(ldapEntry.getAttribute("telephoneNumber")));
 		}
 		if (ldapEntry.getAttribute("facsimileTelephoneNumber") != null) {
-			contact.setWorkFax((ldapEntry.getAttribute("facsimileTelephoneNumber").getStringValue()));
+			contact.setWorkFax(getAttributeValueAsString(ldapEntry.getAttribute("facsimileTelephoneNumber")));
 		}
 		if (ldapEntry.getAttribute("mozillaHomeStreet") != null) { // Home Address
-			contact.setHomeAddress((ldapEntry.getAttribute("mozillaHomeStreet").getStringValue()));
+			contact.setHomeAddress(getAttributeValueAsString(ldapEntry.getAttribute("mozillaHomeStreet")));
 		}
 		if (ldapEntry.getAttribute("mozillaHomePostalCode") != null) { // Home Postal Code
-			contact.setHomePostalCode((ldapEntry.getAttribute("mozillaHomePostalCode").getStringValue()));
+			contact.setHomePostalCode(getAttributeValueAsString(ldapEntry.getAttribute("mozillaHomePostalCode")));
 		}
 		if (ldapEntry.getAttribute("mozillaHomeLocalityName") != null) { // Home City
-			contact.setHomeCity((ldapEntry.getAttribute("mozillaHomeLocalityName").getStringValue()));
+			contact.setHomeCity(getAttributeValueAsString(ldapEntry.getAttribute("mozillaHomeLocalityName")));
 		}
-		if (ldapEntry.getAttribute("mozillaHomeState") != null) { // Home State/province
-			contact.setHomeState(ldapEntry.getAttribute("mozillaHomeState").getStringValue());
+		if (ldapEntry.getAttribute("mozillaHomeState") != null) { // Home State/province	
+			contact.setHomeState(getAttributeValueAsString(ldapEntry.getAttribute("mozillaHomeState")));
 		}
 		if (ldapEntry.getAttribute("mozillaHomeCountryName") != null) { // Home Country
-			contact.setHomeCountry((ldapEntry.getAttribute("mozillaHomeCountryName").getStringValue()));
+			contact.setHomeCountry(getAttributeValueAsString(ldapEntry.getAttribute("mozillaHomeCountryName")));
 		}
 		if (ldapEntry.getAttribute("homePhone") != null) {
-			contact.setHomeTelephone1((ldapEntry.getAttribute("homePhone").getStringValue()));
+			contact.setHomeTelephone1(getAttributeValueAsString(ldapEntry.getAttribute("homePhone")));
 		}
 		if (ldapEntry.getAttribute("title") != null) { // Job title
-			contact.setFunction(ldapEntry.getAttribute("title").getStringValue());
+			contact.setFunction(getAttributeValueAsString(ldapEntry.getAttribute("title")));
 		}
-		if (ldapEntry.getAttribute("ou") !=null) { // Department		
-			contact.setDepartment(ldapEntry.getAttribute("ou").getStringValue());
+		if (ldapEntry.getAttribute("ou") != null) { // Department
+			contact.setDepartment(getAttributeValueAsString(ldapEntry.getAttribute("ou")));
 		}
 		if (ldapEntry.getAttribute("birthday") != null && ldapEntry.getAttribute("birthmonth") != null && ldapEntry.getAttribute("birthyear") != null) {
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy");
-			contact.setBirthday(DateTimeUtils.parseLocalDate(fmt, ldapEntry.getAttribute("birthday").getStringValue()+"/"+ldapEntry.getAttribute("birthmonth").getStringValue()+"/"+ldapEntry.getAttribute("birthyear").getStringValue()));
+			contact.setBirthday(DateTimeUtils.parseLocalDate(fmt, ldapEntry.getAttribute("birthday").getStringValue() + "/" + ldapEntry.getAttribute("birthmonth").getStringValue() + "/" + ldapEntry.getAttribute("birthyear").getStringValue()));
 		}
-		if (ldapEntry.getAttribute("description") != null) {	
-			contact.setNotes((ldapEntry.getAttribute("description").getStringValue()));
+		if (ldapEntry.getAttribute("description") != null) {
+			contact.setNotes(getAttributeValueAsString(ldapEntry.getAttribute("description")));
 		}
-		
 		return new ContactInput(contact);
+	}
+	
+	private String getAttributeValueAsString(LdapAttribute attribute) {
+		if (attribute.isBinary()) {
+			return new String(attribute.getBinaryValue());
+		} else {
+			return attribute.getStringValue();
+		}
 	}
 }

@@ -61,6 +61,7 @@ import ezvcard.property.Role;
 import ezvcard.property.StructuredName;
 import ezvcard.property.Telephone;
 import ezvcard.property.TextListProperty;
+import ezvcard.property.Title;
 import ezvcard.property.Url;
 import java.io.IOException;
 import java.io.InputStream;
@@ -221,12 +222,12 @@ public class VCardInput {
 	public ContactInput fromVCard(VCard vCard, LogEntries log) throws WTException {
 		Contact contact = new Contact();
 		
-		// UID
+		// UID(?)
 		if (vCard.getUid() != null) {
 			contact.setPublicUid(deflt(vCard.getUid().getValue()));
 		}
 		
-		// FN -> displayName
+		// FN(+) -> displayName
 		if (!vCard.getFormattedNames().isEmpty()) {
 			FormattedName fn = vCard.getFormattedNames().get(0);
 			contact.setDisplayName(deflt(fn.getValue()));
@@ -235,7 +236,7 @@ public class VCardInput {
 			}
 		}
 		
-		// N -> FirstName/LastName
+		// N(?) -> FirstName/LastName
 		if (!vCard.getStructuredNames().isEmpty()) {
 			StructuredName sn = vCard.getStructuredNames().get(0);
 			contact.setFirstName(deflt(sn.getGiven()));
@@ -251,7 +252,7 @@ public class VCardInput {
 			}
 		}
 		
-		// NICKNAME
+		// NICKNAME(*)
 		if (!vCard.getNicknames().isEmpty()) {
 			Nickname ni = vCard.getNicknames().get(0);
 			contact.setNickname(deflt(flatten(ni)));
@@ -260,12 +261,12 @@ public class VCardInput {
 			}
 		}
 		
-		// GENDER
+		// GENDER(?)
 		if (vCard.getGender() != null) {
 			contact.setGender(fromGender(vCard.getGender()));
 		}
 		
-		// ADR
+		// ADR(*)
 		if (!vCard.getAddresses().isEmpty()) {
 			HashMap<MatchCategory, LinkedList<Address>> map = analyzeAddresses(vCard.getAddresses());
 			for (MatchCategory key : map.keySet()) { // Strict matching
@@ -289,7 +290,7 @@ public class VCardInput {
 			}
 		}
 		
-		// TEL
+		// TEL(*)
 		if (!vCard.getTelephoneNumbers().isEmpty()) {
 			HashMap<MatchCategory, LinkedList<Telephone>> map = analyzeTelephones(vCard.getTelephoneNumbers());
 			for (MatchCategory key : map.keySet()) { // Strict matching
@@ -359,7 +360,7 @@ public class VCardInput {
 		}
 		*/
 		
-		// EMAIL
+		// EMAIL(*)
 		if (!vCard.getEmails().isEmpty()) {
 			HashMap<MatchCategory, LinkedList<Email>> map = analyzeEmails(vCard.getEmails());
 			for (MatchCategory key : map.keySet()) { // Strict matching
@@ -383,7 +384,7 @@ public class VCardInput {
 			}
 		}
 		
-		// IMPP -> InstantMsg
+		// IMPP(*) -> InstantMsg
 		if (!vCard.getImpps().isEmpty()) {
 			HashMap<MatchCategory, LinkedList<Impp>> map = analyzeIMPPs(vCard.getImpps());
 			for (MatchCategory key : map.keySet()) { // Strict matching
@@ -407,7 +408,7 @@ public class VCardInput {
 			}
 		}
 		
-		// ORG -> Company/Department
+		// ORG(*) -> Company/Department
 		if (vCard.getOrganization() != null) {
 			List<String> values = vCard.getOrganization().getValues();
 			if (!values.isEmpty()) {
@@ -417,18 +418,29 @@ public class VCardInput {
 			}
 		}
 		
-		// TITLE -> ??????
-		/*
+		// TITLE and ROLE have a similar meaning but seems that devices 
+		// writes data into TITLE field. In order to catch many cases we can,
+		// it's better to give precedence to TITLE field and then fallback to
+		// the similar ROLE field.
+		
+		// TITLE(*) -> Function
 		if (!vCard.getTitles().isEmpty()) {
 			Title ti = vCard.getTitles().get(0);
-			contact.setTitle(deflt(ti.getValue()));
+			contact.setFunction(deflt(ti.getValue()));
 			if ((log != null) && (vCard.getTitles().size() > 1)) {
 				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many TITLE properties found"));
 			}
 		}
-		*/
-		
-		// ROLE -> Function
+		// ROLE(*) -> Function
+		if (StringUtils.isBlank(contact.getFunction()) && !vCard.getRoles().isEmpty()) {
+			Role ro = vCard.getRoles().get(0);
+			contact.setFunction(deflt(ro.getValue()));
+			if ((log != null) && (vCard.getRoles().size() > 1)) {
+				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many ROLE properties found"));
+			}
+		}
+		/*
+		// ROLE(*) -> Function
 		if (!vCard.getRoles().isEmpty()) {
 			Role ro = vCard.getRoles().get(0);
 			contact.setFunction(deflt(ro.getValue()));
@@ -436,22 +448,23 @@ public class VCardInput {
 				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many ROLE properties found"));
 			}
 		}
+		*/
 		
-		//TODO: come riempiamo il campo manager?
-		//TODO: come riempiamo il campo assistant?
-		//TODO: come riempiamo il campo telephoneAssistant?
+		//TODO: How we can fill manager field?
+		//TODO: How we can fill assistant field?
+		//TODO: How we can fill assistant-phone field?
 		
-		// BDAY
+		// BDAY(*)
 		if (vCard.getBirthday() != null) {
 			contact.setBirthday(new LocalDate(vCard.getBirthday().getDate()));
 		}
 		
-		// ANNIVERSARY
+		// ANNIVERSARY(*)
 		if (vCard.getAnniversary()!= null) {
 			contact.setAnniversary(new LocalDate(vCard.getAnniversary().getDate()));
 		}
 		
-		// URL
+		// URL(*)
 		if (!vCard.getUrls().isEmpty()) {
 			Url ur = vCard.getUrls().get(0);
 			contact.setUrl(deflt(ur.getValue()));
@@ -460,7 +473,7 @@ public class VCardInput {
 			}
 		}
 		
-		// NOTE
+		// NOTE(*)
 		if (!vCard.getNotes().isEmpty()) {
 			StringBuilder sb = new StringBuilder();
 			for (Note no : vCard.getNotes()) {
@@ -470,7 +483,7 @@ public class VCardInput {
 			contact.setNotes(sb.toString());
 		}
 		
-		// PHOTO
+		// PHOTO(*)
 		if (!vCard.getPhotos().isEmpty()) {
 			if ((log != null) && (vCard.getPhotos().size() > 1)) {
 				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many PHOTO properties found"));

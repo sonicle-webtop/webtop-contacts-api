@@ -63,6 +63,7 @@ import ezvcard.property.Related;
 import ezvcard.property.Role;
 import ezvcard.property.StructuredName;
 import ezvcard.property.Telephone;
+import ezvcard.property.Title;
 import ezvcard.property.Uid;
 import ezvcard.property.Url;
 import java.util.ArrayList;
@@ -153,15 +154,20 @@ public class VCardOutput {
 		// ORG(*) -> Company/Department
 		vCard.setOrganization(toOrganization(contact));
 		
-		// TITLE(*) -> ??????
+		// TITLE and ROLE have a similar meaning but seems that devices 
+		// display info taking data from TITLE field.
+		// So, we choose TITLE in vCard outputting!
 		
+		// TITLE(*) -> Function
+		Title title = toTitle(contact);
+		if (title != null) vCard.addTitle(title);
 		// ROLE(*) -> Function
-		Role role = toRole(contact);
-		if (role != null) vCard.addRole(role);
+		//Role role = toRole(contact);
+		//if (role != null) vCard.addRole(role);
 		
-		//TODO: come riempiamo il campo manager?
-		//TODO: come riempiamo il campo assistant?
-		//TODO: come riempiamo il campo telephoneAssistant?
+		//TODO: Where we can put manager field?
+		//TODO: Where we can put assistant field?
+		//TODO: Where we can put assistant-phone field?
 		
 		// RELATED(*)
 		Related spouse = toSpouse(contact);
@@ -410,6 +416,14 @@ public class VCardOutput {
 			prop = new Organization();
 			if (hasCompany) prop.getValues().add(StringUtils.defaultString(contact.getCompany().getCompanyDescription()));
 			if (hasDept) prop.getValues().add(contact.getDepartment());
+		}
+		return prop;
+	}
+	
+	public Title toTitle(Contact contact) {
+		Title prop = null;
+		if (!StringUtils.isBlank(contact.getFunction())) {
+			prop = new Title(contact.getFunction());
 		}
 		return prop;
 	}

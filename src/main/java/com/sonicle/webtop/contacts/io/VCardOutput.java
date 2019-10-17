@@ -76,38 +76,59 @@ import org.apache.commons.lang3.StringUtils;
  * @author malbinola
  */
 public class VCardOutput {
+	private boolean enableCaretEncoding = true;
+	private VCardVersion version = VCardVersion.V4_0;
+	private RecipientFieldCategory preferredTarget = RecipientFieldCategory.WORK;
 	private final String prodId;
-	private final VCardVersion version;
-	private final RecipientFieldCategory preferredTarget;
 	private final AddressType otherAddressType = AddressType.POSTAL;
 	private EmailType[] emailTypeMap = new EmailType[]{EmailType.WORK, EmailType.HOME, EmailType.AOL};
 	private ImppType[] imppTypeMap = new ImppType[]{ImppType.WORK, ImppType.HOME, ImppType.PERSONAL};
 	
 	public VCardOutput(String prodId) {
-		this(prodId, VCardVersion.V4_0, RecipientFieldCategory.WORK);
-	}
-	
-	public VCardOutput(String prodId, VCardVersion version) {
-		this(prodId, version, RecipientFieldCategory.WORK);
-	}
-	
-	public VCardOutput(String prodId, VCardVersion version, RecipientFieldCategory preferredTarget) {
 		this.prodId = prodId;
+	}
+
+	public boolean isEnableCaretEncoding() {
+		return enableCaretEncoding;
+	}
+
+	public VCardOutput withEnableCaretEncoding(boolean enableCaretEncoding) {
+		this.enableCaretEncoding = enableCaretEncoding;
+		return this;
+	}
+	
+	public VCardVersion getVCardVersion() {
+		return version;
+	}
+	
+	public VCardOutput withVCardVersion(VCardVersion version) {
 		this.version = version;
+		return this;
+	}
+	
+	public RecipientFieldCategory getPreferredTarget() {
+		return preferredTarget;
+	}
+	
+	public VCardOutput withPreferredTarget(RecipientFieldCategory preferredTarget) {
 		this.preferredTarget = preferredTarget;
+		return this;
 	}
 	
 	public String write(VCard vCard) {
 		return write(vCard, false);
 	}
 	
-	public String write(VCard vCard, boolean keepFileVersion) {
+	public String write(VCard vCard, boolean useOriginalVersion) {
 		if (vCard == null) return null;
 		VCardVersion targetVersion = version;
-		if (keepFileVersion && (vCard.getVersion() != null)) {
+		if (useOriginalVersion && (vCard.getVersion() != null)) {
 			targetVersion = vCard.getVersion();
 		}
-		return Ezvcard.write(vCard).version(targetVersion).go();
+		return Ezvcard.write(vCard)
+				.caretEncoding(enableCaretEncoding)
+				.version(targetVersion)
+				.go();
 	}
 	
 	public VCard toVCard(Contact contact) throws WTException {

@@ -57,6 +57,7 @@ import ezvcard.VCard;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.joda.time.DateTime;
 
 /**
@@ -72,8 +73,8 @@ public interface IContactsManager {
 	
 	public List<ShareRootCategory> listIncomingCategoryRoots() throws WTException;
 	public Map<Integer, ShareFolderCategory> listIncomingCategoryFolders(String rootShareId) throws WTException;
-	public List<Integer> listCategoryIds() throws WTException;
-	public List<Integer> listIncomingCategoryIds() throws WTException;
+	public Set<Integer> listCategoryIds() throws WTException;
+	public Set<Integer> listIncomingCategoryIds() throws WTException;
 	public Map<Integer, Category> listCategories() throws WTException;
 	public Map<Integer, DateTime> getCategoriesLastRevision(Collection<Integer> categoryIds) throws WTException;
 	public Category getCategory(int categoryId) throws WTException;

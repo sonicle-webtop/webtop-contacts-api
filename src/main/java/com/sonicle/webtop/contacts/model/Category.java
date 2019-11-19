@@ -33,6 +33,7 @@
 package com.sonicle.webtop.contacts.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.rits.cloning.Cloner;
 import com.sonicle.commons.EnumUtils;
 import com.sonicle.commons.LangUtils;
 import com.sonicle.webtop.core.sdk.UserProfileId;
@@ -199,6 +200,17 @@ public class Category {
 	
 	public boolean isProviderRemote() {
 		return Category.isProviderRemote(getProvider());
+	}
+	
+	public Category applyPropSet(CategoryPropSet propSet) {
+		if (propSet != null) {
+			Category clone = Cloner.standard().deepClone(this);
+			clone.setColor(propSet.getColorOrDefault(clone.getColor()));
+			clone.setSync(propSet.getSyncOrDefault(clone.getSync()));
+			return clone;
+		} else {
+			return this;
+		}
 	}
 	
 	public static boolean isProviderRemote(String provider) {

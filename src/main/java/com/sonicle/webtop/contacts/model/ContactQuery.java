@@ -59,6 +59,14 @@ public class ContactQuery extends QBuilder<ContactQuery> {
 	public StringProperty<ContactQuery> phone() {
 		return string("phone");
 	}
+	
+	public StringProperty<ContactQuery> address() {
+		return string("address");
+	}
+	
+	public StringProperty<ContactQuery> notes() {
+		return string("notes");
+	}
 
 	public StringProperty<ContactQuery> any() {
 		return string("any");
@@ -88,6 +96,12 @@ public class ContactQuery extends QBuilder<ContactQuery> {
 					break;
 				case "phone":
 					result = q.phone().eq(queryCondition.value);
+					break;
+				case "address":
+					result = q.address().eq(queryCondition.value);
+					break;
+				case "notes":
+					result = q.notes().eq(queryCondition.value);
 					break;
 				default:
 					throw new UnsupportedOperationException(queryCondition.keyword);

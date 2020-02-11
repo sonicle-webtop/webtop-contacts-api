@@ -36,6 +36,7 @@ import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
 import com.sonicle.commons.web.json.bean.QueryObj;
+import com.sonicle.webtop.core.app.sdk.WTUnsupportedOperationException;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -43,7 +44,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author malbinola
  */
 public class ContactQuery extends QBuilder<ContactQuery> {
-		
+	
 	public StringProperty<ContactQuery> name() {
 		return string("name");
 	}
@@ -70,6 +71,10 @@ public class ContactQuery extends QBuilder<ContactQuery> {
 
 	public StringProperty<ContactQuery> any() {
 		return string("any");
+	}
+	
+	public StringProperty<ContactQuery> tag() {
+		return string("tag");
 	}
 	
 	public static Condition<ContactQuery> toCondition(String pattern) {
@@ -103,8 +108,11 @@ public class ContactQuery extends QBuilder<ContactQuery> {
 				case "notes":
 					result = q.notes().eq(queryCondition.value);
 					break;
+				case "tag":
+					result = q.tag().eq(queryCondition.value);
+					break;
 				default:
-					throw new UnsupportedOperationException(queryCondition.keyword);
+					throw new WTUnsupportedOperationException("Unsupported keyword '{}'", queryCondition.keyword);
 			}
 		}
 		

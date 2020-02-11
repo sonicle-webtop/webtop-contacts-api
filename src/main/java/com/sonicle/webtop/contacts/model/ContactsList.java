@@ -34,6 +34,8 @@ package com.sonicle.webtop.contacts.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import net.sf.qualitycheck.Check;
 
 /**
  *
@@ -43,6 +45,8 @@ public class ContactsList {
 	protected Integer contactId;
 	protected Integer categoryId;
 	protected String name;
+	protected String email;
+	protected Set<String> tags;
 	protected List<ContactsListRecipient> recipients = new ArrayList<>();
 	
 	public ContactsList() {}
@@ -69,6 +73,36 @@ public class ContactsList {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	public Set<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
+	}
+	
+	public ContactsList addTag(String tagId) {
+		if (tags != null) {
+			tags.add(Check.notNull(tagId, "tagId"));
+		}
+		return this;
+	}
+	
+	public ContactsList removeTag(String tagId) {
+		if (tags != null) {
+			tags.remove(Check.notNull(tagId, "tagId"));
+		}
+		return this;
 	}
 
 	public List<ContactsListRecipient> getRecipients() {

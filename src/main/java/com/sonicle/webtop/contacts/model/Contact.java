@@ -35,7 +35,10 @@ package com.sonicle.webtop.contacts.model;
 import com.google.gson.annotations.SerializedName;
 import com.sonicle.commons.LangUtils;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import net.sf.qualitycheck.Check;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -100,6 +103,7 @@ public class Contact {
 	protected String etag;
 	protected ContactCompany company;
 	protected ContactPicture picture;
+	protected Set<String> tags;
 	protected List<ContactAttachment> attachments = new ArrayList<>();
 	
 	public Contact() {}
@@ -538,6 +542,28 @@ public class Contact {
 		this.company = company;
 	}
 	
+	public Set<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
+	}
+	
+	public Contact addTag(String tagId) {
+		if (tags != null) {
+			tags.add(Check.notNull(tagId, "tagId"));
+		}
+		return this;
+	}
+	
+	public Contact removeTag(String tagId) {
+		if (tags != null) {
+			tags.remove(Check.notNull(tagId, "tagId"));
+		}
+		return this;
+	}
+	
 	public ContactPicture getPicture() {
 		return picture;
 	}
@@ -558,8 +584,16 @@ public class Contact {
 		return company != null;
 	}
 	
+	public boolean hasTags() {
+		return tags != null;
+	}
+	
 	public boolean hasPicture() {
 		return picture != null;
+	}
+	
+	public boolean hasAttachments() {
+		return attachments != null;
 	}
 	
 	public String getDisplayName(boolean fallback) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Sonicle S.r.l.
+ * Copyright (C) 2020 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,19 +28,18 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2018 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2020 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.contacts;
 
-import com.sonicle.webtop.core.sdk.WTException;
+import com.google.gson.annotations.SerializedName;
 
 /**
  *
  * @author malbinola
  */
-public class NotFoundException extends WTException {
-	
-	public NotFoundException(String message, Object... arguments) {
-		super(message, arguments);
-	}
+public enum UpdateTagsOperation {
+	@SerializedName("set") SET,
+	@SerializedName("unset") UNSET,
+	@SerializedName("reset") RESET
 }

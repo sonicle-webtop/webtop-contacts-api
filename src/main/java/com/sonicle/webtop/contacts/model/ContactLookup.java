@@ -43,16 +43,16 @@ public class ContactLookup extends BaseContact {
 	protected String companyId;
 	protected String companyDescription;
 	protected String function;
+	protected String mobile;
+	protected String email1;
+	protected String email2;
 	protected String workCity;
-	protected String workTelephone;
-	protected String workMobile;
-	protected String workEmail;
-	protected String homeTelephone;
-	protected String homeEmail;
+	protected String workTelephone1;
+	protected String homeTelephone1;
 	protected String categoryName;
 	protected String categoryDomainId;
 	protected String categoryUserId;
-	
+	protected String tags;
 	protected boolean hasPicture;
 
 	public Boolean getIsList() {
@@ -86,6 +86,30 @@ public class ContactLookup extends BaseContact {
 	public void setFunction(String function) {
 		this.function = function;
 	}
+	
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+	
+	public String getEmail1() {
+		return email1;
+	}
+
+	public void setEmail1(String email1) {
+		this.email1 = email1;
+	}
+	
+	public String getEmail2() {
+		return email2;
+	}
+
+	public void setEmail2(String email2) {
+		this.email2 = email2;
+	}
 
 	public String getWorkCity() {
 		return workCity;
@@ -95,14 +119,15 @@ public class ContactLookup extends BaseContact {
 		this.workCity = workCity;
 	}
 
-	public String getWorkTelephone() {
-		return workTelephone;
+	public String getWorkTelephone1() {
+		return workTelephone1;
 	}
 
-	public void setWorkTelephone(String workTelephone) {
-		this.workTelephone = workTelephone;
+	public void setWorkTelephone1(String workTelephone1) {
+		this.workTelephone1 = workTelephone1;
 	}
 
+	/*
 	public String getWorkMobile() {
 		return workMobile;
 	}
@@ -118,21 +143,32 @@ public class ContactLookup extends BaseContact {
 	public void setWorkEmail(String workEmail) {
 		this.workEmail = workEmail;
 	}
+	*/
 
-	public String getHomeTelephone() {
-		return homeTelephone;
+	public String getHomeTelephone1() {
+		return homeTelephone1;
 	}
 
-	public void setHomeTelephone(String homeTelephone) {
-		this.homeTelephone = homeTelephone;
+	public void setHomeTelephone1(String homeTelephone1) {
+		this.homeTelephone1 = homeTelephone1;
 	}
 
+	/*
 	public String getHomeEmail() {
 		return homeEmail;
 	}
 
 	public void setHomeEmail(String homeEmail) {
 		this.homeEmail = homeEmail;
+	}
+	*/
+	
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
 	}
 	
 	public String getCategoryName() {
@@ -167,6 +203,7 @@ public class ContactLookup extends BaseContact {
 		this.hasPicture = hasPicture;
 	}
 	
+	/*
 	public String getMobile() {
 		return getWorkMobile();
 	}
@@ -174,6 +211,7 @@ public class ContactLookup extends BaseContact {
 	public void setMobile(String mobile) {
 		setWorkMobile(mobile);
 	}
+	*/
 	
 	public void setCompany(ContactCompany company) {
 		setCompanyId((company != null) ? company.getValueId() : null);

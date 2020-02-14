@@ -83,7 +83,7 @@ public interface IContactsManager {
 	public Category addCategory(Category cat) throws WTException;
 	public Category addBuiltInCategory() throws WTException;
 	public void updateCategory(Category cat) throws WTException;
-	public void deleteCategory(int categoryId) throws WTException;
+	public boolean deleteCategory(int categoryId) throws WTException;
 	public CategoryPropSet getCategoryCustomProps(int categoryId) throws WTException;
 	public Map<Integer, CategoryPropSet> getCategoryCustomProps(Collection<Integer> categoryIds) throws WTException;
 	public CategoryPropSet updateCategoryCustomProps(int categoryId, CategoryPropSet propertySet) throws WTException;
@@ -127,6 +127,6 @@ public interface IContactsManager {
 	public void deleteContactsList(Collection<Integer> contactsListIds) throws WTException;
 	public void moveContactsList(boolean copy, int contactsListId, int targetCategoryId) throws WTException;
 	public void moveContactsList(boolean copy, Collection<Integer> contactIds, int targetCategoryId) throws WTException;
-	public void updateContactTags(final UpdateTagsOperation operation, final int categoryId, final Set<String> tagIds) throws WTException;
+	public void updateContactCategoryTags(final UpdateTagsOperation operation, final int categoryId, final Set<String> tagIds) throws WTException;
 	public void updateContactTags(final UpdateTagsOperation operation, final Collection<Integer> contactIds, final Set<String> tagIds) throws WTException;
 }

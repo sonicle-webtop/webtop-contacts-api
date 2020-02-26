@@ -34,10 +34,14 @@ package com.sonicle.webtop.contacts.model;
 
 import com.google.gson.annotations.SerializedName;
 import com.sonicle.commons.LangUtils;
+import com.sonicle.webtop.core.model.CustomFieldValue;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import net.sf.qualitycheck.Check;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -105,6 +109,7 @@ public class Contact {
 	protected ContactPicture picture;
 	protected Set<String> tags;
 	protected List<ContactAttachment> attachments = new ArrayList<>();
+	protected Map<String, CustomFieldValue> customValues = new LinkedHashMap<>();
 	
 	public Contact() {}
 	
@@ -580,6 +585,20 @@ public class Contact {
 		this.attachments = attachments;
 	}
 	
+	public Map<String, CustomFieldValue> getCustomValues() {
+		return customValues;
+	}
+	
+	public void setCustomValues(Map<String, CustomFieldValue> customValues) {
+		this.customValues = customValues;
+	}
+	
+	public void setCustomValues(Collection<CustomFieldValue> customValues) {
+		this.customValues = customValues.stream()
+				.filter(item -> item.getFieldId() != null)
+				.collect(Collectors.toMap(item -> item.getFieldId(), item -> item, (ov, nv) -> nv, LinkedHashMap::new));
+	}
+	
 	public boolean hasCompany() {
 		return company != null;
 	}
@@ -594,6 +613,10 @@ public class Contact {
 	
 	public boolean hasAttachments() {
 		return attachments != null;
+	}
+	
+	public boolean hasCustomValues() {
+		return customValues != null;
 	}
 	
 	public String getDisplayName(boolean fallback) {

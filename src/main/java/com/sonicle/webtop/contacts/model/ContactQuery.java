@@ -32,18 +32,24 @@
  */
 package com.sonicle.webtop.contacts.model;
 
-import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
+import com.sonicle.commons.web.json.CompId;
 import com.sonicle.commons.web.json.bean.QueryObj;
+import com.sonicle.webtop.core.app.sdk.QBuilderWithCValues;
 import com.sonicle.webtop.core.app.sdk.WTUnsupportedOperationException;
+import com.sonicle.webtop.core.model.CustomField;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTimeZone;
 
 /**
  *
  * @author malbinola
  */
-public class ContactQuery extends QBuilder<ContactQuery> {
+public class ContactQuery extends QBuilderWithCValues<ContactQuery> {
 	
 	public StringProperty<ContactQuery> name() {
 		return string("name");
@@ -85,35 +91,51 @@ public class ContactQuery extends QBuilder<ContactQuery> {
 		}
 	}
 	
-	public static Condition<ContactQuery> toCondition(QueryObj query) {
+	public static Condition<ContactQuery> toCondition(QueryObj query, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone) {
 		Condition<ContactQuery> result = null;
-		for (QueryObj.Condition queryCondition : query.conditions) {
+		
+		for (Map.Entry<String, Collection<QueryObj.Condition>> entry : query.getConditionsMap().entrySet()) {
 			ContactQuery q = (result == null) ? new ContactQuery() : result.and();
-			switch(queryCondition.keyword) {
-				case "name":
-					result = q.name().eq(queryCondition.value);
-					break;
-				case "company":
-					result = q.company().eq(queryCondition.value);
-					break;
-				case "email":
-					result = q.email().eq(queryCondition.value);
-					break;
-				case "phone":
-					result = q.phone().eq(queryCondition.value);
-					break;
-				case "address":
-					result = q.address().eq(queryCondition.value);
-					break;
-				case "notes":
-					result = q.notes().eq(queryCondition.value);
-					break;
-				case "tag":
-					result = q.tag().eq(queryCondition.value);
-					break;
-				default:
+			
+			ArrayList<Condition<ContactQuery>> cndts = new ArrayList<>();
+			for (QueryObj.Condition queryCondition : entry.getValue()) {
+				if ("name".equals(queryCondition.keyword)) {
+					cndts.add(new ContactQuery().name().eq(queryCondition.value));
+					
+				} else if ("company".equals(queryCondition.keyword)) {
+					cndts.add(new ContactQuery().company().eq(queryCondition.value));
+					
+				} else if ("email".equals(queryCondition.keyword)) {
+					cndts.add(new ContactQuery().email().eq(queryCondition.value));
+					
+				} else if ("phone".equals(queryCondition.keyword)) {
+					cndts.add(new ContactQuery().phone().eq(queryCondition.value));
+					
+				} else if ("address".equals(queryCondition.keyword)) {
+					cndts.add(new ContactQuery().address().eq(queryCondition.value));
+					
+				} else if ("notes".equals(queryCondition.keyword)) {
+					cndts.add(new ContactQuery().notes().eq(queryCondition.value));
+					
+				} else if ("tag".equals(queryCondition.keyword)) {
+					cndts.add(new ContactQuery().tag().eq(queryCondition.value));
+					
+				} else if (StringUtils.startsWith(queryCondition.keyword, "cfield")) {
+					Condition<ContactQuery> cond = null;
+					CompId cf = new CompId(2).parse(queryCondition.keyword, false);
+					if (!cf.isTokenEmpty(1)) {
+						String cfId = cf.getToken(1);
+						if (customFieldTypeMapping.containsKey(cfId)) {
+							cond = new ContactQuery().customValueCondition(cfId, customFieldTypeMapping.get(cfId), queryCondition.value, queryCondition.negated, timezone);
+						}
+					}
+					if (cond != null) cndts.add(cond);					
+					
+				} else {
 					throw new WTUnsupportedOperationException("Unsupported keyword '{}'", queryCondition.keyword);
+				}
 			}
+			result = q.or(cndts);
 		}
 		
 		if (!StringUtils.isBlank(query.allText)) {

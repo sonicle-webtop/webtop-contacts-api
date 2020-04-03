@@ -36,7 +36,7 @@ import com.github.rutledgepaulv.qbuilders.conditions.Condition;
 import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
 import com.sonicle.commons.web.json.CompId;
 import com.sonicle.commons.web.json.bean.QueryObj;
-import com.sonicle.webtop.core.app.sdk.QBuilderWithCValues;
+import com.sonicle.webtop.core.app.sdk.QueryBuilderWithCValues;
 import com.sonicle.webtop.core.app.sdk.WTUnsupportedOperationException;
 import com.sonicle.webtop.core.model.CustomField;
 import java.util.ArrayList;
@@ -49,7 +49,11 @@ import org.joda.time.DateTimeZone;
  *
  * @author malbinola
  */
-public class ContactQuery extends QBuilderWithCValues<ContactQuery> {
+public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
+	
+	public ContactQuery() {
+		super(true);
+	}
 	
 	public StringProperty<ContactQuery> name() {
 		return string("name");
@@ -100,22 +104,22 @@ public class ContactQuery extends QBuilderWithCValues<ContactQuery> {
 			ArrayList<Condition<ContactQuery>> cndts = new ArrayList<>();
 			for (QueryObj.Condition queryCondition : entry.getValue()) {
 				if ("name".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().name().eq(queryCondition.value));
+					cndts.add(new ContactQuery().name().eq(q.prepareStringValue(queryCondition.value)));
 					
 				} else if ("company".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().company().eq(queryCondition.value));
+					cndts.add(new ContactQuery().company().eq(q.prepareStringValue(queryCondition.value)));
 					
 				} else if ("email".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().email().eq(queryCondition.value));
+					cndts.add(new ContactQuery().email().eq(q.prepareStringValue(queryCondition.value)));
 					
 				} else if ("phone".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().phone().eq(queryCondition.value));
+					cndts.add(new ContactQuery().phone().eq(q.prepareStringValue(queryCondition.value)));
 					
 				} else if ("address".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().address().eq(queryCondition.value));
+					cndts.add(new ContactQuery().address().eq(q.prepareStringValue(queryCondition.value)));
 					
 				} else if ("notes".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().notes().eq(queryCondition.value));
+					cndts.add(new ContactQuery().notes().eq(q.prepareStringValue(queryCondition.value)));
 					
 				} else if ("tag".equals(queryCondition.keyword)) {
 					cndts.add(new ContactQuery().tag().eq(queryCondition.value));
@@ -140,7 +144,7 @@ public class ContactQuery extends QBuilderWithCValues<ContactQuery> {
 		
 		if (!StringUtils.isBlank(query.allText)) {
 			ContactQuery q = (result == null) ? new ContactQuery() : result.and();
-			result = q.any().eq(query.allText);
+			result = q.any().eq(q.prepareStringValue(query.allText));
 		}
 		
 		return result;

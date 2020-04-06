@@ -104,22 +104,22 @@ public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 			ArrayList<Condition<ContactQuery>> cndts = new ArrayList<>();
 			for (QueryObj.Condition queryCondition : entry.getValue()) {
 				if ("name".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().name().eq(q.prepareStringValue(queryCondition.value)));
+					cndts.add(new ContactQuery().name().eq(q.asSmartStringValue(queryCondition.value)));
 					
 				} else if ("company".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().company().eq(q.prepareStringValue(queryCondition.value)));
+					cndts.add(new ContactQuery().company().eq(q.asSmartStringValue(queryCondition.value)));
 					
 				} else if ("email".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().email().eq(q.prepareStringValue(queryCondition.value)));
+					cndts.add(new ContactQuery().email().eq(q.asSmartStringValue(queryCondition.value)));
 					
 				} else if ("phone".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().phone().eq(q.prepareStringValue(queryCondition.value)));
+					cndts.add(new ContactQuery().phone().eq(q.asSmartStringValue(queryCondition.value)));
 					
 				} else if ("address".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().address().eq(q.prepareStringValue(queryCondition.value)));
+					cndts.add(new ContactQuery().address().eq(q.asSmartStringValue(queryCondition.value)));
 					
 				} else if ("notes".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().notes().eq(q.prepareStringValue(queryCondition.value)));
+					cndts.add(new ContactQuery().notes().eq(q.asSmartStringValue(queryCondition.value)));
 					
 				} else if ("tag".equals(queryCondition.keyword)) {
 					cndts.add(new ContactQuery().tag().eq(queryCondition.value));
@@ -144,7 +144,7 @@ public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 		
 		if (!StringUtils.isBlank(query.allText)) {
 			ContactQuery q = (result == null) ? new ContactQuery() : result.and();
-			result = q.any().eq(q.prepareStringValue(query.allText));
+			result = q.any().eq(q.asSmartStringValue(query.allText));
 		}
 		
 		return result;

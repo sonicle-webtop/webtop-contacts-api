@@ -32,8 +32,8 @@
  */
 package com.sonicle.webtop.contacts.model;
 
-import com.github.rutledgepaulv.qbuilders.conditions.Condition;
-import com.github.rutledgepaulv.qbuilders.properties.concrete.StringProperty;
+import com.sonicle.commons.qbuilders.conditions.Condition;
+import com.sonicle.commons.qbuilders.properties.concrete.StringProperty;
 import com.sonicle.commons.web.json.CompId;
 import com.sonicle.commons.web.json.bean.QueryObj;
 import com.sonicle.webtop.core.app.sdk.QueryBuilderWithCValues;
@@ -50,10 +50,6 @@ import org.joda.time.DateTimeZone;
  * @author malbinola
  */
 public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
-	
-	public ContactQuery() {
-		super(true);
-	}
 	
 	public StringProperty<ContactQuery> name() {
 		return string("name");
@@ -96,6 +92,63 @@ public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 	}
 	
 	public static Condition<ContactQuery> toCondition(QueryObj query, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone) {
+		boolean smartStringComparison = true;
+		ContactQuery q = new ContactQuery();
+		
+		Condition<ContactQuery> last = q.trueCondition();
+		for (Map.Entry<String, Collection<QueryObj.Condition>> entry : query.getConditionsMap().entrySet()) {
+			q = last.and();
+			int pos = 0;
+			for (QueryObj.Condition queryCondition : entry.getValue()) {
+				pos++;
+				if (pos > 1) q = last.or();
+				
+				if ("name".equals(queryCondition.keyword)) {
+					last = q.name().eq(asStringValue(queryCondition.value, smartStringComparison));
+					
+				} else if ("company".equals(queryCondition.keyword)) {
+					last = q.company().eq(asStringValue(queryCondition.value, smartStringComparison));
+					
+				} else if ("email".equals(queryCondition.keyword)) {
+					last = q.email().eq(asStringValue(queryCondition.value, smartStringComparison));
+					
+				} else if ("phone".equals(queryCondition.keyword)) {
+					last = q.phone().eq(asStringValue(queryCondition.value, smartStringComparison));
+					
+				} else if ("address".equals(queryCondition.keyword)) {
+					last = q.address().eq(asStringValue(queryCondition.value, smartStringComparison));
+					
+				} else if ("notes".equals(queryCondition.keyword)) {
+					last = q.notes().eq(asStringValue(queryCondition.value, smartStringComparison));
+					
+				} else if ("tag".equals(queryCondition.keyword)) {
+					last = q.tag().eq(queryCondition.value);
+					
+				} else if (StringUtils.startsWith(queryCondition.keyword, "cfield")) {
+					CompId cf = new CompId(2).parse(queryCondition.keyword, false);
+					if (!cf.isTokenEmpty(1)) {
+						String cfId = cf.getToken(1);
+						if (customFieldTypeMapping.containsKey(cfId)) {
+							last = q.customValueCondition(cfId, customFieldTypeMapping.get(cfId), queryCondition.value, queryCondition.negated, smartStringComparison, timezone);
+						}
+					}			
+					
+				} else {
+					throw new WTUnsupportedOperationException("Unsupported keyword '{}'", queryCondition.keyword);
+				}
+			}
+		}
+		
+		if (!StringUtils.isBlank(query.allText)) {
+			return last.and().any().eq(asStringValue(query.allText, smartStringComparison));
+		} else {
+			return last;
+		}
+	}
+	
+	/*
+	public static Condition<ContactQuery> toCondition(QueryObj query, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone) {
+		boolean smartStringComparison = true;
 		Condition<ContactQuery> result = null;
 		
 		for (Map.Entry<String, Collection<QueryObj.Condition>> entry : query.getConditionsMap().entrySet()) {
@@ -104,22 +157,22 @@ public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 			ArrayList<Condition<ContactQuery>> cndts = new ArrayList<>();
 			for (QueryObj.Condition queryCondition : entry.getValue()) {
 				if ("name".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().name().eq(q.asSmartStringValue(queryCondition.value)));
+					cndts.add(new ContactQuery().name().eq(asStringValue(queryCondition.value, smartStringComparison)));
 					
 				} else if ("company".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().company().eq(q.asSmartStringValue(queryCondition.value)));
+					cndts.add(new ContactQuery().company().eq(asStringValue(queryCondition.value, smartStringComparison)));
 					
 				} else if ("email".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().email().eq(q.asSmartStringValue(queryCondition.value)));
+					cndts.add(new ContactQuery().email().eq(asStringValue(queryCondition.value, smartStringComparison)));
 					
 				} else if ("phone".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().phone().eq(q.asSmartStringValue(queryCondition.value)));
+					cndts.add(new ContactQuery().phone().eq(asStringValue(queryCondition.value, smartStringComparison)));
 					
 				} else if ("address".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().address().eq(q.asSmartStringValue(queryCondition.value)));
+					cndts.add(new ContactQuery().address().eq(asStringValue(queryCondition.value, smartStringComparison)));
 					
 				} else if ("notes".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().notes().eq(q.asSmartStringValue(queryCondition.value)));
+					cndts.add(new ContactQuery().notes().eq(asStringValue(queryCondition.value, smartStringComparison)));
 					
 				} else if ("tag".equals(queryCondition.keyword)) {
 					cndts.add(new ContactQuery().tag().eq(queryCondition.value));
@@ -144,9 +197,10 @@ public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 		
 		if (!StringUtils.isBlank(query.allText)) {
 			ContactQuery q = (result == null) ? new ContactQuery() : result.and();
-			result = q.any().eq(q.asSmartStringValue(query.allText));
+			result = q.any().eq(asStringValue(query.allText, smartStringComparison));
 		}
 		
 		return result;
 	}
+	*/
 }

@@ -52,6 +52,7 @@ import com.sonicle.webtop.contacts.model.Grouping;
 import com.sonicle.webtop.contacts.model.ListContactsResult;
 import com.sonicle.webtop.contacts.model.ShowBy;
 import com.sonicle.webtop.contacts.model.ContactType;
+import com.sonicle.webtop.core.model.CustomFieldValue;
 import com.sonicle.webtop.core.sdk.WTException;
 import ezvcard.VCard;
 import java.util.Collection;
@@ -109,6 +110,7 @@ public interface IContactsManager {
 	public Contact getContact(int contactId) throws WTException;
 	public ContactAttachmentWithBytes getContactAttachment(int contactId, String attachmentId) throws WTException;
 	public ContactCompany getContactCompany(int contactId) throws WTException;
+	public Map<String, CustomFieldValue> getContactCustomValues(int contactId) throws WTException;
 	public Contact addContact(Contact contact) throws WTException;
 	public Contact addContact(Contact contact, String vCardRawData) throws WTException;
 	public void updateContact(Contact contact) throws WTException;

@@ -56,6 +56,9 @@ public class LDIFInput {
 		if (ldapEntry.getAttribute("sn") != null) { // LastName
 			contact.setLastName(getAttributeValueAsString(ldapEntry.getAttribute("sn")));
 		}
+		if (ldapEntry.getAttribute("cn") != null) { // DisplayName
+			contact.setDisplayName(getAttributeValueAsString(ldapEntry.getAttribute("cn")));
+		}
 		if (ldapEntry.getAttribute("mozillaNickname") != null) { // Nickname
 			contact.setNickname(getAttributeValueAsString(ldapEntry.getAttribute("mozillaNickname")));
 		}

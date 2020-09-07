@@ -34,6 +34,7 @@ package com.sonicle.webtop.contacts;
 
 import com.sonicle.commons.Base58;
 import com.sonicle.commons.IdentifierUtils;
+import com.sonicle.commons.InternetAddressUtils;
 import com.sonicle.commons.beans.VirtualAddress;
 import static com.sonicle.webtop.contacts.IContactsManager.RCPT_ORIGIN_LIST;
 import com.sonicle.webtop.core.sdk.WTException;
@@ -74,17 +75,27 @@ public class ContactsUtils {
 		return VCardUtils.buildUid(DigestUtils.md5Hex(id), internetName);
 	}
 	
-	public static int getListIdFromInternetAddress(InternetAddress ia) {
-		VirtualAddress va=new VirtualAddress(ia.getAddress());
-		return getListIdFromVirtualRecipient(va.getLocal());
+	public static boolean isListVirtualRecipient(InternetAddress ia) {
+		return StringUtils.startsWithIgnoreCase(ia.getAddress(), RCPT_ORIGIN_LIST + "-") && StringUtils.endsWithIgnoreCase(ia.getAddress(), "@com.sonicle.webtop.contacts");
 	}
 	
-	public static int getListIdFromVirtualRecipient(String virtualRecipient) {
+	public static boolean isListVirtualRecipient(String virtualRecipientAddress) {
+		InternetAddress ia = InternetAddressUtils.toInternetAddress(virtualRecipientAddress);
+		return ia != null ? isListVirtualRecipient(ia) : false;
+	}
+	
+	public static Integer virtualRecipientToListId(InternetAddress ia) {
+		return virtualRecipientToListId(new VirtualAddress(ia.getAddress()).getLocal());
+	}
+	
+	/**
+	 * Tries to extract a contactList ID from passed virtualAddress. For example
+	 * if recipient is "list-1234", value "1234" is returned. Null in case of no match.
+	 * @param virtualRecipient
+	 * @return 
+	 */
+	public static Integer virtualRecipientToListId(String virtualRecipient) {
 		Matcher matcher = PATTERN_VIRTUALRCPT_LIST.matcher(virtualRecipient);
-		int contactId=-1;
-		if (matcher.matches()) {
-			contactId = Integer.valueOf(matcher.group(1));
-		}
-		return contactId;
+		return matcher.matches() ? Integer.valueOf(matcher.group(1)) : null;
 	}
 }

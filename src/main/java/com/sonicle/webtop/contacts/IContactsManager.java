@@ -52,6 +52,7 @@ import com.sonicle.webtop.contacts.model.Grouping;
 import com.sonicle.webtop.contacts.model.ListContactsResult;
 import com.sonicle.webtop.contacts.model.ShowBy;
 import com.sonicle.webtop.contacts.model.ContactType;
+import com.sonicle.webtop.contacts.model.ContactsListRecipient;
 import com.sonicle.webtop.core.model.CustomFieldValue;
 import com.sonicle.webtop.core.sdk.WTException;
 import ezvcard.VCard;
@@ -123,8 +124,8 @@ public interface IContactsManager {
 	public void moveContact(boolean copy, Collection<Integer> contactIds, int targetCategoryId) throws WTException;
 	public ContactsList getContactsList(int contactId) throws WTException;
 	public void addContactsList(ContactsList list) throws WTException;
-	public void addToContactsList(int contactsListId, ContactsList list) throws WTException;
 	public void updateContactsList(ContactsList list) throws WTException;
+	public void updateContactsListRecipients(int contactsListId, Collection<ContactsListRecipient> recipients, boolean append) throws WTException;
 	public void deleteContactsList(int contactsListId) throws WTException;
 	public void deleteContactsList(Collection<Integer> contactsListIds) throws WTException;
 	public void moveContactsList(boolean copy, int contactsListId, int targetCategoryId) throws WTException;

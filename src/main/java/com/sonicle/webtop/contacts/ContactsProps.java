@@ -40,7 +40,12 @@ import java.util.Properties;
  * @author malbinola
  */
 public class ContactsProps {
+	public static final String PROP_VCARDWRITER_CARETENCODINGENABLED = "webtop.contacts.vcardwriter.caretencodingenabled";
 	public static final String PROP_BATCHSIZE = "webtop.contacts.batchsize";
+	
+	public static boolean getVCardWriterCaretEncodingEnabled(Properties props) {
+		return PropUtils.getBooleanProperty(props, PROP_VCARDWRITER_CARETENCODINGENABLED, true);
+	}
 	
 	public static int getBatchSize(Properties props) {
 		return Math.min(Math.max(0, PropUtils.getIntProperty(props, PROP_BATCHSIZE, 100)), 1000);

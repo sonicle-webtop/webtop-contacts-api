@@ -41,7 +41,7 @@ import com.sonicle.webtop.core.sdk.WTException;
 import com.sonicle.webtop.core.util.VCardUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 

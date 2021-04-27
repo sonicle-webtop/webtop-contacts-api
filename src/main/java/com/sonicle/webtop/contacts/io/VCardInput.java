@@ -724,7 +724,8 @@ public class VCardInput {
 				contact.setHomeTelephone1(deflt(telephone.getText()));
 				return true;
 			}
-		} else if (types.contains(TelephoneType.FAX)) {
+		}
+		if (types.contains(TelephoneType.FAX)) {
 			if (StringUtils.isBlank(contact.getWorkFax())) {
 				contact.setWorkFax(deflt(telephone.getText()));
 				return true;
@@ -732,7 +733,8 @@ public class VCardInput {
 				contact.setHomeFax(deflt(telephone.getText()));
 				return true;
 			}
-		} else if (types.contains(TelephoneType.PAGER)) {
+		}
+		if (types.contains(TelephoneType.PAGER)) {
 			if (StringUtils.isBlank(contact.getPager1())) {
 				contact.setPager1(deflt(telephone.getText()));
 				return true;
@@ -740,7 +742,8 @@ public class VCardInput {
 				contact.setPager2(deflt(telephone.getText()));
 				return true;
 			}
-		} else if (types.contains(TelephoneType.CELL)) {
+		}
+		if (types.contains(TelephoneType.CELL)) {
 			if (StringUtils.isBlank(contact.getMobile())) {
 				contact.setMobile(deflt(telephone.getText()));
 				return true;
@@ -757,7 +760,8 @@ public class VCardInput {
 				contact.setHomeTelephone2(deflt(telephone.getText()));
 				return true;
 			}			
-		} else if (types.contains(TelephoneType.TEXT)) {
+		}
+		if (types.contains(TelephoneType.TEXT)) {
 			if (StringUtils.isBlank(contact.getWorkTelephone2())) {
 				contact.setWorkTelephone2(deflt(telephone.getText()));
 				return true;
@@ -765,21 +769,20 @@ public class VCardInput {
 				contact.setHomeTelephone2(deflt(telephone.getText()));
 				return true;
 			}
-		} else {
-			if (StringUtils.isBlank(contact.getWorkTelephone1())) {
-				contact.setWorkTelephone1(deflt(telephone.getText()));
-				return true;
-			} else if (StringUtils.isBlank(contact.getWorkTelephone2())) {
-				contact.setWorkTelephone2(deflt(telephone.getText()));
-				return true;
-			} else if (StringUtils.isBlank(contact.getHomeTelephone1())) {
-				contact.setHomeTelephone1(deflt(telephone.getText()));
-				return true;
-			} else if (StringUtils.isBlank(contact.getHomeTelephone2())) {
-				contact.setHomeTelephone2(deflt(telephone.getText()));
-				return true;
-			}
 		}
+		if (StringUtils.isBlank(contact.getWorkTelephone1())) {
+			contact.setWorkTelephone1(deflt(telephone.getText()));
+			return true;
+		} else if (StringUtils.isBlank(contact.getWorkTelephone2())) {
+			contact.setWorkTelephone2(deflt(telephone.getText()));
+			return true;
+		} else if (StringUtils.isBlank(contact.getHomeTelephone1())) {
+			contact.setHomeTelephone1(deflt(telephone.getText()));
+			return true;
+		} else if (StringUtils.isBlank(contact.getHomeTelephone2())) {
+			contact.setHomeTelephone2(deflt(telephone.getText()));
+			return true;
+		}		
 		return false;
 	}
 	

@@ -48,11 +48,11 @@ public class CategoryRemoteParameters {
 	
 	public static CategoryRemoteParameters fromJson(String value) {
 		if (value == null) return null;
-		return JsonResult.gson.fromJson(value, CategoryRemoteParameters.class);
+		return JsonResult.gson().fromJson(value, CategoryRemoteParameters.class);
 	}
 	
 	public static String toJson(CategoryRemoteParameters value) {
 		if (value == null) return null;
-		return JsonResult.gson.toJson(value, CategoryRemoteParameters.class);
+		return JsonResult.gson().toJson(value, CategoryRemoteParameters.class);
 	}
 }

@@ -716,6 +716,24 @@ public class VCardInput {
 	
 	private boolean setTelephoneRelaxed(Contact contact, Telephone telephone) {
 		final List<TelephoneType> types = telephone.getTypes();
+		if (types.contains(TelephoneType.CELL)) {
+			if (StringUtils.isBlank(contact.getMobile())) {
+				contact.setMobile(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getWorkTelephone1())) {
+				contact.setWorkTelephone1(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getWorkTelephone2())) {
+				contact.setWorkTelephone2(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getHomeTelephone1())) {
+				contact.setHomeTelephone1(deflt(telephone.getText()));
+				return true;
+			} else if (StringUtils.isBlank(contact.getHomeTelephone2())) {
+				contact.setHomeTelephone2(deflt(telephone.getText()));
+				return true;
+			}			
+		}
 		if (types.contains(TelephoneType.VOICE)) {
 			if (StringUtils.isBlank(contact.getWorkTelephone1())) {
 				contact.setWorkTelephone1(deflt(telephone.getText()));
@@ -742,24 +760,6 @@ public class VCardInput {
 				contact.setPager2(deflt(telephone.getText()));
 				return true;
 			}
-		}
-		if (types.contains(TelephoneType.CELL)) {
-			if (StringUtils.isBlank(contact.getMobile())) {
-				contact.setMobile(deflt(telephone.getText()));
-				return true;
-			} else if (StringUtils.isBlank(contact.getWorkTelephone1())) {
-				contact.setWorkTelephone1(deflt(telephone.getText()));
-				return true;
-			} else if (StringUtils.isBlank(contact.getWorkTelephone2())) {
-				contact.setWorkTelephone2(deflt(telephone.getText()));
-				return true;
-			} else if (StringUtils.isBlank(contact.getHomeTelephone1())) {
-				contact.setHomeTelephone1(deflt(telephone.getText()));
-				return true;
-			} else if (StringUtils.isBlank(contact.getHomeTelephone2())) {
-				contact.setHomeTelephone2(deflt(telephone.getText()));
-				return true;
-			}			
 		}
 		if (types.contains(TelephoneType.TEXT)) {
 			if (StringUtils.isBlank(contact.getWorkTelephone2())) {

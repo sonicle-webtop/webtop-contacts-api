@@ -84,6 +84,8 @@ public interface IContactsManager {
 	public Map<Integer, Category> listIncomingCategories() throws WTException;
 	public Map<Integer, Category> listIncomingCategories(final UserProfileId owner) throws WTException;
 	public Map<Integer, DateTime> getCategoriesLastRevision(Collection<Integer> categoryIds) throws WTException;
+	public Integer getDefaultCategoryId() throws WTException;
+	public Integer getBuiltInCategoryId() throws WTException;
 	public Category getCategory(int categoryId) throws WTException;
 	public Category getBuiltInCategory() throws WTException;
 	public Category addCategory(Category cat) throws WTException;

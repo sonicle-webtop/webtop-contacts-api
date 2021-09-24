@@ -39,7 +39,9 @@ import com.sonicle.commons.web.json.bean.QueryObj;
 import com.sonicle.webtop.core.app.sdk.QueryBuilderWithCValues;
 import com.sonicle.webtop.core.app.sdk.WTUnsupportedOperationException;
 import com.sonicle.webtop.core.model.CustomField;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
@@ -82,7 +84,7 @@ public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 		return string("tag");
 	}
 	
-	public static Condition<ContactQuery> toCondition(String pattern) {
+	public static Condition<ContactQuery> createCondition(String pattern) {
 		if (!StringUtils.isBlank(pattern)) {
 			return new ContactQuery().any().eq(StringUtils.replace(pattern, "%", "*"));
 		} else {
@@ -90,116 +92,64 @@ public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 		}
 	}
 	
-	public static Condition<ContactQuery> toCondition(QueryObj query, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone) {
+	public static Condition<ContactQuery> createCondition(QueryObj query, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone) {
 		boolean smartStringComparison = true;
-		ContactQuery q = new ContactQuery();
 		
-		Condition<ContactQuery> last = q.trueCondition();
-		for (Map.Entry<String, Collection<QueryObj.Condition>> entry : query.getConditionsMap().entrySet()) {
-			q = last.and();
-			int pos = 0;
-			for (QueryObj.Condition queryCondition : entry.getValue()) {
-				pos++;
-				if (pos > 1) q = last.or();
-				
-				if ("name".equals(queryCondition.keyword)) {
-					last = q.name().eq(asStringValue(queryCondition.value, smartStringComparison));
-					
-				} else if ("company".equals(queryCondition.keyword)) {
-					last = q.company().eq(asStringValue(queryCondition.value, smartStringComparison));
-					
-				} else if ("email".equals(queryCondition.keyword)) {
-					last = q.email().eq(asStringValue(queryCondition.value, smartStringComparison));
-					
-				} else if ("phone".equals(queryCondition.keyword)) {
-					last = q.phone().eq(asStringValue(queryCondition.value, smartStringComparison));
-					
-				} else if ("address".equals(queryCondition.keyword)) {
-					last = q.address().eq(asStringValue(queryCondition.value, smartStringComparison));
-					
-				} else if ("notes".equals(queryCondition.keyword)) {
-					last = q.notes().eq(asStringValue(queryCondition.value, smartStringComparison));
-					
-				} else if ("tag".equals(queryCondition.keyword)) {
-					last = q.tag().eq(queryCondition.value);
-					
-				} else if (StringUtils.startsWith(queryCondition.keyword, "cfield")) {
-					CId cf = new CId(queryCondition.keyword, 2);
-					if (!cf.isTokenEmpty(1)) {
-						String cfId = cf.getToken(1);
-						if (customFieldTypeMapping.containsKey(cfId)) {
-							last = q.customValueCondition(cfId, customFieldTypeMapping.get(cfId), queryCondition.value, queryCondition.negated, smartStringComparison, timezone);
-						}
-					}			
-					
-				} else {
-					throw new WTUnsupportedOperationException("Unsupported keyword '{}'", queryCondition.keyword);
+		Condition<ContactQuery> last = new ContactQuery().trueCondition();
+		for (Map.Entry<QueryObj.Condition, List<String>> entry : query.groupConditions().entrySet()) {
+			final QueryObj.Condition key = entry.getKey();
+			final List<String> values = entry.getValue();
+			
+			if (values.isEmpty() || values.size() == 1) {
+				last = new ContactQuery().and(last, createCondition(key, values.isEmpty() ? null : values.get(0), customFieldTypeMapping, timezone, smartStringComparison));
+			} else {
+				List<Condition<ContactQuery>> conds = new ArrayList<>();
+				for (String value : entry.getValue()) {
+					conds.add(createCondition(key, value, customFieldTypeMapping, timezone, smartStringComparison));
 				}
+				last = new ContactQuery().and(last, new ContactQuery().or(conds));
 			}
 		}
 		
-		if (!StringUtils.isBlank(query.allText)) {
-			return last.and().any().eq(asStringValue(query.allText, smartStringComparison));
+		if (!StringUtils.isBlank(query.getAllText())) {
+			return new ContactQuery().and(last, new ContactQuery().any().eq(asStringValue(query.getAllText(), smartStringComparison)));
 		} else {
 			return last;
 		}
 	}
 	
-	/*
-	public static Condition<ContactQuery> toCondition(QueryObj query, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone) {
-		boolean smartStringComparison = true;
-		Condition<ContactQuery> result = null;
-		
-		for (Map.Entry<String, Collection<QueryObj.Condition>> entry : query.getConditionsMap().entrySet()) {
-			ContactQuery q = (result == null) ? new ContactQuery() : result.and();
-			
-			ArrayList<Condition<ContactQuery>> cndts = new ArrayList<>();
-			for (QueryObj.Condition queryCondition : entry.getValue()) {
-				if ("name".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().name().eq(asStringValue(queryCondition.value, smartStringComparison)));
-					
-				} else if ("company".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().company().eq(asStringValue(queryCondition.value, smartStringComparison)));
-					
-				} else if ("email".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().email().eq(asStringValue(queryCondition.value, smartStringComparison)));
-					
-				} else if ("phone".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().phone().eq(asStringValue(queryCondition.value, smartStringComparison)));
-					
-				} else if ("address".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().address().eq(asStringValue(queryCondition.value, smartStringComparison)));
-					
-				} else if ("notes".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().notes().eq(asStringValue(queryCondition.value, smartStringComparison)));
-					
-				} else if ("tag".equals(queryCondition.keyword)) {
-					cndts.add(new ContactQuery().tag().eq(queryCondition.value));
-					
-				} else if (StringUtils.startsWith(queryCondition.keyword, "cfield")) {
-					Condition<ContactQuery> cond = null;
-					CompId cf = new CompId(2).parse(queryCondition.keyword, false);
-					if (!cf.isTokenEmpty(1)) {
-						String cfId = cf.getToken(1);
-						if (customFieldTypeMapping.containsKey(cfId)) {
-							cond = new ContactQuery().customValueCondition(cfId, customFieldTypeMapping.get(cfId), queryCondition.value, queryCondition.negated, timezone);
-						}
-					}
-					if (cond != null) cndts.add(cond);					
-					
-				} else {
-					throw new WTUnsupportedOperationException("Unsupported keyword '{}'", queryCondition.keyword);
+	private static Condition<ContactQuery> createCondition(QueryObj.Condition condition, String value, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone, boolean smartStringComparison) {
+		if ("name".equals(condition.keyword)) {
+			return new ContactQuery().name().eq(asStringValue(value, smartStringComparison));
+
+		} else if ("company".equals(condition.keyword)) {
+			return new ContactQuery().company().eq(asStringValue(value, smartStringComparison));
+
+		} else if ("email".equals(condition.keyword)) {
+			return new ContactQuery().email().eq(asStringValue(value, smartStringComparison));
+
+		} else if ("phone".equals(condition.keyword)) {
+			return new ContactQuery().phone().eq(asStringValue(value, smartStringComparison));
+
+		} else if ("address".equals(condition.keyword)) {
+			return new ContactQuery().address().eq(asStringValue(value, smartStringComparison));
+
+		} else if ("notes".equals(condition.keyword)) {
+			return new ContactQuery().notes().eq(asStringValue(value, smartStringComparison));
+
+		} else if ("tag".equals(condition.keyword)) {
+			return new ContactQuery().tag().eq(value);
+
+		} else if (StringUtils.startsWith(condition.keyword, "cfield")) {
+			CId cf = new CId(condition.keyword, 2);
+			if (!cf.isTokenEmpty(1)) {
+				String cfId = cf.getToken(1);
+				if (customFieldTypeMapping.containsKey(cfId)) {
+					return new ContactQuery().customValueCondition(cfId, customFieldTypeMapping.get(cfId), value, condition.negated, smartStringComparison, timezone);
 				}
 			}
-			result = q.or(cndts);
 		}
 		
-		if (!StringUtils.isBlank(query.allText)) {
-			ContactQuery q = (result == null) ? new ContactQuery() : result.and();
-			result = q.any().eq(asStringValue(query.allText, smartStringComparison));
-		}
-		
-		return result;
+		throw new WTUnsupportedOperationException("Unsupported keyword '{}'", condition.keyword);
 	}
-	*/
 }

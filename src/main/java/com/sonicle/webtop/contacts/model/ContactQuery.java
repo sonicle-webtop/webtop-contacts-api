@@ -40,7 +40,6 @@ import com.sonicle.webtop.core.app.sdk.QueryBuilderWithCValues;
 import com.sonicle.webtop.core.app.sdk.WTUnsupportedOperationException;
 import com.sonicle.webtop.core.model.CustomField;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +57,10 @@ public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 
 	public StringProperty<ContactQuery> company() {
 		return string("company");
+	}
+	
+	public StringProperty<ContactQuery> companyId() {
+		return string("companyId");
 	}
 
 	public StringProperty<ContactQuery> email() {
@@ -124,6 +127,9 @@ public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 
 		} else if ("company".equals(condition.keyword)) {
 			return new ContactQuery().company().eq(asStringValue(value, smartStringComparison));
+
+		} else if ("companyId".equals(condition.keyword)) {
+			return new ContactQuery().companyId().eq(value);
 
 		} else if ("email".equals(condition.keyword)) {
 			return new ContactQuery().email().eq(asStringValue(value, smartStringComparison));

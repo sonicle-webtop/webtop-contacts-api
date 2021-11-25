@@ -30,35 +30,17 @@
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
  * display the words "Copyright (C) 2021 Sonicle S.r.l.".
  */
-package com.sonicle.webtop.contacts.model;
+package com.sonicle.webtop.contacts.io;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import com.sonicle.webtop.core.app.io.input.WTReaderException;
+import java.io.File;
+import java.io.IOException;
+import com.sonicle.webtop.core.app.io.BeanHandler;
 
 /**
  *
  * @author malbinola
  */
-public class Contact extends ContactEx {
-	protected Integer contactId;
-	
-	public Contact() {
-		super();
-	}
-	
-	public Integer getContactId() {
-		return contactId;
-	}
-
-	public void setContactId(Integer contactId) {
-		this.contactId = contactId;
-	}
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this)
-				.append(getContactId())
-				.append(getFirstName())
-				.append(getLastName())
-				.toString();
-	}
+public interface ContactFileReader {
+	public void read(File file, BeanHandler beanHandler) throws IOException, WTReaderException;
 }

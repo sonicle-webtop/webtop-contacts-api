@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2014 Sonicle S.r.l.
+/*
+ * Copyright (C) 2021 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,51 +28,74 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2014 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2021 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.contacts.model;
+
+import com.rits.cloning.Cloner;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import net.sf.qualitycheck.Check;
 
 /**
  *
  * @author malbinola
  */
-public class ContactsListRecipient {
-	protected Integer listRecipientId;
-	protected String recipient;
-	protected Integer recipientContactId;
-	protected String recipientType;
+public class ContactListEx extends ContactListBase {
+	protected List<ContactListRecipient> recipients;
+	protected Set<String> tags;
 	
-	public ContactsListRecipient() {}
-
-	public Integer getListRecipientId() {
-		return listRecipientId;
-	}
-
-	public void setListRecipientId(Integer listRecipientId) {
-		this.listRecipientId = listRecipientId;
-	}
-
-	public String getRecipient() {
-		return recipient;
-	}
-
-	public void setRecipient(String recipient) {
-		this.recipient = recipient;
+	public ContactListEx() {
+		super();
 	}
 	
-	public Integer getRecipientContactId() {
-		return recipientContactId;
+	public ContactListEx(ContactListBase contactList) {
+		super();
+		Cloner.standard().copyPropertiesOfInheritedClass(contactList, this);
 	}
 
-	public void setRecipientContactId(Integer recipientContactId) {
-		this.recipientContactId = recipientContactId;
+	public List<ContactListRecipient> getRecipients() {
+		return recipients;
+	}
+	
+	public void setRecipients(List<ContactListRecipient> recipients) {
+		this.recipients = recipients;
 	}
 
-	public String getRecipientType() {
-		return recipientType;
+	public Set<String> getTags() {
+		return tags;
 	}
 
-	public void setRecipientType(String recipientType) {
-		this.recipientType = recipientType;
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
+	}
+	
+	public ContactListEx addRecipient(ContactListRecipient recipient) {
+		if (this.recipients == null) this.recipients = new ArrayList<>();
+		this.recipients.add(Check.notNull(recipient, "recipient"));
+		return this;
+	}
+	
+	public ContactListEx addTag(String tagId) {
+		if (this.tags == null) this.tags = new LinkedHashSet<>();
+		this.tags.add(Check.notNull(tagId, "tagId"));
+		return this;
+	}
+	
+	public ContactListEx removeTag(String tagId) {
+		if (this.tags != null) {
+			this.tags.remove(Check.notNull(tagId, "tagId"));
+		}
+		return this;
+	}
+	
+	public boolean hasRecipients() {
+		return this.recipients != null;
+	}
+	
+	public boolean hasTags() {
+		return this.tags != null;
 	}
 }

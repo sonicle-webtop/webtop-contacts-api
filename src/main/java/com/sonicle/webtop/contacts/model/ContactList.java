@@ -32,16 +32,14 @@
  */
 package com.sonicle.webtop.contacts.model;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 /**
  *
  * @author malbinola
  */
-public class Contact extends ContactEx {
+public class ContactList extends ContactListEx {
 	protected Integer contactId;
 	
-	public Contact() {
+	public ContactList() {
 		super();
 	}
 	
@@ -51,14 +49,5 @@ public class Contact extends ContactEx {
 
 	public void setContactId(Integer contactId) {
 		this.contactId = contactId;
-	}
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this)
-				.append(getContactId())
-				.append(getFirstName())
-				.append(getLastName())
-				.toString();
 	}
 }

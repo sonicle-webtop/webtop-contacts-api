@@ -32,6 +32,9 @@
  */
 package com.sonicle.webtop.contacts;
 
+import com.google.gson.annotations.SerializedName;
+import com.sonicle.commons.BitFlag;
+import com.sonicle.commons.BitFlagEnum;
 import com.sonicle.commons.qbuilders.conditions.Condition;
 import com.sonicle.commons.LangUtils;
 import com.sonicle.webtop.contacts.model.Category;
@@ -41,18 +44,18 @@ import com.sonicle.webtop.contacts.model.ShareRootCategory;
 import com.sonicle.webtop.contacts.model.Contact;
 import com.sonicle.webtop.contacts.model.ContactAttachmentWithBytes;
 import com.sonicle.webtop.contacts.model.ContactCompany;
+import com.sonicle.webtop.contacts.model.ContactEx;
+import com.sonicle.webtop.contacts.model.ContactList;
+import com.sonicle.webtop.contacts.model.ContactListEx;
 import com.sonicle.webtop.contacts.model.ContactObject;
 import com.sonicle.webtop.contacts.model.ContactObjectChanged;
-import com.sonicle.webtop.contacts.model.ContactObjectWithVCard;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
-import com.sonicle.webtop.contacts.model.ContactPictureWithBytesOld;
 import com.sonicle.webtop.contacts.model.ContactQuery;
-import com.sonicle.webtop.contacts.model.ContactsList;
 import com.sonicle.webtop.contacts.model.Grouping;
 import com.sonicle.webtop.contacts.model.ListContactsResult;
 import com.sonicle.webtop.contacts.model.ShowBy;
 import com.sonicle.webtop.contacts.model.ContactType;
-import com.sonicle.webtop.contacts.model.ContactsListRecipient;
+import com.sonicle.webtop.contacts.model.ContactListRecipient;
 import com.sonicle.webtop.core.model.CustomFieldValue;
 import com.sonicle.webtop.core.sdk.UserProfileId;
 import com.sonicle.webtop.core.sdk.WTException;
@@ -95,47 +98,67 @@ public interface IContactsManager {
 	public CategoryPropSet getCategoryCustomProps(int categoryId) throws WTException;
 	public Map<Integer, CategoryPropSet> getCategoryCustomProps(Collection<Integer> categoryIds) throws WTException;
 	public CategoryPropSet updateCategoryCustomProps(int categoryId, CategoryPropSet propertySet) throws WTException;
-	public List<ContactObject> listContactObjects(int categoryId, ContactObjectOutputType outputType) throws WTException;
-	public LangUtils.CollectionChangeSet<ContactObjectChanged> listContactObjectsChanges(int categoryId, DateTime since, Integer limit) throws WTException;
-	public ContactObjectWithVCard getContactObjectWithVCard(int categoryId, String href) throws WTException;
-	public List<ContactObjectWithVCard> getContactObjectsWithVCard(int categoryId, Collection<String> hrefs) throws WTException;
-	public ContactObject getContactObject(int contactId, ContactObjectOutputType outputType) throws WTException;
-	public void addContactObject(int categoryId, String href, VCard vCard) throws WTException;
-	public void updateContactObject(int categoryId, String href, VCard vCard) throws WTException;
-	public void deleteContactObject(int categoryId, String href) throws WTException;
+	public List<ContactObject> listContactObjects(final int categoryId, final ContactObjectOutputType outputType) throws WTException;
+	public LangUtils.CollectionChangeSet<ContactObjectChanged> listContactObjectsChanges(final int categoryId, final DateTime since, final Integer limit) throws WTException;
+	public ContactObject getContactObject(final int categoryId, final String href, final ContactObjectOutputType outputType) throws WTException;
+	public List<ContactObject> getContactObjects(final int categoryId, final Collection<String> hrefs, final ContactObjectOutputType outputType) throws WTException;
+	public ContactObject getContactObject(final int contactId, final ContactObjectOutputType outputType) throws WTException;
+	public void addContactObject(final int categoryId, final String href, final VCard vCard) throws WTException;
+	public void updateContactObject(final int categoryId, final String href, final VCard vCard) throws WTException;
+	public void deleteContactObject(final int categoryId, final String href) throws WTException;
 	public boolean existContact(Collection<Integer> categoryIds, Condition<ContactQuery> conditionPredicate) throws WTException;
-	
-	/**
-	 * @deprecated
-	 */
-	@Deprecated
-	public ListContactsResult listContacts(Collection<Integer> categoryIds, boolean listOnly, Grouping groupBy, ShowBy showBy, String pattern, int page, int limit, boolean returnFullCount) throws WTException;
-	
 	public ListContactsResult listContacts(Collection<Integer> categoryIds, ContactType type, Grouping groupBy, ShowBy showBy, String pattern) throws WTException;
 	public ListContactsResult listContacts(Collection<Integer> categoryIds, ContactType type, Grouping groupBy, ShowBy showBy, Condition<ContactQuery> conditionPredicate) throws WTException;
 	public ListContactsResult listContacts(Collection<Integer> categoryIds, ContactType type, Grouping groupBy, ShowBy showBy, Condition<ContactQuery> conditionPredicate, int page, int limit, boolean returnFullCount) throws WTException;
-	public Contact getContact(int contactId) throws WTException;
-	public ContactAttachmentWithBytes getContactAttachment(int contactId, String attachmentId) throws WTException;
-	public ContactCompany getContactCompany(int contactId) throws WTException;
-	public Map<String, CustomFieldValue> getContactCustomValues(int contactId) throws WTException;
-	public Contact addContact(Contact contact) throws WTException;
-	public Contact addContact(Contact contact, String vCardRawData) throws WTException;
-	public void updateContact(Contact contact) throws WTException;
-	public void updateContact(Contact contact, boolean processPicture) throws WTException;
-	public ContactPictureWithBytes getContactPicture(int contactId) throws WTException;
-	public void updateContactPicture(int contactId, ContactPictureWithBytesOld picture) throws WTException;
-	public void deleteContact(int contactId) throws WTException;
-	public void deleteContact(Collection<Integer> contactIds) throws WTException;
-	public void moveContact(boolean copy, int contactId, int targetCategoryId) throws WTException;
-	public void moveContact(boolean copy, Collection<Integer> contactIds, int targetCategoryId) throws WTException;
-	public ContactsList getContactsList(int contactId) throws WTException;
-	public void addContactsList(ContactsList list) throws WTException;
-	public void updateContactsList(ContactsList list) throws WTException;
-	public void updateContactsListRecipients(int contactsListId, Collection<ContactsListRecipient> recipients, boolean append) throws WTException;
-	public void deleteContactsList(int contactsListId) throws WTException;
-	public void deleteContactsList(Collection<Integer> contactsListIds) throws WTException;
-	public void moveContactsList(boolean copy, int contactsListId, int targetCategoryId) throws WTException;
-	public void moveContactsList(boolean copy, Collection<Integer> contactIds, int targetCategoryId) throws WTException;
+	public Contact getContact(final int contactId) throws WTException;
+	public Contact getContact(final int contactId, final BitFlag<ContactGetOptions> opts) throws WTException;
+	public ContactPictureWithBytes getContactPicture(final int contactId) throws WTException;
+	public ContactCompany getContactCompany(final int contactId) throws WTException;
+	public ContactAttachmentWithBytes getContactAttachment(final int contactId, final String attachmentId) throws WTException;
+	public Map<String, CustomFieldValue> getContactCustomValues(final int contactId) throws WTException;
+	public Contact addContact(ContactEx contact) throws WTException;
+	public Contact addContact(ContactEx contact, String vCardRawData) throws WTException;
+	public void updateContact(final int contactId, final ContactEx contact) throws WTException;
+	public void updateContact(final int contactId, final ContactEx contact, final BitFlag<ContactUpdateOptions> opts) throws WTException;
+	public void updateContactPicture(final int contactId, final ContactPictureWithBytes picture) throws WTException;	
+	public void deleteContact(final int contactId) throws WTException;
+	public void deleteContact(final Collection<Integer> contactIds) throws WTException;
+	public void moveContact(final boolean copy, final int contactId, final int targetCategoryId) throws WTException;
+	public void moveContact(final boolean copy, final int contactId, final int targetCategoryId, BitFlag<ContactGetOptions> opts) throws WTException;
+	public void moveContact(final boolean copy, final Collection<Integer> contactIds, final int targetCategoryId) throws WTException;
+	public void moveContact(final boolean copy, final Collection<Integer> contactIds, final int targetCategoryId, BitFlag<ContactGetOptions> opts) throws WTException;
+	public ContactList getContactList(final int contactId) throws WTException;
+	public ContactList getContactList(final int contactId, final BitFlag<ContactGetOptions> opts) throws WTException;
+	public ContactList addContactList(final ContactListEx contact) throws WTException;
+	public void updateContactList(final int contactId, final ContactListEx contact) throws WTException;
+	public void updateContactList(final int contactId, final ContactListEx contact, final BitFlag<ContactUpdateOptions> opts) throws WTException;
+	public void updateContactsListRecipients(final int contactId, final Collection<ContactListRecipient> recipients, final boolean append) throws WTException;
+	public void deleteContactList(final int contactId) throws WTException;
+	public void deleteContactList(final Collection<Integer> contactIds) throws WTException;
+	
 	public void updateContactCategoryTags(final UpdateTagsOperation operation, final int categoryId, final Set<String> tagIds) throws WTException;
 	public void updateContactTags(final UpdateTagsOperation operation, final Collection<Integer> contactIds, final Set<String> tagIds) throws WTException;
+	
+	public static enum ContactGetOptions implements BitFlagEnum {
+		PICTURE(1), ATTACHMENTS(2), TAGS(4), CUSTOM_VALUES(8), LIST_RECIPIENTS(16);
+		
+		private int value = 0;
+		private ContactGetOptions(int value) { this.value = value; }
+		@Override
+		public int value() { return this.value; }
+	}
+	
+	public static enum ContactUpdateOptions implements BitFlagEnum {
+		PICTURE(1), ATTACHMENTS(2), TAGS(4), CUSTOM_VALUES(8), LIST_RECIPIENTS(16);
+		
+		private int value = 0;
+		private ContactUpdateOptions(int value) { this.value = value; }
+		@Override
+		public int value() { return this.value; }
+	}
+	
+	public static enum ImportMode {
+		@SerializedName("copy") COPY,
+		@SerializedName("append") APPEND
+	}
 }

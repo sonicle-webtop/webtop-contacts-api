@@ -32,33 +32,18 @@
  */
 package com.sonicle.webtop.contacts.model;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 /**
  *
  * @author malbinola
  */
-public class Contact extends ContactEx {
-	protected Integer contactId;
+public class ContactPictureWithSize extends ContactPicture {
+	protected Long size;
 	
-	public Contact() {
-		super();
+	public ContactPictureWithSize(Long size) {
+		this.size = size;
 	}
 	
-	public Integer getContactId() {
-		return contactId;
-	}
-
-	public void setContactId(Integer contactId) {
-		this.contactId = contactId;
-	}
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this)
-				.append(getContactId())
-				.append(getFirstName())
-				.append(getLastName())
-				.toString();
+	public Long getSize() {
+		return size;
 	}
 }

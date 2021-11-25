@@ -33,13 +33,15 @@
 package com.sonicle.webtop.contacts.io;
 
 import com.google.gson.annotations.SerializedName;
-import com.sonicle.webtop.contacts.model.Contact;
+import com.sonicle.commons.LangUtils;
+import com.sonicle.webtop.contacts.model.ContactBase;
 import com.sonicle.webtop.contacts.model.ContactCompany;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
+import com.sonicle.webtop.core.app.util.log.BufferingLogHandler;
+import com.sonicle.webtop.core.app.util.log.LogEntry;
+import com.sonicle.webtop.core.app.util.log.LogHandler;
+import com.sonicle.webtop.core.app.util.log.LogMessage;
 import com.sonicle.webtop.core.sdk.WTException;
-import com.sonicle.webtop.core.util.LogEntries;
-import com.sonicle.webtop.core.util.LogEntry;
-import com.sonicle.webtop.core.util.MessageLogEntry;
 import com.sonicle.webtop.core.util.VCardUtils;
 import eu.medsea.mimeutil.MimeException;
 import eu.medsea.mimeutil.MimeType;
@@ -50,18 +52,22 @@ import ezvcard.parameter.EmailType;
 import ezvcard.parameter.ImppType;
 import ezvcard.parameter.TelephoneType;
 import ezvcard.property.Address;
+import ezvcard.property.Anniversary;
+import ezvcard.property.Birthday;
 import ezvcard.property.Email;
 import ezvcard.property.FormattedName;
 import ezvcard.property.Gender;
 import ezvcard.property.Impp;
 import ezvcard.property.Nickname;
 import ezvcard.property.Note;
+import ezvcard.property.Organization;
 import ezvcard.property.Photo;
 import ezvcard.property.Role;
 import ezvcard.property.StructuredName;
 import ezvcard.property.Telephone;
 import ezvcard.property.TextListProperty;
 import ezvcard.property.Title;
+import ezvcard.property.Uid;
 import ezvcard.property.Url;
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,8 +81,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
+import com.sonicle.webtop.core.app.io.BeanHandler;
 
 /**
  *
@@ -85,6 +94,10 @@ import org.joda.time.LocalDate;
 public class VCardInput {
 	private final MatchCategory preferredMatch;
 	private final boolean relaxedMatching = true;
+	private boolean returnSourceObject = false;
+	private Map<String, String> categoriesToTagsMap = null;
+	private LogHandler logHandler = null;
+	private BeanHandler<ContactInput> beanHandler = null;
 	
 	public VCardInput() {
 		this(MatchCategory.WORK);
@@ -94,79 +107,332 @@ public class VCardInput {
 		this.preferredMatch = preferredMatch;
 	}
 	
-	public List<ContactInput> fromVCardFile(InputStream is, LogEntries log) throws WTException {
+	public VCardInput withReturnSourceObject(boolean returnSourceObject) {
+		this.returnSourceObject = returnSourceObject;
+		return this;
+	}
+	
+	public VCardInput withCategoriesToTagsMap(Map<String, String> categoriesToTagsMap) {
+		this.categoriesToTagsMap = categoriesToTagsMap;
+		return this;
+	}
+	
+	public VCardInput withLogHandler(LogHandler logHandler) {
+		this.logHandler = logHandler;
+		return this;
+	}
+	
+	public VCardInput withBeanHandler(BeanHandler<ContactInput> beanHandler) {
+		this.beanHandler = beanHandler;
+		return this;
+	}
+	
+	public List<ContactInput> read(InputStream is) throws IOException, WTException {
+		return parseVCard(is);
+	}
+	
+	public List<ContactInput> parseVCard(InputStream is) throws IOException, WTException {
+		return parseCardObjects(Ezvcard.parse(is).all());
+	}
+	
+	public List<ContactInput> parseVCard(String s) throws WTException {
 		try {
-			final List<VCard> vCards = Ezvcard.parse(is).all();
-			return fromVCardFile(vCards, log);
+			return parseCardObjects(Ezvcard.parse(new StringReader(s)).all());
 		} catch(IOException ex) {
-			throw new WTException(ex, "Unable to read stream");
+			throw new WTException(ex, "Unable to read String");
 		}
 	}
 	
-	/*
-	public List<ContactInput> fromVCardFile(Collection<VCard> vCards, LogEntries log) throws WTException {
-		// See https://tools.ietf.org/html/rfc6350
-		// See http://www.w3.org/TR/vcard-rdf/
-		ArrayList<ContactInput> results = new ArrayList<>();
+	public List<ContactInput> parseCardObjects(Collection<VCard> vCards) throws WTException {
+		ArrayList<ContactInput> results = (beanHandler == null) ? new ArrayList<>() : null;
 		
+		int count = 0;
 		for (VCard vc : vCards) {
-			final LogEntries vclog = (log != null) ? new LogEntries() : null;
-
+			count++;
+			BufferingLogHandler buffLogHandler = createBufferingLogHandler(new LogMessage(0, LogEntry.Level.INFO, "VCARD #{} [{}]", count, VCardUtils.print(vc)));
+			
+			/*
+			final VCard obj = vc;
+			final int no = count;
+			
+			BufferingLogHandler buffLogHandler = null;
+			if (logHandler != null) {
+				buffLogHandler = new BufferingLogHandler() {
+					@Override
+					public List<LogEntry> first() {
+						return Arrays.asList(new LogMessage(0, LogEntry.Level.INFO, "VCARD #{} [{}]", no, VCardUtils.print(obj)));
+					}
+				};
+			}
+			*/
+			
 			try {
-				final ContactInput result = fromVCard(vc, vclog);
+				final ContactInput result = parseCardObject(vc, buffLogHandler);
 				if (result.contact.trimFieldLengths()) {
-					if (vclog != null) vclog.add(new MessageLogEntry(LogEntry.Level.WARN, "Some fields were truncated due to max-length"));
+					log(buffLogHandler, 1, LogEntry.Level.WARN, "Some fields were truncated due to max-length");
 				}
-				results.add(result);
-				if ((log != null) && (vclog != null)) {
-					if (!vclog.isEmpty()) {
-						log.addMaster(new MessageLogEntry(LogEntry.Level.WARN, "VCARD [{0}]", VCardUtils.print(vc)));
-						log.addAll(vclog);
-					}
+				if (beanHandler != null) {
+					beanHandler.handle(result);
+				} else if (results != null) {
+					results.add(result);
 				}
+
 			} catch(Throwable t) {
-				if (log != null) log.addMaster(new MessageLogEntry(LogEntry.Level.ERROR, "VCARD [{0}]. Reason: {1}", VCardUtils.print(vc), t.getMessage()));
+				log(buffLogHandler, 0, LogEntry.Level.ERROR, "Reason: {}", LangUtils.getThrowableMessage(t));
 			}
-		}
-		return results;
-	}
-	*/
-	
-	public List<ContactInput> fromVCardFile(Collection<VCard> vCards, LogEntries log) throws WTException {
-		ArrayList<ContactInput> results = new ArrayList<>();
-		
-		for (VCard vc : vCards) {
-			final LogEntries vclog = (log != null) ? new LogEntries() : null;
-			try {
-				final ContactInput result = fromVCardFile(vc, vclog);
-				results.add(result);
-				if ((log != null) && (vclog != null)) {
-					if (!vclog.isEmpty()) {
-						log.addMaster(new MessageLogEntry(LogEntry.Level.WARN, "VCARD [{0}]", VCardUtils.print(vc)));
-						log.addAll(vclog);
-					}
-				}
-			} catch(Throwable t) {
-				if (log != null) log.addMaster(new MessageLogEntry(LogEntry.Level.ERROR, "VCARD [{0}]. Reason: {1}", VCardUtils.print(vc), t.getMessage()));
+			
+			flushToLogHandler(buffLogHandler);
+			/*
+			if (logHandler != null && buffLogHandler != null) {
+				final List<LogEntry> entries = buffLogHandler.flush();
+				if (entries != null) logHandler.handle(entries);
 			}
+			*/
 		}
 		return results;
 	}
 	
-	public ContactInput fromVCardString(String s, LogEntries log) throws IOException, WTException {
-		VCard vCard = Ezvcard.parse(new StringReader(s)).first();
-		return fromVCardFile(vCard, log);
+	public ContactInput parseCardObject(VCard vCard) throws WTException {
+		return parseCardObject(vCard, null);
 	}
 	
-	public ContactInput fromVCardFile(VCard vCard, LogEntries log) throws WTException {
+	private ContactInput parseCardObject(VCard vcard, LogHandler logHandler) throws WTException {
 		// See https://tools.ietf.org/html/rfc6350
 		// See http://www.w3.org/TR/vcard-rdf/
+		ContactBase contact = new ContactBase();
+		ContactCompany contactCompany = null;
+		ContactPictureWithBytes contactPicture = null;
+		Set<String> tagNames = null;
+		VCard vcCopy = new VCard(vcard);
 		
-		final ContactInput result = fromVCard(vCard, log);
-		if (result.contact.trimFieldLengths()) {
-			if (log != null) log.add(new MessageLogEntry(LogEntry.Level.WARN, "Some fields were truncated due to max-length"));
+		//TODO: pass string field lengths in constructor or take them from db field definitions
+		
+		// UID(?)
+		if (vcCopy.getUid() != null) {
+			Uid uid = vcCopy.getUid();
+			if (!StringUtils.isBlank(uid.getValue())) {
+				contact.setPublicUid(uid.getValue());
+			} else {
+				log(logHandler, 1, LogEntry.Level.WARN, "UID is missing");
+			}
+			vcCopy.removeProperty(uid);
 		}
-		return result;
+		
+		// FN(+) -> displayName
+		if (!vcCopy.getFormattedNames().isEmpty()) {
+			if (vcCopy.getFormattedNames().size() > 1) log(logHandler, 1, LogEntry.Level.WARN, "Many FN properties found");
+			FormattedName fn = vcCopy.getFormattedNames().get(0);
+			contact.setDisplayName(deflt(fn.getValue()));
+			vcCopy.removeProperties(FormattedName.class);
+		}
+		
+		// N(?) -> FirstName/LastName
+		if (!vcCopy.getStructuredNames().isEmpty()) {
+			if (vcCopy.getStructuredNames().size() > 1) log(logHandler, 1, LogEntry.Level.WARN, "Many N properties found");
+			StructuredName sn = vcCopy.getStructuredNames().get(0);
+			contact.setFirstName(deflt(sn.getGiven()));
+			contact.setLastName(deflt(sn.getFamily()));
+			if (!sn.getPrefixes().isEmpty()) {
+				contact.setTitle(sn.getPrefixes().get(0));
+				if (sn.getPrefixes().size() > 1) {
+					log(logHandler, 1, LogEntry.Level.WARN, "Many N(prefix) properties found");
+				}
+			}
+			vcCopy.removeProperties(StructuredName.class);
+		}
+		
+		// NICKNAME(*)
+		if (!vcCopy.getNicknames().isEmpty()) {
+			if (vcCopy.getNicknames().size() > 1) log(logHandler, 1, LogEntry.Level.WARN, "Many NICKNAME properties found");
+			Nickname ni = vcCopy.getNicknames().get(0);
+			contact.setNickname(deflt(flatten(ni)));
+			vcCopy.removeProperties(Nickname.class);
+		}
+		
+		// GENDER(?)
+		if (vcCopy.getGender() != null) {
+			Gender gender = vcCopy.getGender();
+			contact.setGender(toContactGender(gender));
+			vcCopy.removeProperty(gender);
+		}
+		
+		// ADR(*)
+		if (!vcCopy.getAddresses().isEmpty()) {
+			HashMap<MatchCategory, LinkedList<Address>> map = analyzeAddresses(vcCopy.getAddresses());
+			for (Map.Entry<MatchCategory, LinkedList<Address>> entry : map.entrySet()) { // Strict matching
+				if (MatchCategory.NONE.equals(entry.getKey())) continue;
+				final Address address = entry.getValue().pollFirst();
+				setAddress(contact, entry.getKey(), address);
+			}
+			if (relaxedMatching) {
+				for (Map.Entry<MatchCategory, LinkedList<Address>> entry : map.entrySet()) {
+					boolean shouldBreak = false;
+					for (Address address : entry.getValue()) {
+						if (!setAddressRelaxed(contact, address)) {
+							shouldBreak = true;
+							break;
+						}
+					}
+					if (shouldBreak) break;
+				}
+			}
+			vcCopy.removeProperties(Address.class);
+		}
+		
+		// TEL(*)
+		if (!vcCopy.getTelephoneNumbers().isEmpty()) {
+			HashMap<MatchCategory, LinkedList<Telephone>> map = analyzeTelephones(vcCopy.getTelephoneNumbers());
+			for (Map.Entry<MatchCategory, LinkedList<Telephone>> entry : map.entrySet()) { // Strict matching
+				if (MatchCategory.NONE.equals(entry.getKey())) continue;
+				final Telephone telephone = entry.getValue().pollFirst();
+				setTelephone(contact, entry.getKey(), telephone);
+			}
+			if (relaxedMatching) {
+				for (Map.Entry<MatchCategory, LinkedList<Telephone>> entry : map.entrySet()) {
+					boolean shouldBreak = false;
+					for (Telephone telephone : entry.getValue()) {
+						if (!setTelephoneRelaxed(contact, telephone)) {
+							shouldBreak = true;
+							break;
+						}
+					}
+					if (shouldBreak) break;
+				}
+			}
+			vcCopy.removeProperties(Telephone.class);
+		}
+		
+		// EMAIL(*)
+		if (!vcCopy.getEmails().isEmpty()) {
+			HashMap<MatchCategory, LinkedList<Email>> map = analyzeEmails(vcCopy.getEmails());
+			for (Map.Entry<MatchCategory, LinkedList<Email>> entry : map.entrySet()) { // Strict matching
+				if (MatchCategory.NONE.equals(entry.getKey())) continue;
+				final Email email = entry.getValue().pollFirst();
+				setEmail(contact, entry.getKey(), email);
+			}
+			if (relaxedMatching) {
+				for (Map.Entry<MatchCategory, LinkedList<Email>> entry : map.entrySet()) {
+					boolean shouldBreak = false;
+					for (Email email : entry.getValue()) {
+						if (!setEmailRelaxed(contact, email)) {
+							shouldBreak = true;
+							break;
+						}
+					}
+					if (shouldBreak) break;
+				}
+			}
+			vcCopy.removeProperties(Email.class);
+		}
+		
+		// IMPP(*) -> InstantMsg
+		if (!vcCopy.getImpps().isEmpty()) {
+			HashMap<MatchCategory, LinkedList<Impp>> map = analyzeIMPPs(vcCopy.getImpps());
+			for (Map.Entry<MatchCategory, LinkedList<Impp>> entry : map.entrySet()) { // Strict matching
+				if (MatchCategory.NONE.equals(entry.getKey())) continue;
+				final Impp impp = entry.getValue().pollFirst();
+				setIMPP(contact, entry.getKey(), impp);
+			}
+			if (relaxedMatching) {
+				for (Map.Entry<MatchCategory, LinkedList<Impp>> entry : map.entrySet()) {
+					boolean shouldBreak = false;
+					for (Impp impp : entry.getValue()) {
+						if (!setIMPPRelaxed(contact, impp)) {
+							shouldBreak = true;
+							break;
+						}
+					}
+					if (shouldBreak) break;
+				}
+			}
+			vcCopy.removeProperties(Impp.class);
+		}
+		
+		// ORG(*) -> Company/Department
+		if (vcCopy.getOrganization() != null) {
+			Organization org = vcCopy.getOrganization();
+			List<String> values = org.getValues();
+			if (!values.isEmpty()) {
+				String value = deflt(values.get(0));
+				contactCompany = new ContactCompany(value, value);
+				if (values.size() > 1) contact.setDepartment(deflt(values.get(1)));
+			}
+			vcCopy.removeProperties(Organization.class);
+		}
+		
+		// TITLE and ROLE have a similar meaning but seems that devices 
+		// writes data into TITLE field. In order to catch many cases we can,
+		// it's better to give precedence to TITLE field and then fallback to
+		// the similar ROLE field.
+		
+		// TITLE(*) -> Function
+		if (!vcCopy.getTitles().isEmpty()) {
+			if (vcCopy.getTitles().size() > 1) log(logHandler, 1, LogEntry.Level.WARN, "Many TITLE properties found");
+			Title ti = vcCopy.getTitles().get(0);
+			contact.setFunction(deflt(ti.getValue()));
+			vcCopy.removeProperties(Title.class);
+		}
+		// ROLE(*) -> Function
+		if (StringUtils.isBlank(contact.getFunction()) && !vcCopy.getRoles().isEmpty()) {
+			if (vcCopy.getRoles().size() > 1) log(logHandler, 1, LogEntry.Level.WARN, "Many ROLE properties found");
+			Role ro = vcCopy.getRoles().get(0);
+			contact.setFunction(deflt(ro.getValue()));
+			vcCopy.removeProperties(Role.class);
+		}
+		
+		//TODO: How we can fill manager field?
+		//TODO: How we can fill assistant field?
+		//TODO: How we can fill assistant-phone field?
+		
+		// BDAY(*)
+		if (vcCopy.getBirthday() != null) {
+			Birthday bday = vcCopy.getBirthday();
+			contact.setBirthday(new LocalDate(bday.getDate()));
+			vcCopy.removeProperties(Birthday.class);
+		}
+		
+		// ANNIVERSARY(*)
+		if (vcCopy.getAnniversary()!= null) {
+			Anniversary anni = vcCopy.getAnniversary();
+			contact.setAnniversary(new LocalDate(anni.getDate()));
+			vcCopy.removeProperties(Anniversary.class);
+		}
+		
+		// URL(*)
+		if (!vcCopy.getUrls().isEmpty()) {
+			if (vcCopy.getUrls().size() > 1) log(logHandler, 1, LogEntry.Level.WARN, "Many URL properties found");
+			Url ur = vcCopy.getUrls().get(0);
+			contact.setUrl(deflt(ur.getValue()));
+			vcCopy.removeProperties(Url.class);
+		}
+		
+		// NOTE(*)
+		if (!vcCopy.getNotes().isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+			for (Note no : vcCopy.getNotes()) {
+				sb.append(no.getValue());
+				sb.append("\n");
+			}
+			contact.setNotes(sb.toString());
+			vcCopy.removeProperties(Note.class);
+		}
+		
+		// PHOTO(*)
+		if (!vcCopy.getPhotos().isEmpty()) {
+			if (vcCopy.getPhotos().size() > 1) log(logHandler, 1, LogEntry.Level.WARN, "Many PHOTO properties found");
+			final Photo pho = vcCopy.getPhotos().get(0);
+			final String mtype = getMediaType(pho);
+			if (mtype != null) {
+				contactPicture = new ContactPictureWithBytes(pho.getData());
+				contactPicture.setMediaType(mtype);
+				vcCopy.removeProperties(Photo.class);
+			} else {
+				log(logHandler, 1, LogEntry.Level.WARN, "PHOTO skipped: unspecified content type");
+			}
+		}
+		
+		VCard sourceObject = (returnSourceObject && !vcCopy.getProperties().isEmpty()) ? vcCopy : null;
+		return new ContactInput(contact, contactCompany, contactPicture, tagNames, sourceObject);
 	}
 	
 	/*
@@ -218,289 +484,6 @@ public class VCardInput {
 		}
 	}
 	*/
-	
-	public ContactInput fromVCard(VCard vCard, LogEntries log) throws WTException {
-		Contact contact = new Contact();
-		
-		// UID(?)
-		if (vCard.getUid() != null) {
-			contact.setPublicUid(deflt(vCard.getUid().getValue()));
-		}
-		
-		// FN(+) -> displayName
-		if (!vCard.getFormattedNames().isEmpty()) {
-			FormattedName fn = vCard.getFormattedNames().get(0);
-			contact.setDisplayName(deflt(fn.getValue()));
-			if ((log != null) && (vCard.getFormattedNames().size() > 1)) {
-				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many FN properties found"));
-			}
-		}
-		
-		// N(?) -> FirstName/LastName
-		if (!vCard.getStructuredNames().isEmpty()) {
-			StructuredName sn = vCard.getStructuredNames().get(0);
-			contact.setFirstName(deflt(sn.getGiven()));
-			contact.setLastName(deflt(sn.getFamily()));
-			if (!sn.getPrefixes().isEmpty()) {
-				contact.setTitle(sn.getPrefixes().get(0));
-				if ((log != null) && (sn.getPrefixes().size() > 1)) {
-					log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many N(prefix) properties found"));
-				}
-			}
-			if ((log != null) && (vCard.getStructuredNames().size() > 1)) {
-				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many N properties found"));
-			}
-		}
-		
-		// NICKNAME(*)
-		if (!vCard.getNicknames().isEmpty()) {
-			Nickname ni = vCard.getNicknames().get(0);
-			contact.setNickname(deflt(flatten(ni)));
-			if ((log != null) && (vCard.getNicknames().size() > 1)) {
-				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many NICKNAME properties found"));
-			}
-		}
-		
-		// GENDER(?)
-		if (vCard.getGender() != null) {
-			contact.setGender(fromGender(vCard.getGender()));
-		}
-		
-		// ADR(*)
-		if (!vCard.getAddresses().isEmpty()) {
-			HashMap<MatchCategory, LinkedList<Address>> map = analyzeAddresses(vCard.getAddresses());
-			for (MatchCategory key : map.keySet()) { // Strict matching
-				if (MatchCategory.NONE.equals(key)) continue;
-				final Address address = map.get(key).pollFirst();
-				setAddress(contact, key, address);
-			}
-			if (relaxedMatching) {
-				for (MatchCategory key : map.keySet()) {
-					boolean shouldBreak = false;
-					final int count = map.get(key).size();
-					for (int i=1; i<=count; i++) {
-						final Address address = map.get(key).pollFirst();
-						if (!setAddressRelaxed(contact, address)) {
-							shouldBreak = true;
-							break;
-						}
-					}
-					if (shouldBreak) break;
-				}
-			}
-		}
-		
-		// TEL(*)
-		if (!vCard.getTelephoneNumbers().isEmpty()) {
-			HashMap<MatchCategory, LinkedList<Telephone>> map = analyzeTelephones(vCard.getTelephoneNumbers());
-			for (MatchCategory key : map.keySet()) { // Strict matching
-				if (MatchCategory.NONE.equals(key)) continue;
-				final Telephone telephone = map.get(key).pollFirst();
-				setTelephone(contact, key, telephone);
-			}
-			if (relaxedMatching) {
-				for (MatchCategory key : map.keySet()) {
-					boolean shouldBreak = false;
-					final int count = map.get(key).size();
-					for (int i=1; i<=count; i++) {
-						final Telephone telephone = map.get(key).pollFirst();
-						if (!setTelephoneRelaxed(contact, telephone)) {
-							shouldBreak = true;
-							break;
-						}
-					}
-					if (shouldBreak) break;
-				}
-			}
-		}
-		
-		/*
-		if (!vCard.getTelephoneNumbers().isEmpty()) {
-			for (Telephone tel : vCard.getTelephoneNumbers()) {
-				Set<TelephoneType> types = tel.getTypes();
-				if (types.contains(TelephoneType.WORK)) {
-					if (types.contains(TelephoneType.VOICE)) {
-						contact.setWorkTelephone(deflt(tel.getText()));
-					} else if (types.contains(TelephoneType.CELL)) {
-						contact.setWorkMobile(deflt(tel.getText()));
-					} else if (types.contains(TelephoneType.FAX)) {
-						contact.setWorkFax(deflt(tel.getText()));
-					} else if (types.contains(TelephoneType.PAGER)) {
-						contact.setWorkPager(deflt(tel.getText()));
-					} else if (types.contains(TelephoneType.TEXT)) {
-						contact.setWorkTelephone2(deflt(tel.getText()));
-					} else {
-						if (StringUtils.isBlank(contact.getWorkTelephone())) {
-							contact.setWorkTelephone(deflt(tel.getText()));
-						}
-					}
-				} else if (types.contains(TelephoneType.HOME)) {
-					if (types.contains(TelephoneType.VOICE)) {
-						contact.setHomeTelephone(deflt(tel.getText()));
-					} else if (types.contains(TelephoneType.FAX)) {
-						contact.setHomeFax(deflt(tel.getText()));
-					} else if (types.contains(TelephoneType.PAGER)) {
-						contact.setHomePager(deflt(tel.getText()));
-					} else if (types.contains(TelephoneType.CELL)) {
-						contact.setHomeTelephone2(deflt(tel.getText()));
-					} else if (types.contains(TelephoneType.TEXT)) {
-						contact.setHomeTelephone2(deflt(tel.getText()));
-					} else {
-						if (StringUtils.isBlank(contact.getHomeTelephone())) {
-							contact.setHomeTelephone(deflt(tel.getText()));
-						}
-					}
-				} else {
-					final String value = deflt(tel.getText());
-					for (TelephoneType type : types) {
-						setFallbackTelephone(contact, type, value);
-					}
-				}
-			}
-		}
-		*/
-		
-		// EMAIL(*)
-		if (!vCard.getEmails().isEmpty()) {
-			HashMap<MatchCategory, LinkedList<Email>> map = analyzeEmails(vCard.getEmails());
-			for (MatchCategory key : map.keySet()) { // Strict matching
-				if (MatchCategory.NONE.equals(key)) continue;
-				final Email email = map.get(key).pollFirst();
-				setEmail(contact, key, email);
-			}
-			if (relaxedMatching) {
-				for (MatchCategory key : map.keySet()) {
-					boolean shouldBreak = false;
-					final int count = map.get(key).size();
-					for (int i=1; i<=count; i++) {
-						final Email email = map.get(key).pollFirst();
-						if (!setEmailRelaxed(contact, email)) {
-							shouldBreak = true;
-							break;
-						}
-					}
-					if (shouldBreak) break;
-				}
-			}
-		}
-		
-		// IMPP(*) -> InstantMsg
-		if (!vCard.getImpps().isEmpty()) {
-			HashMap<MatchCategory, LinkedList<Impp>> map = analyzeIMPPs(vCard.getImpps());
-			for (MatchCategory key : map.keySet()) { // Strict matching
-				if (MatchCategory.NONE.equals(key)) continue;
-				final Impp impp = map.get(key).pollFirst();
-				setIMPP(contact, key, impp);
-			}
-			if (relaxedMatching) {
-				for (MatchCategory key : map.keySet()) {
-					boolean shouldBreak = false;
-					final int count = map.get(key).size();
-					for (int i=1; i<=count; i++) {
-						final Impp impp = map.get(key).pollFirst();
-						if (!setIMPPRelaxed(contact, impp)) {
-							shouldBreak = true;
-							break;
-						}
-					}
-					if (shouldBreak) break;
-				}
-			}
-		}
-		
-		// ORG(*) -> Company/Department
-		if (vCard.getOrganization() != null) {
-			List<String> values = vCard.getOrganization().getValues();
-			if (!values.isEmpty()) {
-				String value = deflt(values.get(0));
-				contact.setCompany(new ContactCompany(value, value));
-				if (values.size() > 1) contact.setDepartment(deflt(values.get(1)));
-			}
-		}
-		
-		// TITLE and ROLE have a similar meaning but seems that devices 
-		// writes data into TITLE field. In order to catch many cases we can,
-		// it's better to give precedence to TITLE field and then fallback to
-		// the similar ROLE field.
-		
-		// TITLE(*) -> Function
-		if (!vCard.getTitles().isEmpty()) {
-			Title ti = vCard.getTitles().get(0);
-			contact.setFunction(deflt(ti.getValue()));
-			if ((log != null) && (vCard.getTitles().size() > 1)) {
-				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many TITLE properties found"));
-			}
-		}
-		// ROLE(*) -> Function
-		if (StringUtils.isBlank(contact.getFunction()) && !vCard.getRoles().isEmpty()) {
-			Role ro = vCard.getRoles().get(0);
-			contact.setFunction(deflt(ro.getValue()));
-			if ((log != null) && (vCard.getRoles().size() > 1)) {
-				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many ROLE properties found"));
-			}
-		}
-		/*
-		// ROLE(*) -> Function
-		if (!vCard.getRoles().isEmpty()) {
-			Role ro = vCard.getRoles().get(0);
-			contact.setFunction(deflt(ro.getValue()));
-			if ((log != null) && (vCard.getRoles().size() > 1)) {
-				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many ROLE properties found"));
-			}
-		}
-		*/
-		
-		//TODO: How we can fill manager field?
-		//TODO: How we can fill assistant field?
-		//TODO: How we can fill assistant-phone field?
-		
-		// BDAY(*)
-		if (vCard.getBirthday() != null) {
-			contact.setBirthday(new LocalDate(vCard.getBirthday().getDate()));
-		}
-		
-		// ANNIVERSARY(*)
-		if (vCard.getAnniversary()!= null) {
-			contact.setAnniversary(new LocalDate(vCard.getAnniversary().getDate()));
-		}
-		
-		// URL(*)
-		if (!vCard.getUrls().isEmpty()) {
-			Url ur = vCard.getUrls().get(0);
-			contact.setUrl(deflt(ur.getValue()));
-			if ((log != null) && (vCard.getUrls().size() > 1)) {
-				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many URL properties found"));
-			}
-		}
-		
-		// NOTE(*)
-		if (!vCard.getNotes().isEmpty()) {
-			StringBuilder sb = new StringBuilder();
-			for (Note no : vCard.getNotes()) {
-				sb.append(no.getValue());
-				sb.append("\n");
-			}
-			contact.setNotes(sb.toString());
-		}
-		
-		// PHOTO(*)
-		if (!vCard.getPhotos().isEmpty()) {
-			if ((log != null) && (vCard.getPhotos().size() > 1)) {
-				log.add(new MessageLogEntry(LogEntry.Level.WARN, "Many PHOTO properties found"));
-			}
-			final Photo pho = vCard.getPhotos().get(0);
-			final String mtype = getMediaType(pho);
-			if (mtype != null) {
-				ContactPictureWithBytes picture = new ContactPictureWithBytes(pho.getData());
-				picture.setMediaType(mtype);
-				contact.setPicture(picture);
-			} else {
-				if (log != null) log.add(new MessageLogEntry(LogEntry.Level.WARN, "PHOTO skipped: unspecified content type"));
-			}
-		}
-		
-		return new ContactInput(contact);
-	}
 	
 	public HashMap<MatchCategory, LinkedList<Address>> analyzeAddresses(List<Address> addresses) {
 		HashMap<MatchCategory, LinkedList<Address>> map = new LinkedHashMap<>();
@@ -628,36 +611,40 @@ public class VCardInput {
 		return map;
 	}
 	
-	public Contact.Gender fromGender(Gender gender) {
-		if (gender.isMale()) return Contact.Gender.MALE;
-		if (gender.isFemale()) return Contact.Gender.FEMALE;
-		if (gender.isOther()) return Contact.Gender.OTHER;
+	public ContactBase.Gender toContactGender(Gender gender) {
+		if (gender.isMale()) return ContactBase.Gender.MALE;
+		if (gender.isFemale()) return ContactBase.Gender.FEMALE;
+		if (gender.isOther()) return ContactBase.Gender.OTHER;
 		return null;
 	}
 	
-	private void setAddress(Contact contact, MatchCategory category, Address address) {
+	private boolean setAddress(ContactBase contact, MatchCategory category, Address address) {
 		if (MatchCategory.WORK.equals(category)) {
 			contact.setWorkAddress(deflt(address.getStreetAddress()));
 			contact.setWorkPostalCode(deflt(address.getPostalCode()));
 			contact.setWorkCity(deflt(address.getLocality()));
 			contact.setWorkState(deflt(address.getRegion()));
 			contact.setWorkCountry(deflt(address.getCountry()));
+			return true;
 		} else if (MatchCategory.HOME.equals(category)) {
 			contact.setHomeAddress(deflt(address.getStreetAddress()));
 			contact.setHomePostalCode(deflt(address.getPostalCode()));
 			contact.setHomeCity(deflt(address.getLocality()));
 			contact.setHomeState(deflt(address.getRegion()));
 			contact.setHomeCountry(deflt(address.getCountry()));
+			return true;
 		} else if (MatchCategory.OTHER.equals(category)) {
 			contact.setOtherAddress(deflt(address.getStreetAddress()));
 			contact.setOtherPostalCode(deflt(address.getPostalCode()));
 			contact.setOtherCity(deflt(address.getLocality()));
 			contact.setOtherState(deflt(address.getRegion()));
 			contact.setOtherCountry(deflt(address.getCountry()));
+			return true;
 		}
+		return false;
 	}
 	
-	private boolean setAddressRelaxed(Contact contact, Address address) {
+	private boolean setAddressRelaxed(ContactBase contact, Address address) {
 		if (contact.isWorkAddressEmpty()) {
 			contact.setWorkAddress(deflt(address.getStreetAddress()));
 			contact.setWorkPostalCode(deflt(address.getPostalCode()));
@@ -683,38 +670,50 @@ public class VCardInput {
 		return false;
 	}
 	
-	private void setTelephone(Contact contact, MatchCategory category, Telephone telephone) {
+	private boolean setTelephone(ContactBase contact, MatchCategory category, Telephone telephone) {
 		final List<TelephoneType> types = telephone.getTypes();
 		if (MatchCategory.WORK.equals(category)) {
 			if (types.contains(TelephoneType.VOICE)) {
 				contact.setWorkTelephone1(deflt(telephone.getText()));
+				return true;
 			} else if (types.contains(TelephoneType.FAX)) {
 				contact.setWorkFax(deflt(telephone.getText()));
+				return true;
 			} else if (types.contains(TelephoneType.PAGER)) {
 				contact.setPager1(deflt(telephone.getText()));
+				return true;
 			} else if (types.contains(TelephoneType.CELL)) {
 				contact.setMobile(deflt(telephone.getText()));
+				return true;
 			} else if (types.contains(TelephoneType.TEXT)) {
 				contact.setWorkTelephone2(deflt(telephone.getText()));
+				return true;
 			} else {
 				contact.setWorkTelephone1(deflt(telephone.getText()));
+				return true;
 			}
 		} else if (MatchCategory.HOME.equals(category)) {
 			if (types.contains(TelephoneType.VOICE)) {
 				contact.setHomeTelephone1(deflt(telephone.getText()));
+				return true;
 			} else if (types.contains(TelephoneType.FAX)) {
 				contact.setHomeFax(deflt(telephone.getText()));
+				return true;
 			} else if (types.contains(TelephoneType.PAGER)) {
 				contact.setPager2(deflt(telephone.getText()));
+				return true;
 			} else if (types.contains(TelephoneType.TEXT)) {
 				contact.setHomeTelephone2(deflt(telephone.getText()));
+				return true;
 			} else {
 				contact.setHomeTelephone1(deflt(telephone.getText()));
+				return true;
 			}
 		}
+		return false;
 	}
 	
-	private boolean setTelephoneRelaxed(Contact contact, Telephone telephone) {
+	private boolean setTelephoneRelaxed(ContactBase contact, Telephone telephone) {
 		final List<TelephoneType> types = telephone.getTypes();
 		if (types.contains(TelephoneType.CELL)) {
 			if (StringUtils.isBlank(contact.getMobile())) {
@@ -786,17 +785,21 @@ public class VCardInput {
 		return false;
 	}
 	
-	private void setEmail(Contact contact, MatchCategory category, Email email) {
+	private boolean setEmail(ContactBase contact, MatchCategory category, Email email) {
 		if (MatchCategory.WORK.equals(category)) {
 			contact.setEmail1(deflt(email.getValue()));
+			return true;
 		} else if (MatchCategory.HOME.equals(category)) {
 			contact.setEmail2(deflt(email.getValue()));
+			return true;
 		} else if (MatchCategory.OTHER.equals(category)) {
 			contact.setEmail3(deflt(email.getValue()));
+			return true;
 		}
+		return false;
 	}
 	
-	private boolean setEmailRelaxed(Contact contact, Email email) {
+	private boolean setEmailRelaxed(ContactBase contact, Email email) {
 		if (StringUtils.isBlank(contact.getEmail1())) {
 			contact.setEmail1(deflt(email.getValue()));
 			return true;
@@ -810,17 +813,21 @@ public class VCardInput {
 		return false;
 	}
 	
-	private void setIMPP(Contact contact, MatchCategory category, Impp impp) {
+	private boolean setIMPP(ContactBase contact, MatchCategory category, Impp impp) {
 		if (MatchCategory.WORK.equals(category)) {
 			contact.setInstantMsg1(deflt(impp.getUri().toString()));
+			return true;
 		} else if (MatchCategory.HOME.equals(category)) {
 			contact.setInstantMsg2(deflt(impp.getUri().toString()));
+			return true;
 		} else if (MatchCategory.OTHER.equals(category)) {
 			contact.setInstantMsg3(deflt(impp.getUri().toString()));
+			return true;
 		}
+		return false;
 	}
 	
-	private boolean setIMPPRelaxed(Contact contact, Impp impp) {
+	private boolean setIMPPRelaxed(ContactBase contact, Impp impp) {
 		if (StringUtils.isBlank(contact.getInstantMsg1())) {
 			contact.setInstantMsg1(deflt(impp.getUri().toString()));
 			return true;
@@ -837,7 +844,7 @@ public class VCardInput {
 	private String getMediaType(Photo photo) {
 		if (photo.getContentType() == null) return null;
 		try {
-			return new MimeType(photo.getContentType().getValue()).toString();
+			return new MimeType(photo.getContentType().getMediaType()).toString();
 		} catch(MimeException ex) {
 			return null;
 		}
@@ -853,6 +860,34 @@ public class VCardInput {
 	
 	private String flatten(TextListProperty textListProp, String separator) {
 		return StringUtils.join(textListProp.getValues(), separator);
+	}
+	
+	private BufferingLogHandler createBufferingLogHandler(LogMessage firstLogMessage) {
+		if (logHandler != null) {
+			return new BufferingLogHandler() {
+				@Override
+				public List<LogEntry> first() {
+					return Arrays.asList(firstLogMessage);
+				}
+			};
+		} else {
+			return null;
+		}
+	}
+	
+	private void flushToLogHandler(BufferingLogHandler bufferingLogHandler) {
+		if (logHandler != null && bufferingLogHandler != null) {
+			final List<LogEntry> entries = bufferingLogHandler.flush();
+			if (entries != null) logHandler.handle(entries);
+		}
+	}
+	
+	private void log(LogHandler handler, int depth, LogEntry.Level level, String message, Object... arguments) {
+		if (handler != null) {
+			try {
+				handler.handle(new LogMessage(depth, level, message, arguments));
+			} catch(Throwable t) {}
+		}
 	}
 	
 	public static enum MatchCategory {

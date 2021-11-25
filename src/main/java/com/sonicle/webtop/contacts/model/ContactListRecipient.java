@@ -36,48 +36,43 @@ package com.sonicle.webtop.contacts.model;
  *
  * @author malbinola
  */
-public class ContactPictureWithBytesOld {
-	protected String mediaType;
-	protected byte[] bytes;
-	protected int width;
-	protected int height;
+public class ContactListRecipient {
+	protected Integer listRecipientId;
+	protected String recipient;
+	protected Integer recipientContactId;
+	protected String recipientType;
 	
-	public ContactPictureWithBytesOld() {}
-	
-	public ContactPictureWithBytesOld(String mediaType, byte[] bytes) {
-		this.mediaType = mediaType;
-		this.bytes = bytes;
+	public ContactListRecipient() {}
+
+	public Integer getListRecipientId() {
+		return listRecipientId;
 	}
 
-	public String getMediaType() {
-		return mediaType;
+	public void setListRecipientId(Integer listRecipientId) {
+		this.listRecipientId = listRecipientId;
 	}
 
-	public void setMediaType(String mediaType) {
-		this.mediaType = mediaType;
+	public String getRecipient() {
+		return recipient;
 	}
 
-	public byte[] getBytes() {
-		return bytes;
-	}
-
-	public void setBytes(byte[] bytes) {
-		this.bytes = bytes;
+	public void setRecipient(String recipient) {
+		this.recipient = recipient;
 	}
 	
-	public int getWidth() {
-		return width;
+	public Integer getRecipientContactId() {
+		return recipientContactId;
 	}
 
-	public void setWidth(int width) {
-		this.width = width;
+	public void setRecipientContactId(Integer recipientContactId) {
+		this.recipientContactId = recipientContactId;
 	}
 
-	public int getHeight() {
-		return height;
+	public String getRecipientType() {
+		return recipientType;
 	}
 
-	public void setHeight(int height) {
-		this.height = height;
+	public void setRecipientType(String recipientType) {
+		this.recipientType = recipientType;
 	}
 }

@@ -30,35 +30,29 @@
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
  * display the words "Copyright (C) 2021 Sonicle S.r.l.".
  */
-package com.sonicle.webtop.contacts.model;
+package com.sonicle.webtop.contacts;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import com.sonicle.webtop.core.sdk.WTException;
 
 /**
  *
  * @author malbinola
  */
-public class Contact extends ContactEx {
-	protected Integer contactId;
+public class WTImportException extends WTException {
 	
-	public Contact() {
+	public WTImportException() {
 		super();
 	}
 	
-	public Integer getContactId() {
-		return contactId;
-	}
-
-	public void setContactId(Integer contactId) {
-		this.contactId = contactId;
+	public WTImportException(Throwable cause) {
+		super(cause);
 	}
 	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this)
-				.append(getContactId())
-				.append(getFirstName())
-				.append(getLastName())
-				.toString();
+	public WTImportException(String message, Object... arguments) {
+		super(message, arguments);
+	}
+	
+	public WTImportException(Throwable cause, String message, Object... arguments) {
+		super(cause, message, arguments);
 	}
 }

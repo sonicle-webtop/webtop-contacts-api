@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Sonicle S.r.l.
+ * Copyright (C) 2018 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,106 +28,27 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2021 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2018 Sonicle S.r.l.".
  */
-package com.sonicle.webtop.contacts.io;
+package com.sonicle.webtop.contacts.old.io;
 
-import com.sonicle.commons.LangUtils;
 import com.sonicle.commons.time.DateTimeUtils;
+import com.sonicle.webtop.contacts.io.ContactInput;
 import com.sonicle.webtop.contacts.model.ContactBase;
-import com.sonicle.webtop.core.app.util.log.BufferingLogHandler;
-import com.sonicle.webtop.core.app.util.log.LogEntry;
-import com.sonicle.webtop.core.app.util.log.LogHandler;
-import com.sonicle.webtop.core.app.util.log.LogMessage;
 import com.sonicle.webtop.core.sdk.WTException;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import org.apache.commons.io.IOUtils;
+import com.sonicle.webtop.core.util.LogEntries;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchResult;
-import org.ldaptive.io.LdifReader;
-import com.sonicle.webtop.core.app.io.BeanHandler;
 
 /**
  *
  * @author malbinola
  */
 public class LDIFInput {
-	private LogHandler logHandler = null;
-	private BeanHandler<ContactInput> beanHandler = null;
-	
-	public LDIFInput withLogHandler(LogHandler logHandler) {
-		this.logHandler = logHandler;
-		return this;
-	}
-	
-	public LDIFInput withBeanHandler(BeanHandler<ContactInput> beanHandler) {
-		this.beanHandler = beanHandler;
-		return this;
-	}
-	
-	public List<ContactInput> parseLDIF(File file) throws IOException, WTException {
-		FileReader fr = null;
-		try {
-			fr = new FileReader(file);
-			final LdifReader ldifReader = new LdifReader(fr);
-			SearchResult resLDIF = ldifReader.read();
-			return parseLDIFObjects(resLDIF.getEntries());
-			
-		} finally {
-			IOUtils.closeQuietly(fr);
-		}
-	}
-	
-	public List<ContactInput> parseLDIF(InputStream is) throws IOException, WTException {
-		final LdifReader ldifReader = new LdifReader(new InputStreamReader(is));
-		SearchResult resLDIF = ldifReader.read();
-		return parseLDIFObjects(resLDIF.getEntries());
-	}
-	
-	public List<ContactInput> parseLDIFObjects(Collection<LdapEntry> ldapEntries) throws WTException {
-		ArrayList<ContactInput> results = (beanHandler == null) ? new ArrayList<>() : null;
-		
-		int count = 0;
-		for (LdapEntry ldapEntry : ldapEntries) {
-			count++;
-			BufferingLogHandler buffLogHandler = createBufferingLogHandler(new LogMessage(0, LogEntry.Level.INFO, "LDIF #{} [{}]", count, ldapEntry.toString()));
-			
-			try {
-				final ContactInput result = parseLDIFObject(ldapEntry, buffLogHandler);
-				if (result.contact.trimFieldLengths()) {
-					log(buffLogHandler, 1, LogEntry.Level.WARN, "Some fields were truncated due to max-length");
-				}
-				if (beanHandler != null) {
-					beanHandler.handle(result);
-				} else if (results != null) {
-					results.add(result);
-				}
 
-			} catch(Throwable t) {
-				log(buffLogHandler, 0, LogEntry.Level.ERROR, "Reason: {}", LangUtils.getThrowableMessage(t));
-			}
-			
-			flushToLogHandler(buffLogHandler);
-		}
-		return results;
-	}
-	
-	public ContactInput parseLDIFObject(LdapEntry ldapEntry) throws WTException {
-		return parseLDIFObject(ldapEntry, null);
-	}
-	
-	private ContactInput parseLDIFObject(LdapEntry ldapEntry, LogHandler logHandler) throws WTException {
+	public ContactInput fromLDIF(LdapEntry ldapEntry, LogEntries log) throws WTException {
 		ContactBase contact = new ContactBase();
 
 		if (ldapEntry.getAttribute("givenName") != null) { // FirstName
@@ -211,34 +132,6 @@ public class LDIFInput {
 			return new String(attribute.getBinaryValue());
 		} else {
 			return attribute.getStringValue();
-		}
-	}
-	
-	private BufferingLogHandler createBufferingLogHandler(LogMessage firstLogMessage) {
-		if (logHandler != null) {
-			return new BufferingLogHandler() {
-				@Override
-				public List<LogEntry> first() {
-					return Arrays.asList(firstLogMessage);
-				}
-			};
-		} else {
-			return null;
-		}
-	}
-	
-	private void flushToLogHandler(BufferingLogHandler bufferingLogHandler) {
-		if (logHandler != null && bufferingLogHandler != null) {
-			final List<LogEntry> entries = bufferingLogHandler.flush();
-			if (entries != null) logHandler.handle(entries);
-		}
-	}
-	
-	private void log(LogHandler handler, int depth, LogEntry.Level level, String message, Object... arguments) {
-		if (handler != null) {
-			try {
-				handler.handle(new LogMessage(depth, level, message, arguments));
-			} catch(Throwable t) {}
 		}
 	}
 }

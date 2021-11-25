@@ -30,35 +30,41 @@
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
  * display the words "Copyright (C) 2021 Sonicle S.r.l.".
  */
-package com.sonicle.webtop.contacts.model;
+package com.sonicle.webtop.contacts.io.input;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import com.sonicle.webtop.contacts.io.LDIFInput;
+import com.sonicle.webtop.core.app.io.input.AbstractReader;
+import com.sonicle.webtop.core.app.io.input.WTReaderException;
+import com.sonicle.webtop.core.app.util.log.LogHandler;
+import com.sonicle.webtop.core.sdk.WTException;
+import java.io.IOException;
+import java.io.File;
+import com.sonicle.webtop.contacts.io.ContactFileReader;
+import com.sonicle.webtop.core.app.io.BeanHandler;
 
 /**
  *
  * @author malbinola
  */
-public class Contact extends ContactEx {
-	protected Integer contactId;
-	
-	public Contact() {
-		super();
-	}
-	
-	public Integer getContactId() {
-		return contactId;
-	}
+public class ContactLDIFFileReader extends AbstractReader implements ContactFileReader {
 
-	public void setContactId(Integer contactId) {
-		this.contactId = contactId;
+	public ContactLDIFFileReader() {
+		super(null);
+	}
+	
+	public ContactLDIFFileReader(LogHandler logHandler) {
+		super(logHandler);
 	}
 	
 	@Override
-	public String toString() {
-		return new ToStringBuilder(this)
-				.append(getContactId())
-				.append(getFirstName())
-				.append(getLastName())
-				.toString();
+	public void read(File file, BeanHandler beanHandler) throws IOException, WTReaderException {
+		LDIFInput input = new LDIFInput()
+				.withLogHandler(logHandler)
+				.withBeanHandler(beanHandler);
+		try {
+			input.parseLDIF(file);
+		} catch (WTException ex) {
+			throw new WTReaderException(ex, "Unable to read");
+		}
 	}
 }

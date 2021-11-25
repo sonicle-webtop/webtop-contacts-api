@@ -41,7 +41,7 @@ import org.joda.time.DateTime;
 public class ContactObject {
 	protected Integer contactId;
 	protected Integer categoryId;
-	protected Contact.RevisionStatus revisionStatus;
+	protected ContactBase.RevisionStatus revisionStatus;
 	protected DateTime revisionTimestamp;
 	protected String publicUid;
 	protected String href;
@@ -62,11 +62,11 @@ public class ContactObject {
 		this.categoryId = categoryId;
 	}
 
-	public Contact.RevisionStatus getRevisionStatus() {
+	public ContactBase.RevisionStatus getRevisionStatus() {
 		return revisionStatus;
 	}
 
-	public void setRevisionStatus(Contact.RevisionStatus revisionStatus) {
+	public void setRevisionStatus(ContactBase.RevisionStatus revisionStatus) {
 		this.revisionStatus = revisionStatus;
 	}
 

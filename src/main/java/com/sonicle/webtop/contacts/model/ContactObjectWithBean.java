@@ -37,24 +37,13 @@ package com.sonicle.webtop.contacts.model;
  * @author malbinola
  */
 public class ContactObjectWithBean extends ContactObject {
-	protected Contact contact;
-	//protected ContactCompany contactCompany;
+	protected ContactEx contact;
 	
-	public Contact getContact() {
+	public ContactEx getContact() {
 		return contact;
 	}
 
-	public void setContact(Contact contact) {
+	public void setContact(ContactEx contact) {
 		this.contact = contact;
 	}
-	
-	/*
-	public ContactCompany getContactCompany() {
-		return contactCompany;
-	}
-
-	public void setContactCompany(ContactCompany contactCompany) {
-		this.contactCompany = contactCompany;
-	}
-	*/
 }

@@ -32,11 +32,15 @@
  */
 package com.sonicle.webtop.contacts.io;
 
-import com.sonicle.webtop.contacts.model.Contact;
-import com.sonicle.webtop.contacts.model.ContactCompany;
-import com.sonicle.webtop.contacts.model.ContactCompanyJoined;
+import com.sonicle.commons.LangUtils;
+import com.sonicle.webtop.contacts.model.ContactBase;
+import com.sonicle.webtop.contacts.model.ContactEx;
 import com.sonicle.webtop.contacts.model.ContactPicture;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
+import com.sonicle.webtop.core.app.util.log.BufferingLogHandler;
+import com.sonicle.webtop.core.app.util.log.LogEntry;
+import com.sonicle.webtop.core.app.util.log.LogHandler;
+import com.sonicle.webtop.core.app.util.log.LogMessage;
 import com.sonicle.webtop.core.model.RecipientFieldCategory;
 import com.sonicle.webtop.core.sdk.WTException;
 import ezvcard.Ezvcard;
@@ -68,7 +72,10 @@ import ezvcard.property.Uid;
 import ezvcard.property.Url;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import net.sf.qualitycheck.Check;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -76,29 +83,39 @@ import org.apache.commons.lang3.StringUtils;
  * @author malbinola
  */
 public class VCardOutput {
+	private final String prodId;
+	private TagsMappingMode tagsMappingMode = TagsMappingMode.NAME;
+	private Map<String, String> tagNamesByIdMap = null;
+	private LogHandler logHandler = null;
 	private boolean enableCaretEncoding = true;
 	private VCardVersion version = VCardVersion.V4_0;
 	private RecipientFieldCategory preferredTarget = RecipientFieldCategory.WORK;
-	private final String prodId;
 	private final AddressType otherAddressType = AddressType.POSTAL;
 	private EmailType[] emailTypeMap = new EmailType[]{EmailType.WORK, EmailType.HOME, EmailType.AOL};
 	private ImppType[] imppTypeMap = new ImppType[]{ImppType.WORK, ImppType.HOME, ImppType.PERSONAL};
 	
 	public VCardOutput(String prodId) {
-		this.prodId = prodId;
+		this.prodId = Check.notNull(prodId, "prodId");
 	}
-
-	public boolean isEnableCaretEncoding() {
-		return enableCaretEncoding;
-	}
-
-	public VCardOutput withEnableCaretEncoding(boolean enableCaretEncoding) {
-		this.enableCaretEncoding = enableCaretEncoding;
+	
+	public VCardOutput withTagsMappingMode(TagsMappingMode tagsMappingMode) {
+		this.tagsMappingMode = Check.notNull(tagsMappingMode, "tagsMappingMode");
 		return this;
 	}
 	
-	public VCardVersion getVCardVersion() {
-		return version;
+	public VCardOutput withTagNamesByIdMap(Map<String, String> tagNamesByIdMap) {
+		this.tagNamesByIdMap = tagNamesByIdMap;
+		return this;
+	}
+	
+	public VCardOutput withLogHandler(LogHandler logHandler) {
+		this.logHandler = logHandler;
+		return this;
+	}
+	
+	public VCardOutput withEnableCaretEncoding(boolean enableCaretEncoding) {
+		this.enableCaretEncoding = enableCaretEncoding;
+		return this;
 	}
 	
 	public VCardOutput withVCardVersion(VCardVersion version) {
@@ -106,74 +123,133 @@ public class VCardOutput {
 		return this;
 	}
 	
-	public RecipientFieldCategory getPreferredTarget() {
-		return preferredTarget;
-	}
-	
 	public VCardOutput withPreferredTarget(RecipientFieldCategory preferredTarget) {
 		this.preferredTarget = preferredTarget;
 		return this;
 	}
 	
-	public String write(VCard vCard) {
-		return write(vCard, false);
+	public boolean isEnableCaretEncoding() {
+		return enableCaretEncoding;
 	}
 	
-	public String write(VCard vCard, boolean useOriginalVersion) {
+	public VCardVersion getVCardVersion() {
+		return version;
+	}
+	
+	public RecipientFieldCategory getPreferredTarget() {
+		return preferredTarget;
+	}
+	
+	public String write(VCard vCard) {
 		if (vCard == null) return null;
-		VCardVersion targetVersion = version;
-		if (useOriginalVersion && (vCard.getVersion() != null)) {
-			targetVersion = vCard.getVersion();
-		}
 		return Ezvcard.write(vCard)
 				.caretEncoding(enableCaretEncoding)
-				.version(targetVersion)
+				.version(version)
 				.go();
 	}
 	
-	public VCard toVCard(Contact contact) throws WTException {
-		VCard vCard = new VCard();
+	public String writeVCard(ContactEx contact, VCard baseObject) throws WTException {
+		return writeVCard(new ContactOutput(contact, baseObject));
+	}
+	
+	public String writeVCard(ContactOutput output) throws WTException {
+		return writeVCard(Arrays.asList(output));
+	}
+	
+	public String writeVCard(Collection<ContactOutput> outputs) throws WTException {
+		return Ezvcard.write(createCardObjectsCollection(outputs))
+			.caretEncoding(enableCaretEncoding)
+			.version(version)
+			.go();
+	}
+	
+	public String writeVCard(VCard vCard) throws WTException {
+		return Ezvcard.write(vCard)
+			.caretEncoding(enableCaretEncoding)
+			.version(version)
+			.go();
+	}
+	
+	public Collection<VCard> createCardObjectsCollection(Collection<ContactOutput> outputs) throws WTException {
+		List<VCard> ret = new ArrayList<>(outputs.size());
+		
+		int count = 0;
+		for (ContactOutput output : outputs) {
+			count++;
+			final ContactEx contact = output.contact;
+			final int outNo = count;
+			
+			BufferingLogHandler buffLogHandler = null;
+			if (logHandler != null) {
+				buffLogHandler = new BufferingLogHandler() {
+					@Override
+					public List<LogEntry> first() {
+						return Arrays.asList(new LogMessage(0, LogEntry.Level.INFO, "Contact #{} [{}, {}]", outNo, contact.getPublicUid(), contact.getDisplayName(true)));
+					}
+				};
+			}
+			
+			try {
+				ret.add(createCardObject(output.contact, output.baseObject, logHandler));
+			} catch(Throwable t) {
+				log(buffLogHandler, 0, LogEntry.Level.ERROR, "Reason: {}", LangUtils.getThrowableMessage(t));
+			}
+			
+			if (logHandler != null && buffLogHandler != null) {
+				final List<LogEntry> entries = buffLogHandler.flush();
+				if (entries != null) logHandler.handle(entries);
+			}
+		}
+		return ret;
+	}
+	
+	public VCard createCardObject(ContactEx contact, VCard baseObject) throws WTException {
+		return createCardObject(contact, baseObject, null);
+	}
+	
+	private VCard createCardObject(ContactEx contact, VCard baseObject, LogHandler logHandler) throws WTException {
+		VCard vcard = baseObject != null ? baseObject : new VCard();
 		
 		// UID(?)
-		vCard.setUid(toUid(contact));
+		vcard.setUid(toUid(contact));
 		
 		// FN(+) -> Formatted Name (full name)
-		vCard.setFormattedName(toFormattedName(contact));
+		vcard.setFormattedName(toFormattedName(contact));
 		
 		// FN(+) -> Formatted Name (display name)
-		vCard.setFormattedName(toFormattedName(contact));
+		vcard.setFormattedName(toFormattedName(contact));
 		
 		// N(?) -> Structured Name (name components)
-		vCard.setStructuredName(toStructuredName(contact));
+		vcard.setStructuredName(toStructuredName(contact));
 		
 		// NICKNAME(*)
-		vCard.setNickname(toNickname(contact));
+		vcard.setNickname(toNickname(contact));
 		
 		// GENDER(?)
-		vCard.setGender(toGender(contact));
+		vcard.setGender(toGender(contact));
 		
 		// ADR(*)
 		for (Address address : toAddresses(contact)) {
-			vCard.addAddress(address);
+			vcard.addAddress(address);
 		}
 		
 		// TEL(*)
 		for (Telephone telephone : toTelephones(contact)) {
-			vCard.addTelephoneNumber(telephone);
+			vcard.addTelephoneNumber(telephone);
 		}
 		
 		// EMAIL(*)
 		for (Email email : toEmails(contact)) {
-			vCard.addEmail(email);
+			vcard.addEmail(email);
 		}
 		
 		// IMPP(*) -> InstantMsg
 		for (Impp impp : toImpps(contact)) {
-			vCard.addImpp(impp);
+			vcard.addImpp(impp);
 		}
 		
 		// ORG(*) -> Company/Department
-		vCard.setOrganization(toOrganization(contact));
+		vcard.setOrganization(toOrganization(contact));
 		
 		// TITLE and ROLE have a similar meaning but seems that devices 
 		// display info taking data from TITLE field.
@@ -181,10 +257,7 @@ public class VCardOutput {
 		
 		// TITLE(*) -> Function
 		Title title = toTitle(contact);
-		if (title != null) vCard.addTitle(title);
-		// ROLE(*) -> Function
-		//Role role = toRole(contact);
-		//if (role != null) vCard.addRole(role);
+		if (title != null) vcard.addTitle(title);
 		
 		//TODO: Where we can put manager field?
 		//TODO: Where we can put assistant field?
@@ -192,44 +265,44 @@ public class VCardOutput {
 		
 		// RELATED(*)
 		Related spouse = toSpouse(contact);
-		if (spouse != null) vCard.addRelated(spouse);
+		if (spouse != null) vcard.addRelated(spouse);
 		
 		// BDAY(*)
-		vCard.setBirthday(toBirthday(contact));
+		vcard.setBirthday(toBirthday(contact));
 		
 		// ANNIVERSARY(*)
-		vCard.setAnniversary(toAnniversary(contact));
+		vcard.setAnniversary(toAnniversary(contact));
 		
 		// URL(*)
 		Url url = toUrl(contact);
-		if (url != null) vCard.addUrl(url);
+		if (url != null) vcard.addUrl(url);
 		
 		// NOTE(*)
 		Note note = toNotes(contact);
-		if (note != null) vCard.addNote(note);
+		if (note != null) vcard.addNote(note);
 		
 		// PHOTO(*)
 		if (contact.hasPicture()) {
 			ContactPicture picture = contact.getPicture();
 			if (picture instanceof ContactPictureWithBytes) {
 				Photo photo = toPhoto((ContactPictureWithBytes)picture);
-				if (photo != null) vCard.addPhoto(photo);
+				if (photo != null) vcard.addPhoto(photo);
 			}
 		}
 		
-		return vCard;
+		return vcard;
 	}
 	
-	public Uid toUid(Contact contact) {
+	public Uid toUid(ContactEx contact) {
 		final String uid = contact.getPublicUid();
 		return !StringUtils.isBlank(uid) ? new Uid(uid) : null;
 	}
 	
-	public FormattedName toFormattedName(Contact contact) {
+	public FormattedName toFormattedName(ContactEx contact) {
 		return new FormattedName(contact.getDisplayName(true));
 	}
 	
-	public StructuredName toStructuredName(Contact contact) {
+	public StructuredName toStructuredName(ContactEx contact) {
 		StructuredName prop = null;
 		if (!contact.areNamesBlank(false)) {
 			prop = new StructuredName();
@@ -243,7 +316,7 @@ public class VCardOutput {
 		return prop;
 	}
 	
-	public Nickname toNickname(Contact contact) {
+	public Nickname toNickname(ContactEx contact) {
 		Nickname prop = null;
 		if (!StringUtils.isBlank(contact.getNickname())) {
 			prop = new Nickname();
@@ -252,19 +325,19 @@ public class VCardOutput {
 		return prop;
 	}
 	
-	public Gender toGender(Contact contact) {
+	public Gender toGender(ContactEx contact) {
 		Gender prop = null;
-		if (Contact.Gender.MALE.equals(contact.getGender())) {
+		if (ContactBase.Gender.MALE.equals(contact.getGender())) {
 			prop = new Gender(Gender.MALE);
-		} else if (Contact.Gender.FEMALE.equals(contact.getGender())) {
+		} else if (ContactBase.Gender.FEMALE.equals(contact.getGender())) {
 			prop = new Gender(Gender.FEMALE);
-		} else if (Contact.Gender.OTHER.equals(contact.getGender())) {
+		} else if (ContactBase.Gender.OTHER.equals(contact.getGender())) {
 			prop = new Gender(Gender.OTHER);
 		}
 		return prop;
 	}
 	
-	public List<Address> toAddresses(Contact contact) {
+	public List<Address> toAddresses(ContactEx contact) {
 		List<Address> props = new ArrayList<>();
 		if (!contact.isWorkAddressEmpty()) {
 			Address addr = new Address();
@@ -308,7 +381,7 @@ public class VCardOutput {
 		return props;
 	}
 	
-	public List<Telephone> toTelephones(Contact contact) {
+	public List<Telephone> toTelephones(ContactEx contact) {
 		List<Telephone> props = new ArrayList<>();
 		if (!StringUtils.isBlank(contact.getMobile())) {
 			Telephone tel = new Telephone(contact.getMobile());
@@ -376,7 +449,7 @@ public class VCardOutput {
 		return props;
 	}
 	
-	public List<Email> toEmails(Contact contact) {
+	public List<Email> toEmails(ContactEx contact) {
 		List<Email> props = new ArrayList<>();
 		
 		int count = 0;
@@ -401,7 +474,7 @@ public class VCardOutput {
 		return props;
 	}
 	
-	public List<Impp> toImpps(Contact contact) {
+	public List<Impp> toImpps(ContactEx contact) {
 		List<Impp> props = new ArrayList<>();
 		
 		int count = 0;
@@ -426,7 +499,7 @@ public class VCardOutput {
 		return props;
 	}
 	
-	public Organization toOrganization(Contact contact) {
+	public Organization toOrganization(ContactEx contact) {
 		// The property value is a structured type consisting of the 
 		// organization name, followed by zero or more levels of organizational 
 		// unit names.
@@ -441,7 +514,7 @@ public class VCardOutput {
 		return prop;
 	}
 	
-	public Title toTitle(Contact contact) {
+	public Title toTitle(ContactEx contact) {
 		Title prop = null;
 		if (!StringUtils.isBlank(contact.getFunction())) {
 			prop = new Title(contact.getFunction());
@@ -449,7 +522,7 @@ public class VCardOutput {
 		return prop;
 	}
 	
-	public Role toRole(Contact contact) {
+	public Role toRole(ContactEx contact) {
 		Role prop = null;
 		if (!StringUtils.isBlank(contact.getFunction())) {
 			prop = new Role(contact.getFunction());
@@ -457,7 +530,7 @@ public class VCardOutput {
 		return prop;
 	}
 	
-	public Related toSpouse(Contact contact) {
+	public Related toSpouse(ContactEx contact) {
 		Related prop = null;
 		if (!StringUtils.isBlank(contact.getPartner())) {
 			prop = new Related(contact.getPartner());
@@ -466,7 +539,7 @@ public class VCardOutput {
 		return prop;
 	}
 	
-	public Birthday toBirthday(Contact contact) {
+	public Birthday toBirthday(ContactEx contact) {
 		Birthday prop = null;
 		if (contact.getBirthday() != null) {
 			prop = new Birthday(contact.getBirthday().toDate());
@@ -474,7 +547,7 @@ public class VCardOutput {
 		return prop;
 	}
 	
-	public Anniversary toAnniversary(Contact contact) {
+	public Anniversary toAnniversary(ContactEx contact) {
 		Anniversary prop = null;
 		if (contact.getAnniversary() != null) {
 			prop = new Anniversary(contact.getAnniversary().toDate());
@@ -482,7 +555,7 @@ public class VCardOutput {
 		return prop;
 	}
 	
-	public Url toUrl(Contact contact) {
+	public Url toUrl(ContactEx contact) {
 		Url prop = null;
 		if (!StringUtils.isBlank(contact.getUrl())) {
 			prop = new Url(contact.getUrl());
@@ -490,7 +563,7 @@ public class VCardOutput {
 		return prop;
 	}
 	
-	public Note toNotes(Contact contact) {
+	public Note toNotes(ContactEx contact) {
 		Note prop = null;
 		if (!StringUtils.isBlank(contact.getNotes())) {
 			prop = new Note(contact.getNotes());
@@ -501,12 +574,13 @@ public class VCardOutput {
 	public Photo toPhoto(ContactPictureWithBytes picture) {
 		Photo prop = null;
 		if (picture != null) {
+			String mtype = picture.getMediaType();
 			ImageType it = null;
-			if (StringUtils.equals(picture.getMediaType(), ImageType.GIF.getMediaType())) {
+			if (StringUtils.equals(mtype, ImageType.GIF.getMediaType()) || StringUtils.contains(mtype, "gif")) {
 				it = ImageType.GIF;
-			} else if (StringUtils.equals(picture.getMediaType(), ImageType.JPEG.getMediaType())) {
+			} else if (StringUtils.equals(mtype, ImageType.JPEG.getMediaType()) || StringUtils.contains(mtype, "jpeg")) {
 				it = ImageType.JPEG;
-			} else if (StringUtils.equals(picture.getMediaType(), ImageType.PNG.getMediaType())) {
+			} else if (StringUtils.equals(mtype, ImageType.PNG.getMediaType()) || StringUtils.contains(mtype, "png")) {
 				it = ImageType.PNG;
 			}
 			if (it != null) prop = new Photo(picture.getBytes(), it);
@@ -516,5 +590,17 @@ public class VCardOutput {
 	
 	private String deflt(String s) {
 		return StringUtils.defaultIfEmpty(s, null);
+	}
+	
+	private void log(LogHandler logHandler, int depth, LogEntry.Level level, String message, Object... arguments) {
+		if (logHandler != null) {
+			try {
+				logHandler.handle(new LogMessage(depth, level, message, arguments));
+			} catch(Throwable t) {}
+		}
+	}
+	
+	public static enum TagsMappingMode {
+		NAME, ID, NONE
 	}
 }

@@ -32,16 +32,28 @@
  */
 package com.sonicle.webtop.contacts.io;
 
-import com.sonicle.webtop.contacts.model.Contact;
+import com.sonicle.webtop.contacts.model.ContactBase;
+import com.sonicle.webtop.contacts.model.ContactCompany;
+import com.sonicle.webtop.contacts.model.ContactPicture;
+import ezvcard.VCard;
+import java.util.Set;
 
 /**
  *
  * @author malbinola
  */
 public class ContactInput {
-	public final Contact contact;
+	public final ContactBase contact;
+	public final ContactCompany contactCompany;
+	public final ContactPicture contactPicture;
+	public final Set<String> tagNames;
+	public final VCard sourceObject;
 
-	public ContactInput(Contact contact) {
+	public ContactInput(ContactBase contact, ContactCompany contactCompany, ContactPicture contactPicture, Set<String> tagNames, VCard sourceObject) {
 		this.contact = contact;
+		this.contactCompany = contactCompany;
+		this.contactPicture = contactPicture;
+		this.tagNames = tagNames;
+		this.sourceObject = sourceObject;
 	}
 }

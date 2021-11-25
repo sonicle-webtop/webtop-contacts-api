@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2014 Sonicle S.r.l.
+/*
+ * Copyright (C) 2021 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,37 +28,26 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2014 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2021 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.contacts.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import net.sf.qualitycheck.Check;
+import org.joda.time.DateTime;
 
 /**
  *
  * @author malbinola
  */
-public class ContactsList {
-	protected Integer contactId;
+public class ContactListBase {
 	protected Integer categoryId;
-	protected String name;
+	protected String publicUid;
+	protected ContactBase.RevisionStatus revisionStatus;
+	protected DateTime revisionTimestamp;
+	protected Integer revisionSequence;
+	protected DateTime creationTimestamp;
+	protected String displayName;
 	protected String email;
-	protected Set<String> tags;
-	protected List<ContactsListRecipient> recipients = new ArrayList<>();
 	
-	public ContactsList() {}
-
-	public Integer getContactId() {
-		return contactId;
-	}
-
-	public void setContactId(Integer contactId) {
-		this.contactId = contactId;
-	}
-
 	public Integer getCategoryId() {
 		return categoryId;
 	}
@@ -66,54 +55,60 @@ public class ContactsList {
 	public void setCategoryId(Integer categoryId) {
 		this.categoryId = categoryId;
 	}
-
-	public String getName() {
-		return name;
+	
+	public String getPublicUid() {
+		return publicUid;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setPublicUid(String publicUid) {
+		this.publicUid = publicUid;
+	}
+
+	public ContactBase.RevisionStatus getRevisionStatus() {
+		return revisionStatus;
+	}
+
+	public void setRevisionStatus(ContactBase.RevisionStatus revisionStatus) {
+		this.revisionStatus = revisionStatus;
+	}
+
+	public DateTime getRevisionTimestamp() {
+		return revisionTimestamp;
+	}
+
+	public void setRevisionTimestamp(DateTime revisionTimestamp) {
+		this.revisionTimestamp = revisionTimestamp;
 	}
 	
+	public Integer getRevisionSequence() {
+		return revisionSequence;
+	}
+
+	public void setRevisionSequence(Integer revisionSequence) {
+		this.revisionSequence = revisionSequence;
+	}
+
+	public DateTime getCreationTimestamp() {
+		return creationTimestamp;
+	}
+
+	public void setCreationTimestamp(DateTime creationTimestamp) {
+		this.creationTimestamp = creationTimestamp;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
 	public String getEmail() {
 		return email;
 	}
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-	
-	public Set<String> getTags() {
-		return tags;
-	}
-
-	public void setTags(Set<String> tags) {
-		this.tags = tags;
-	}
-	
-	public ContactsList addTag(String tagId) {
-		if (tags != null) {
-			tags.add(Check.notNull(tagId, "tagId"));
-		}
-		return this;
-	}
-	
-	public ContactsList removeTag(String tagId) {
-		if (tags != null) {
-			tags.remove(Check.notNull(tagId, "tagId"));
-		}
-		return this;
-	}
-
-	public List<ContactsListRecipient> getRecipients() {
-		return recipients;
-	}
-
-	public void setRecipients(List<ContactsListRecipient> recipients) {
-		this.recipients = recipients;
-	}
-	
-	public void addRecipient(ContactsListRecipient recipient) {
-		recipients.add(recipient);
 	}
 }

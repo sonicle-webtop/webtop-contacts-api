@@ -13,6 +13,12 @@
 		<version>5</version>
 	</parent>
 	
+	<properties>
+		<!-- WEBTOP: service configuration -->
+		<webtop.service.baseArtifact>webtop-contacts</webtop.service.baseArtifact>
+		<webtop.service.package>com.sonicle.webtop.contacts</webtop.service.package>
+	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>net.sf.qualitycheck</groupId>

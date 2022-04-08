@@ -38,22 +38,24 @@ import com.sonicle.webtop.core.sdk.UserProfileId;
  *
  * @author malbinola
  */
-public class ContactLookup extends BaseContact {
+public class ContactLookup extends ContactBase {
+	protected Integer contactId;
 	protected Boolean isList;
 	protected String companyId;
 	protected String companyDescription;
-	protected String function;
-	protected String mobile;
-	protected String email1;
-	protected String email2;
-	protected String workCity;
-	protected String workTelephone1;
-	protected String homeTelephone1;
 	protected String categoryName;
 	protected String categoryDomainId;
 	protected String categoryUserId;
 	protected String tags;
 	protected boolean hasPicture;
+	
+	public Integer getContactId() {
+		return contactId;
+	}
+
+	public void setContactId(Integer contactId) {
+		this.contactId = contactId;
+	}
 
 	public Boolean getIsList() {
 		return isList;
@@ -78,90 +80,6 @@ public class ContactLookup extends BaseContact {
 	public void setCompanyDescription(String companyDescription) {
 		this.companyDescription = companyDescription;
 	}
-
-	public String getFunction() {
-		return function;
-	}
-
-	public void setFunction(String function) {
-		this.function = function;
-	}
-	
-	public String getMobile() {
-		return mobile;
-	}
-
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
-	
-	public String getEmail1() {
-		return email1;
-	}
-
-	public void setEmail1(String email1) {
-		this.email1 = email1;
-	}
-	
-	public String getEmail2() {
-		return email2;
-	}
-
-	public void setEmail2(String email2) {
-		this.email2 = email2;
-	}
-
-	public String getWorkCity() {
-		return workCity;
-	}
-
-	public void setWorkCity(String workCity) {
-		this.workCity = workCity;
-	}
-
-	public String getWorkTelephone1() {
-		return workTelephone1;
-	}
-
-	public void setWorkTelephone1(String workTelephone1) {
-		this.workTelephone1 = workTelephone1;
-	}
-
-	/*
-	public String getWorkMobile() {
-		return workMobile;
-	}
-
-	public void setWorkMobile(String workMobile) {
-		this.workMobile = workMobile;
-	}
-
-	public String getWorkEmail() {
-		return workEmail;
-	}
-
-	public void setWorkEmail(String workEmail) {
-		this.workEmail = workEmail;
-	}
-	*/
-
-	public String getHomeTelephone1() {
-		return homeTelephone1;
-	}
-
-	public void setHomeTelephone1(String homeTelephone1) {
-		this.homeTelephone1 = homeTelephone1;
-	}
-
-	/*
-	public String getHomeEmail() {
-		return homeEmail;
-	}
-
-	public void setHomeEmail(String homeEmail) {
-		this.homeEmail = homeEmail;
-	}
-	*/
 	
 	public String getTags() {
 		return tags;
@@ -202,16 +120,6 @@ public class ContactLookup extends BaseContact {
 	public void setHasPicture(boolean hasPicture) {
 		this.hasPicture = hasPicture;
 	}
-	
-	/*
-	public String getMobile() {
-		return getWorkMobile();
-	}
-	
-	public void setMobile(String mobile) {
-		setWorkMobile(mobile);
-	}
-	*/
 	
 	public void setCompany(ContactCompany company) {
 		setCompanyId((company != null) ? company.getValueId() : null);

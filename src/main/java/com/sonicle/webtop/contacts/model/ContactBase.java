@@ -543,9 +543,9 @@ public class ContactBase {
 	
 	public String getComputedDisplayName(ShowBy showBy) {
 		if (ShowBy.FIRST_LAST.equals(showBy)) {
-			return BaseContact.buildFullName(getFirstName(), getLastName());
+			return buildFullName(getFirstName(), getLastName());
 		} else if (ShowBy.LAST_FIRST.equals(showBy)) {
-			return BaseContact.buildFullName(getLastName(), getFirstName());
+			return buildFullName(getLastName(), getFirstName());
 		} else if (ShowBy.DISPLAY.equals(showBy)) {
 			return getDisplayName(true);
 		} else {
@@ -559,7 +559,7 @@ public class ContactBase {
 	
 	public String getFullName(boolean firstLastOnly) {
 		if (firstLastOnly) {
-			return BaseContact.buildFullName(getFirstName(), getLastName());
+			return buildFullName(getFirstName(), getLastName());
 		} else {
 			return StringUtils.join(getTitle(), " ", getFirstName(), " ", getLastName()).trim();
 		}
@@ -693,6 +693,10 @@ public class ContactBase {
 		} else {
 			return value;
 		}
+	}
+	
+	public static String buildFullName(String firstName, String lastName) {
+		return StringUtils.trim(StringUtils.defaultString(firstName) + " " + StringUtils.defaultString(lastName));
 	}
 	
 	public static enum RevisionStatus {

@@ -51,6 +51,10 @@ import org.joda.time.DateTimeZone;
  */
 public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 	
+	public StringProperty<ContactQuery> id() {
+		return string("id");
+	}
+	
 	public StringProperty<ContactQuery> name() {
 		return string("name");
 	}
@@ -122,7 +126,10 @@ public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 	}
 	
 	private static Condition<ContactQuery> createCondition(QueryObj.Condition condition, String value, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone, boolean smartStringComparison) {
-		if ("name".equals(condition.keyword)) {
+		if ("id".equals(condition.keyword)) {
+			return new ContactQuery().id().eq(asStringValue(value, false));
+
+		} else if ("name".equals(condition.keyword)) {
 			return new ContactQuery().name().eq(asStringValue(value, smartStringComparison));
 
 		} else if ("company".equals(condition.keyword)) {

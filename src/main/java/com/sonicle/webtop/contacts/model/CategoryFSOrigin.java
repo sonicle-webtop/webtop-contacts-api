@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2014 Sonicle S.r.l.
+/*
+ * Copyright (C) 2023 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,51 +28,26 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2014 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2023 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.contacts.model;
 
-import com.sonicle.webtop.core.model.ShareFolder;
-import com.sonicle.webtop.core.model.SharePermsFolder;
-import com.sonicle.webtop.core.model.SharePermsElements;
+import com.sonicle.webtop.core.app.model.FolderShare;
+import com.sonicle.webtop.core.app.model.ShareOrigin;
 
 /**
  *
  * @author malbinola
  */
-public class ShareFolderCategory extends ShareFolder {
-	private Object data;
+public class CategoryFSOrigin extends ShareOrigin {
+	protected final FolderShare.Permissions wildcardPermissions;
 	
-	public ShareFolderCategory(String shareId, SharePermsFolder perms, SharePermsElements elsPerms, Category category) {
-		super(shareId, perms, category.isProviderRemote() ? new SharePermsElements() : elsPerms, category);
-		data = null;
-	}
-
-	public Category getCategory() {
-		return (Category)object;
+	public CategoryFSOrigin(ShareOrigin origin, FolderShare.Permissions wildcardPermissions) {
+		super(origin);
+		this.wildcardPermissions = wildcardPermissions;
 	}
 	
-	public Object getData() {
-		return data;
-	}
-	
-	public void setData(Object data) {
-		this.data = data;
-	}
-
-	public SharePermsElements getRealElementsPerms(Category.Sync sync) {
-		return realElementsPerms(getElementsPerms(), sync);
-	}
-	
-	public static SharePermsElements realElementsPerms(Category.Sync sync) {
-		return realElementsPerms(SharePermsElements.full(), sync);
-	}
-	
-	public static SharePermsElements realElementsPerms(SharePermsElements origPerms, Category.Sync sync) {
-		if (Category.Sync.READ.equals(sync)) {
-			return new SharePermsElements();
-		} else {
-			return origPerms;
-		}
+	public FolderShare.Permissions getWildcardPermissions() {
+		return wildcardPermissions;
 	}
 }

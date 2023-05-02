@@ -38,9 +38,9 @@ import com.sonicle.commons.BitFlagEnum;
 import com.sonicle.commons.qbuilders.conditions.Condition;
 import com.sonicle.commons.LangUtils;
 import com.sonicle.webtop.contacts.model.Category;
+import com.sonicle.webtop.contacts.model.CategoryFSFolder;
+import com.sonicle.webtop.contacts.model.CategoryFSOrigin;
 import com.sonicle.webtop.contacts.model.CategoryPropSet;
-import com.sonicle.webtop.contacts.model.ShareFolderCategory;
-import com.sonicle.webtop.contacts.model.ShareRootCategory;
 import com.sonicle.webtop.contacts.model.Contact;
 import com.sonicle.webtop.contacts.model.ContactAttachmentWithBytes;
 import com.sonicle.webtop.contacts.model.ContactCompany;
@@ -56,6 +56,8 @@ import com.sonicle.webtop.contacts.model.ListContactsResult;
 import com.sonicle.webtop.contacts.model.ShowBy;
 import com.sonicle.webtop.contacts.model.ContactType;
 import com.sonicle.webtop.contacts.model.ContactListRecipient;
+import com.sonicle.webtop.core.app.model.FolderSharing;
+import com.sonicle.webtop.core.app.sdk.WTNotFoundException;
 import com.sonicle.webtop.core.model.CustomFieldValue;
 import com.sonicle.webtop.core.sdk.UserProfileId;
 import com.sonicle.webtop.core.sdk.WTException;
@@ -77,27 +79,42 @@ public interface IContactsManager {
 	public static final String RCPT_ORIGIN_LIST = "list";
 	public static final String RCPT_ORIGIN_LISTITEM = "listitem";
 	
-	public List<ShareRootCategory> listIncomingCategoryRoots() throws WTException;
-	public Map<Integer, ShareFolderCategory> listIncomingCategoryFolders(String rootShareId) throws WTException;
-	public Set<Integer> listCategoryIds() throws WTException;
+	/**
+	 * @deprecated Use listMyCategoryIds() instead.
+	 */
+	@Deprecated public Set<Integer> listCategoryIds() throws WTException;
+	/**
+	 * @deprecated Use listMyCategories() instead.
+	 */
+	@Deprecated public Map<Integer, Category> listCategories() throws WTException;
+	
+	public Set<FolderSharing.SubjectConfiguration> getFolderShareConfigurations(final UserProfileId originProfileId, final FolderSharing.Scope scope) throws WTException;
+	public void updateFolderShareConfigurations(final UserProfileId originProfileId, final FolderSharing.Scope scope, final Set<FolderSharing.SubjectConfiguration> configurations) throws WTException;
+	public Map<UserProfileId, CategoryFSOrigin> listIncomingCategoryOrigins() throws WTException;
+	public CategoryFSOrigin getIncomingCategoryOriginByFolderId(final int calendarId) throws WTException;
+	public Map<Integer, CategoryFSFolder> listIncomingCategoryFolders(final CategoryFSOrigin origin) throws WTException;
+	public Map<Integer, CategoryFSFolder> listIncomingCategoryFolders(final UserProfileId originProfileId) throws WTException;
+	public Set<Integer> listMyCategoryIds() throws WTException;
 	public Set<Integer> listIncomingCategoryIds() throws WTException;
 	public Set<Integer> listIncomingCategoryIds(final UserProfileId owner) throws WTException;
 	public Set<Integer> listAllCategoryIds() throws WTException;
-	public Map<Integer, Category> listCategories() throws WTException;
+	public Map<Integer, Category> listMyCategories() throws WTException;
 	public Map<Integer, Category> listIncomingCategories() throws WTException;
-	public Map<Integer, Category> listIncomingCategories(final UserProfileId owner) throws WTException;
-	public Map<Integer, DateTime> getCategoriesLastRevision(Collection<Integer> categoryIds) throws WTException;
+	public Map<Integer, Category> listIncomingCategories(final UserProfileId originProfileId) throws WTException;
+	public Map<Integer, DateTime> getCategoriesLastRevision(final Collection<Integer> categoryIds) throws WTException;
+	public UserProfileId getCategoryOwner(final int categoryId) throws WTException;
 	public Integer getDefaultCategoryId() throws WTException;
 	public Integer getBuiltInCategoryId() throws WTException;
-	public Category getCategory(int categoryId) throws WTException;
+	public boolean existCategory(final int categoryId) throws WTException;
+	public Category getCategory(final int categoryId) throws WTException;
 	public Category getBuiltInCategory() throws WTException;
-	public Category addCategory(Category cat) throws WTException;
+	public Category addCategory(final Category category) throws WTException;
 	public Category addBuiltInCategory() throws WTException;
-	public void updateCategory(Category cat) throws WTException;
-	public boolean deleteCategory(int categoryId) throws WTException;
-	public CategoryPropSet getCategoryCustomProps(int categoryId) throws WTException;
-	public Map<Integer, CategoryPropSet> getCategoryCustomProps(Collection<Integer> categoryIds) throws WTException;
-	public CategoryPropSet updateCategoryCustomProps(int categoryId, CategoryPropSet propertySet) throws WTException;
+	public void updateCategory(final Category category) throws WTNotFoundException, WTException;
+	public boolean deleteCategory(final int categoryId) throws WTNotFoundException, WTException;
+	public CategoryPropSet getCategoryCustomProps(final int categoryId) throws WTException;
+	public Map<Integer, CategoryPropSet> getCategoriesCustomProps(final Collection<Integer> categoryIds) throws WTException;
+	public CategoryPropSet updateCategoryCustomProps(final int categoryId, final CategoryPropSet propertySet) throws WTException;
 	public List<ContactObject> listContactObjects(final int categoryId, final ContactObjectOutputType outputType) throws WTException;
 	public LangUtils.CollectionChangeSet<ContactObjectChanged> listContactObjectsChanges(final int categoryId, final DateTime since, final Integer limit) throws WTException;
 	public ContactObject getContactObject(final int categoryId, final String href, final ContactObjectOutputType outputType) throws WTException;
@@ -106,10 +123,10 @@ public interface IContactsManager {
 	public void addContactObject(final int categoryId, final String href, final VCard vCard) throws WTException;
 	public void updateContactObject(final int categoryId, final String href, final VCard vCard) throws WTException;
 	public void deleteContactObject(final int categoryId, final String href) throws WTException;
-	public boolean existContact(Collection<Integer> categoryIds, Condition<ContactQuery> conditionPredicate) throws WTException;
-	public ListContactsResult listContacts(Collection<Integer> categoryIds, ContactType type, Grouping groupBy, ShowBy showBy, String pattern) throws WTException;
-	public ListContactsResult listContacts(Collection<Integer> categoryIds, ContactType type, Grouping groupBy, ShowBy showBy, Condition<ContactQuery> conditionPredicate) throws WTException;
-	public ListContactsResult listContacts(Collection<Integer> categoryIds, ContactType type, Grouping groupBy, ShowBy showBy, Condition<ContactQuery> conditionPredicate, int page, int limit, boolean returnFullCount) throws WTException;
+	public boolean existContact(final Collection<Integer> categoryIds, final Condition<ContactQuery> conditionPredicate) throws WTException;
+	public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final String pattern) throws WTException;
+	public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQuery> conditionPredicate) throws WTException;
+	public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQuery> conditionPredicate, final int page, final int limit, final boolean returnFullCount) throws WTException;
 	public Contact getContact(final int contactId) throws WTException;
 	public Contact getContact(final int contactId, final BitFlag<ContactGetOptions> opts) throws WTException;
 	public ContactPictureWithBytes getContactPicture(final int contactId) throws WTException;

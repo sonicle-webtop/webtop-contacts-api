@@ -86,6 +86,8 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import com.sonicle.webtop.core.app.io.BeanHandler;
+import com.sonicle.webtop.core.app.ezvcard.XAttachmentScribe;
+import ezvcard.io.text.VCardReader;
 
 /**
  *
@@ -94,6 +96,8 @@ import com.sonicle.webtop.core.app.io.BeanHandler;
 public class VCardInput {
 	private final MatchCategory preferredMatch;
 	private final boolean relaxedMatching = true;
+	private boolean ignoreAttachments = true;
+	private boolean ignoreCustomFieldsValues = true;
 	private boolean returnSourceObject = false;
 	private Map<String, String> categoriesToTagsMap = null;
 	private LogHandler logHandler = null;
@@ -105,6 +109,16 @@ public class VCardInput {
 	
 	public VCardInput(MatchCategory preferredMatch) {
 		this.preferredMatch = preferredMatch;
+	}
+	
+	public VCardInput withIgnoreAttachments(boolean ignoreAttachments) {
+		this.ignoreAttachments = ignoreAttachments;
+		return this;
+	}
+	
+	public VCardInput withIgnoreCustomFieldsValues(boolean ignoreCustomFieldsValues) {
+		this.ignoreCustomFieldsValues = ignoreCustomFieldsValues;
+		return this;
 	}
 	
 	public VCardInput withReturnSourceObject(boolean returnSourceObject) {
@@ -127,14 +141,59 @@ public class VCardInput {
 		return this;
 	}
 	
+	public List<ContactInput> parseAllVCards(final InputStream is) throws IOException, WTException {
+		final VCardReader reader = new VCardReader(is);
+		if (!ignoreAttachments) reader.registerScribe(new XAttachmentScribe());
+		//if (!ignoreCustomFieldValues) reader.registerScribe(new XCustomFieldValuePropertyScribe());
+		return parseAllVCards(reader);
+	}
+	
+	public List<ContactInput> parseAllVCards(final String s) throws IOException, WTException {
+		final VCardReader reader = new VCardReader(s);
+		if (!ignoreAttachments) reader.registerScribe(new XAttachmentScribe());
+		//if (!ignoreCustomFieldValues) reader.registerScribe(new XCustomFieldValuePropertyScribe());
+		return parseAllVCards(reader);
+	}
+	
+	public List<ContactInput> parseAllVCards(final VCardReader reader) throws IOException, WTException {
+		ArrayList<ContactInput> results = (beanHandler == null) ? new ArrayList<>() : null;
+		
+		VCard vc;
+		int count = 0;
+		while ((vc = reader.readNext()) != null) {
+			count++;
+			BufferingLogHandler buffLogHandler = createBufferingLogHandler(new LogMessage(0, LogEntry.Level.INFO, "VCARD #{} [{}]", count, VCardUtils.print(vc)));
+			try {
+				final ContactInput result = parseCardObject(vc, buffLogHandler);
+				if (result.contact.trimFieldLengths()) {
+					log(buffLogHandler, 1, LogEntry.Level.WARN, "Some fields were truncated due to max-length");
+				}
+				if (beanHandler != null) {
+					beanHandler.handle(result);
+				} else if (results != null) {
+					results.add(result);
+				}
+
+			} catch(Throwable t) {
+				log(buffLogHandler, 0, LogEntry.Level.ERROR, "Reason: {}", LangUtils.getThrowableMessage(t));
+			}
+			
+			flushToLogHandler(buffLogHandler);
+		}
+		return results;
+	}
+	
+	@Deprecated
 	public List<ContactInput> read(InputStream is) throws IOException, WTException {
 		return parseVCard(is);
 	}
 	
+	@Deprecated
 	public List<ContactInput> parseVCard(InputStream is) throws IOException, WTException {
 		return parseCardObjects(Ezvcard.parse(is).all());
 	}
 	
+	@Deprecated
 	public List<ContactInput> parseVCard(String s) throws WTException {
 		try {
 			return parseCardObjects(Ezvcard.parse(new StringReader(s)).all());
@@ -143,6 +202,7 @@ public class VCardInput {
 		}
 	}
 	
+	@Deprecated
 	public List<ContactInput> parseCardObjects(Collection<VCard> vCards) throws WTException {
 		ArrayList<ContactInput> results = (beanHandler == null) ? new ArrayList<>() : null;
 		

@@ -32,10 +32,15 @@
  */
 package com.sonicle.webtop.contacts.io;
 
+import com.sonicle.webtop.contacts.model.ContactAttachmentWithStream;
 import com.sonicle.webtop.contacts.model.ContactBase;
 import com.sonicle.webtop.contacts.model.ContactCompany;
 import com.sonicle.webtop.contacts.model.ContactPicture;
+import com.sonicle.webtop.core.app.ezvcard.BinaryType;
+import com.sonicle.webtop.core.app.ezvcard.XAttachment;
 import ezvcard.VCard;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -55,5 +60,24 @@ public class ContactInput {
 		this.contactPicture = contactPicture;
 		this.tagNames = tagNames;
 		this.sourceObject = sourceObject;
+	}
+	
+	public ArrayList<ContactAttachmentWithStream> extractAttachments() {
+		ArrayList<ContactAttachmentWithStream> attachments = new ArrayList<>();
+		if (sourceObject != null) {
+			for (XAttachment xatt : sourceObject.getProperties(XAttachment.class)) {
+				byte[] bytes = xatt.getData();
+				if (bytes != null) {
+					ContactAttachmentWithStream attachment = new ContactAttachmentWithStream(new ByteArrayInputStream(bytes));
+					attachment.setSize((long)bytes.length);
+					BinaryType btype = xatt.getContentType();
+					if (btype != null) attachment.setMediaType(btype.getMediaType());
+					attachment.setFilename(xatt.getFilename());
+					attachments.add(attachment);
+				}
+			}
+			sourceObject.removeProperties(XAttachment.class);
+		}
+		return attachments;
 	}
 }

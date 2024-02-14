@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -46,6 +47,13 @@ public class ContactAttachmentWithStream extends ContactAttachment {
 	
 	public ContactAttachmentWithStream(File file) throws FileNotFoundException {
 		this(new FileInputStream(file));
+	}
+	
+	public ContactAttachmentWithStream(InputStream stream, String mediaType, String filename, long size) {
+		this.stream = stream;
+		this.setMediaType(StringUtils.defaultIfBlank(mediaType, "application/octet-stream"));
+		this.setFilename(filename);
+		this.setSize(size);
 	}
 	
 	public ContactAttachmentWithStream(InputStream stream) {

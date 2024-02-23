@@ -40,6 +40,7 @@ import com.sonicle.webtop.contacts.model.ContactEx;
 import com.sonicle.webtop.contacts.model.ContactPicture;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
 import com.sonicle.webtop.core.app.ezvcard.BinaryType;
+import com.sonicle.webtop.core.app.ezvcard.ExtendedProperty;
 import com.sonicle.webtop.core.app.ezvcard.XAttachment;
 import com.sonicle.webtop.core.app.ezvcard.XAttachmentScribe;
 import com.sonicle.webtop.core.app.ezvcard.XCustomField;
@@ -329,7 +330,7 @@ public class VCardOutput {
 		
 		// EXTENDED PROPERTIES
 		for(ExtendedProperty extp: toExtendedProperties(contact)) {
-			vcard.addExtendedProperty(extp.name, extp.value);
+			vcard.addExtendedProperty(extp.getName(), extp.getValue());
 		}
 		
 		// CUSTOM FIELDS AS EXTENDED PROPERTIES
@@ -678,16 +679,6 @@ public class VCardOutput {
 			try {
 				logHandler.handle(new LogMessage(depth, level, message, arguments));
 			} catch(Throwable t) {}
-		}
-	}
-	
-	public class ExtendedProperty {
-		String name;
-		String value;
-		
-		ExtendedProperty(String name, String value) {
-			this.name = name;
-			this.value = value;
 		}
 	}
 	

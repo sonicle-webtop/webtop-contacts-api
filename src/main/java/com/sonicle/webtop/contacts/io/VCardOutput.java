@@ -42,6 +42,8 @@ import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
 import com.sonicle.webtop.core.app.ezvcard.BinaryType;
 import com.sonicle.webtop.core.app.ezvcard.XAttachment;
 import com.sonicle.webtop.core.app.ezvcard.XAttachmentScribe;
+import com.sonicle.webtop.core.app.ezvcard.XCustomField;
+import com.sonicle.webtop.core.app.ezvcard.XCustomFieldScribe;
 import com.sonicle.webtop.core.app.util.log.BufferingLogHandler;
 import com.sonicle.webtop.core.app.util.log.LogEntry;
 import com.sonicle.webtop.core.app.util.log.LogHandler;
@@ -660,46 +662,6 @@ public class VCardOutput {
 		String tags = StringUtils.join(c.getTagsOrEmpty(), ",");
 		addPropIfValued(props, "X-WT-TAGS", ""+tags);
 		return props;
-	}
-	
-	public class XCustomField extends TextProperty {
-		
-		public XCustomField() {
-			super("X-WT-CUSTOMFIELD");
-		}
-		
-		public XCustomField(String uid, String type, String value) {
-			super(uid);
-			if (type != null) addParameter("type", type);
-			if (value != null) addParameter("value", value);
-		}
-		
-		public XCustomField(XCustomField original){
-			super(original);
-			String type = getParameter("type");
-			if (type != null) addParameter("type", type);
-			String value = getParameter("value");
-			if (value != null) addParameter("value", value);
-		}
-		
-		@Override
-		public XCustomField copy() {
-			return new XCustomField(this);
-		}
-	}
-	
-	public class XCustomFieldScribe extends StringPropertyScribe<XCustomField> {
-		
-		public XCustomFieldScribe() {
-			super(XCustomField.class, "X-WT-CUSTOMFIELD");
-		}		
-
-		@Override
-		protected XCustomField _parseValue(String value) {
-			XCustomField property = new XCustomField();
-			property.setValue(value);
-			return property;
-		}
 	}
 	
 	private void addPropIfValued(List<ExtendedProperty> props, String name, String value) {

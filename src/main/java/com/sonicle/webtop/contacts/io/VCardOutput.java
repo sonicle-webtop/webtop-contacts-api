@@ -33,25 +33,36 @@
 package com.sonicle.webtop.contacts.io;
 
 import com.sonicle.commons.LangUtils;
+import com.sonicle.webtop.contacts.model.ContactAttachment;
+import com.sonicle.webtop.contacts.model.ContactAttachmentWithBytes;
 import com.sonicle.webtop.contacts.model.ContactBase;
 import com.sonicle.webtop.contacts.model.ContactEx;
 import com.sonicle.webtop.contacts.model.ContactPicture;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
+import com.sonicle.webtop.core.app.ezvcard.BinaryType;
+import com.sonicle.webtop.core.app.ezvcard.XAttachment;
+import com.sonicle.webtop.core.app.ezvcard.XAttachmentScribe;
 import com.sonicle.webtop.core.app.util.log.BufferingLogHandler;
 import com.sonicle.webtop.core.app.util.log.LogEntry;
 import com.sonicle.webtop.core.app.util.log.LogHandler;
 import com.sonicle.webtop.core.app.util.log.LogMessage;
+import com.sonicle.webtop.core.model.CustomFieldValue;
 import com.sonicle.webtop.core.model.RecipientFieldCategory;
 import com.sonicle.webtop.core.sdk.WTException;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
+import ezvcard.VCardDataType;
 import ezvcard.VCardVersion;
+import ezvcard.io.scribe.StringPropertyScribe;
+import ezvcard.io.scribe.VCardPropertyScribe;
 import ezvcard.parameter.AddressType;
 import ezvcard.parameter.EmailType;
 import ezvcard.parameter.ImageType;
 import ezvcard.parameter.ImppType;
 import ezvcard.parameter.RelatedType;
 import ezvcard.parameter.TelephoneType;
+import ezvcard.parameter.VCardParameter;
+import ezvcard.parameter.VCardParameters;
 import ezvcard.property.Address;
 import ezvcard.property.Anniversary;
 import ezvcard.property.Birthday;
@@ -67,16 +78,24 @@ import ezvcard.property.Related;
 import ezvcard.property.Role;
 import ezvcard.property.StructuredName;
 import ezvcard.property.Telephone;
+import ezvcard.property.TextProperty;
 import ezvcard.property.Title;
 import ezvcard.property.Uid;
 import ezvcard.property.Url;
+import ezvcard.property.VCardProperty;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import net.sf.qualitycheck.Check;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -145,6 +164,8 @@ public class VCardOutput {
 		return Ezvcard.write(vCard)
 				.caretEncoding(enableCaretEncoding)
 				.version(version)
+				.register(new XCustomFieldScribe())
+				.register(new XAttachmentScribe())
 				.go();
 	}
 	
@@ -160,6 +181,8 @@ public class VCardOutput {
 		return Ezvcard.write(createCardObjectsCollection(outputs))
 			.caretEncoding(enableCaretEncoding)
 			.version(version)
+			.register(new XCustomFieldScribe())
+			.register(new XAttachmentScribe())
 			.go();
 	}
 	
@@ -167,6 +190,8 @@ public class VCardOutput {
 		return Ezvcard.write(vCard)
 			.caretEncoding(enableCaretEncoding)
 			.version(version)
+			.register(new XCustomFieldScribe())
+			.register(new XAttachmentScribe())
 			.go();
 	}
 	
@@ -259,10 +284,6 @@ public class VCardOutput {
 		Title title = toTitle(contact);
 		if (title != null) vcard.addTitle(title);
 		
-		//TODO: Where we can put manager field?
-		//TODO: Where we can put assistant field?
-		//TODO: Where we can put assistant-phone field?
-		
 		// RELATED(*)
 		Related spouse = toSpouse(contact);
 		if (spouse != null) vcard.addRelated(spouse);
@@ -287,6 +308,45 @@ public class VCardOutput {
 			if (picture instanceof ContactPictureWithBytes) {
 				Photo photo = toPhoto((ContactPictureWithBytes)picture);
 				if (photo != null) vcard.addPhoto(photo);
+			}
+		}
+		
+		// ATTACHMENTS
+		if (contact.hasAttachments()) {
+			for(ContactAttachment att: contact.getAttachmentsOrEmpty()) {
+				if (att instanceof ContactAttachmentWithBytes) {
+					ContactAttachmentWithBytes attb = (ContactAttachmentWithBytes)att;
+					XAttachment xatt = new XAttachment(
+							attb.getBytes(), 
+							BinaryType.get(null, attb.getMediaType(), null)
+					);
+					vcard.addProperty(xatt);
+				}
+			}
+		}
+		
+		// EXTENDED PROPERTIES
+		for(ExtendedProperty extp: toExtendedProperties(contact)) {
+			vcard.addExtendedProperty(extp.name, extp.value);
+		}
+		
+		// CUSTOM FIELDS AS EXTENDED PROPERTIES
+		Map<String, CustomFieldValue> cv = contact.getCustomValues();
+		if (cv!=null) {
+			for (Entry<String, CustomFieldValue> e: cv.entrySet()) {
+				CustomFieldValue cfv = e.getValue();
+				String uid = e.getKey();
+				DateFormat df = new SimpleDateFormat("yyyyMMdd");
+				Boolean bv = cfv.getBooleanValue();
+				DateTime dv = cfv.getDateValue();
+				Double nv = cfv.getNumberValue();
+				String sv = cfv.getStringValue();
+				String tv = cfv.getTextValue();
+				if (bv!=null) vcard.addProperty(new XCustomField(uid, "boolean", ""+bv));
+				if (dv!=null) vcard.addProperty(new XCustomField(uid, "date", df.format(dv.toDate())));
+				if (nv!=null) vcard.addProperty(new XCustomField(uid, "number", ""+nv));
+				if (!StringUtils.isEmpty(sv)) vcard.addProperty(new XCustomField(uid, "string", ""+sv));
+				if (!StringUtils.isEmpty(tv)) vcard.addProperty(new XCustomField(uid, "text", ""+tv));
 			}
 		}
 		
@@ -588,6 +648,65 @@ public class VCardOutput {
 		return prop;
 	}
 	
+	public List<ExtendedProperty> toExtendedProperties(ContactEx c) {
+		List<ExtendedProperty> props = new ArrayList<>();
+		
+		addPropIfValued(props, "X-WT-ASSISTANT", c.getAssistant());
+		addPropIfValued(props, "X-WT-ASSISTANTTELEPHONE", c.getAssistantTelephone());
+		addPropIfValued(props, "X-WT-CATEGORYID", ""+c.getCategoryId());
+		addPropIfValued(props, "X-WT-HREF", ""+c.getHref());
+		addPropIfValued(props, "X-WT-MANAGER", ""+c.getManager());
+		
+		String tags = StringUtils.join(c.getTagsOrEmpty(), ",");
+		addPropIfValued(props, "X-WT-TAGS", ""+tags);
+		return props;
+	}
+	
+	public class XCustomField extends TextProperty {
+		
+		public XCustomField() {
+			super("X-WT-CUSTOMFIELD");
+		}
+		
+		public XCustomField(String uid, String type, String value) {
+			super(uid);
+			if (type != null) addParameter("type", type);
+			if (value != null) addParameter("value", value);
+		}
+		
+		public XCustomField(XCustomField original){
+			super(original);
+			String type = getParameter("type");
+			if (type != null) addParameter("type", type);
+			String value = getParameter("value");
+			if (value != null) addParameter("value", value);
+		}
+		
+		@Override
+		public XCustomField copy() {
+			return new XCustomField(this);
+		}
+	}
+	
+	public class XCustomFieldScribe extends StringPropertyScribe<XCustomField> {
+		
+		public XCustomFieldScribe() {
+			super(XCustomField.class, "X-WT-CUSTOMFIELD");
+		}		
+
+		@Override
+		protected XCustomField _parseValue(String value) {
+			XCustomField property = new XCustomField();
+			property.setValue(value);
+			return property;
+		}
+	}
+	
+	private void addPropIfValued(List<ExtendedProperty> props, String name, String value) {
+		if (!StringUtils.isBlank(value))
+			props.add(new ExtendedProperty(name, value));
+	}
+	
 	private String deflt(String s) {
 		return StringUtils.defaultIfEmpty(s, null);
 	}
@@ -597,6 +716,16 @@ public class VCardOutput {
 			try {
 				logHandler.handle(new LogMessage(depth, level, message, arguments));
 			} catch(Throwable t) {}
+		}
+	}
+	
+	public class ExtendedProperty {
+		String name;
+		String value;
+		
+		ExtendedProperty(String name, String value) {
+			this.name = name;
+			this.value = value;
 		}
 	}
 	

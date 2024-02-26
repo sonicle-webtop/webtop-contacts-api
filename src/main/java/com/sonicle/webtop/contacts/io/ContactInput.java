@@ -40,6 +40,7 @@ import com.sonicle.webtop.core.app.ezvcard.BinaryType;
 import com.sonicle.webtop.core.app.ezvcard.XAttachment;
 import com.sonicle.webtop.core.model.CustomFieldValue;
 import ezvcard.VCard;
+import ezvcard.property.RawProperty;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -65,6 +66,17 @@ public class ContactInput {
 		this.tagNames = tagNames;
 		this.sourceObject = sourceObject;
 	}
+	
+	/*
+	public String extractCategoryId() {
+		String categoryId = null;
+		if (sourceObject != null) {
+			RawProperty rp = sourceObject.getExtendedProperty(VCardExProps.CATEGORY_ID);
+			if (rp != null) categoryId = rp.getValue();
+		}
+		return categoryId;
+	}
+	*/
 	
 	public List<ContactAttachmentWithStream> extractAttachments() {
 		ArrayList<ContactAttachmentWithStream> attachments = new ArrayList<>();

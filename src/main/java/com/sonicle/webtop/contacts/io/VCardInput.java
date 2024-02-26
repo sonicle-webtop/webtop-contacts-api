@@ -87,7 +87,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import com.sonicle.webtop.core.app.io.BeanHandler;
 import com.sonicle.webtop.core.app.ezvcard.XAttachmentScribe;
+import com.sonicle.webtop.core.app.ezvcard.XCustomFieldScribe;
 import ezvcard.io.text.VCardReader;
+import ezvcard.property.RawProperty;
+import java.util.LinkedHashSet;
 
 /**
  *
@@ -144,14 +147,14 @@ public class VCardInput {
 	public List<ContactInput> parseAllVCards(final InputStream is) throws IOException, WTException {
 		final VCardReader reader = new VCardReader(is);
 		if (!ignoreAttachments) reader.registerScribe(new XAttachmentScribe());
-		//if (!ignoreCustomFieldValues) reader.registerScribe(new XCustomFieldValuePropertyScribe());
+		if (!ignoreCustomFieldsValues) reader.registerScribe(new XCustomFieldScribe());
 		return parseAllVCards(reader);
 	}
 	
 	public List<ContactInput> parseAllVCards(final String s) throws IOException, WTException {
 		final VCardReader reader = new VCardReader(s);
 		if (!ignoreAttachments) reader.registerScribe(new XAttachmentScribe());
-		//if (!ignoreCustomFieldValues) reader.registerScribe(new XCustomFieldValuePropertyScribe());
+		if (!ignoreCustomFieldsValues) reader.registerScribe(new XCustomFieldScribe());
 		return parseAllVCards(reader);
 	}
 	
@@ -440,10 +443,6 @@ public class VCardInput {
 			vcCopy.removeProperties(Role.class);
 		}
 		
-		//TODO: How we can fill manager field?
-		//TODO: How we can fill assistant field?
-		//TODO: How we can fill assistant-phone field?
-		
 		// BDAY(*)
 		if (vcCopy.getBirthday() != null) {
 			Birthday bday = vcCopy.getBirthday();
@@ -488,6 +487,29 @@ public class VCardInput {
 				vcCopy.removeProperties(Photo.class);
 			} else {
 				log(logHandler, 1, LogEntry.Level.WARN, "PHOTO skipped: unspecified content type");
+			}
+		}
+		
+		// X-PROPS(*)
+		if (!vcCopy.getExtendedProperties().isEmpty()) {
+			for (RawProperty rp : vcCopy.getExtendedProperties()) {
+				if (VCardExProps.MANAGER.equals(rp.getPropertyName())) {
+					contact.setAssistant(rp.getValue());
+					vcCopy.removeProperty(rp);
+				} else if (VCardExProps.ASSISTANT.equals(rp.getPropertyName())) {
+					contact.setAssistant(rp.getValue());
+					vcCopy.removeProperty(rp);
+				} else if (VCardExProps.ASSISTANT_TELEPHONE.equals(rp.getPropertyName())) {
+					contact.setAssistantTelephone(rp.getValue());
+					vcCopy.removeProperty(rp);
+				} else if (VCardExProps.HREF.equals(rp.getPropertyName())) {
+					contact.setHref(rp.getValue());
+					vcCopy.removeProperty(rp);
+				} else if (VCardExProps.TAGS.equals(rp.getPropertyName())) {
+					if (tagNames == null) tagNames = new LinkedHashSet<>();
+					tagNames.addAll(LangUtils.parseStringAsList(rp.getValue(), String.class));
+					vcCopy.removeProperty(rp);
+				}
 			}
 		}
 		

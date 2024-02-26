@@ -43,8 +43,8 @@ import com.sonicle.webtop.core.app.ezvcard.BinaryType;
 import com.sonicle.webtop.core.app.ezvcard.ExtendedProperty;
 import com.sonicle.webtop.core.app.ezvcard.XAttachment;
 import com.sonicle.webtop.core.app.ezvcard.XAttachmentScribe;
-import com.sonicle.webtop.core.app.ezvcard.XCustomField;
-import com.sonicle.webtop.core.app.ezvcard.XCustomFieldScribe;
+import com.sonicle.webtop.core.app.ezvcard.XCustomFieldValue;
+import com.sonicle.webtop.core.app.ezvcard.XCustomFieldValueScribe;
 import com.sonicle.webtop.core.app.util.log.BufferingLogHandler;
 import com.sonicle.webtop.core.app.util.log.LogEntry;
 import com.sonicle.webtop.core.app.util.log.LogHandler;
@@ -167,7 +167,7 @@ public class VCardOutput {
 		return Ezvcard.write(vCard)
 				.caretEncoding(enableCaretEncoding)
 				.version(version)
-				.register(new XCustomFieldScribe())
+				.register(new XCustomFieldValueScribe())
 				.register(new XAttachmentScribe())
 				.go();
 	}
@@ -184,7 +184,7 @@ public class VCardOutput {
 		return Ezvcard.write(createCardObjectsCollection(outputs))
 			.caretEncoding(enableCaretEncoding)
 			.version(version)
-			.register(new XCustomFieldScribe())
+			.register(new XCustomFieldValueScribe())
 			.register(new XAttachmentScribe())
 			.go();
 	}
@@ -193,7 +193,7 @@ public class VCardOutput {
 		return Ezvcard.write(vCard)
 			.caretEncoding(enableCaretEncoding)
 			.version(version)
-			.register(new XCustomFieldScribe())
+			.register(new XCustomFieldValueScribe())
 			.register(new XAttachmentScribe())
 			.go();
 	}
@@ -345,11 +345,11 @@ public class VCardOutput {
 				Double nv = cfv.getNumberValue();
 				String sv = cfv.getStringValue();
 				String tv = cfv.getTextValue();
-				if (bv!=null) vcard.addProperty(new XCustomField(uid, "boolean", ""+bv));
-				if (dv!=null) vcard.addProperty(new XCustomField(uid, "date", df.format(dv.toDate())));
-				if (nv!=null) vcard.addProperty(new XCustomField(uid, "number", ""+nv));
-				if (!StringUtils.isEmpty(sv)) vcard.addProperty(new XCustomField(uid, "string", ""+sv));
-				if (!StringUtils.isEmpty(tv)) vcard.addProperty(new XCustomField(uid, "text", ""+tv));
+				if (bv!=null) vcard.addProperty(new XCustomFieldValue(uid, "boolean", ""+bv));
+				else if (dv!=null) vcard.addProperty(new XCustomFieldValue(uid, "date", df.format(dv.toDate())));
+				else if (nv!=null) vcard.addProperty(new XCustomFieldValue(uid, "number", ""+nv));
+				else if (!StringUtils.isEmpty(sv)) vcard.addProperty(new XCustomFieldValue(uid, "string", ""+sv));
+				else if (!StringUtils.isEmpty(tv)) vcard.addProperty(new XCustomFieldValue(uid, "text", ""+tv));
 			}
 		}
 		

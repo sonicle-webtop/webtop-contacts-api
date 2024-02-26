@@ -652,17 +652,14 @@ public class VCardOutput {
 	}
 	
 	public List<ExtendedProperty> toExtendedProperties(ContactEx c) {
-		List<ExtendedProperty> props = new ArrayList<>();
-		
-		addPropIfValued(props, "X-WT-ASSISTANT", c.getAssistant());
-		addPropIfValued(props, "X-WT-ASSISTANTTELEPHONE", c.getAssistantTelephone());
-		addPropIfValued(props, "X-WT-CATEGORYID", ""+c.getCategoryId());
-		addPropIfValued(props, "X-WT-HREF", ""+c.getHref());
-		addPropIfValued(props, "X-WT-MANAGER", ""+c.getManager());
-		
-		String tags = StringUtils.join(c.getTagsOrEmpty(), ",");
-		addPropIfValued(props, "X-WT-TAGS", ""+tags);
-		return props;
+		List<ExtendedProperty> exProps = new ArrayList<>();
+		addPropIfValued(exProps, VCardExProps.MANAGER, c.getManager());
+		addPropIfValued(exProps, VCardExProps.ASSISTANT, c.getAssistant());
+		addPropIfValued(exProps, VCardExProps.ASSISTANT_TELEPHONE, c.getAssistantTelephone());
+		addPropIfValued(exProps, VCardExProps.HREF, c.getHref());
+		addPropIfValued(exProps, VCardExProps.TAGS, StringUtils.join(c.getTagsOrEmpty(), ","));
+		//addPropIfValued(exProps, VCardExProps.CATEGORY_ID, String.valueOf(c.getCategoryId()));
+		return exProps;
 	}
 	
 	private void addPropIfValued(List<ExtendedProperty> props, String name, String value) {

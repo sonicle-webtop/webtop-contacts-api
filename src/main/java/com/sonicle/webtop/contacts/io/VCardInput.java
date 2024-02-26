@@ -87,7 +87,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import com.sonicle.webtop.core.app.io.BeanHandler;
 import com.sonicle.webtop.core.app.ezvcard.XAttachmentScribe;
-import com.sonicle.webtop.core.app.ezvcard.XCustomFieldScribe;
+import com.sonicle.webtop.core.app.ezvcard.XCustomFieldValueScribe;
 import ezvcard.io.text.VCardReader;
 import ezvcard.property.RawProperty;
 import java.util.LinkedHashSet;
@@ -147,14 +147,14 @@ public class VCardInput {
 	public List<ContactInput> parseAllVCards(final InputStream is) throws IOException, WTException {
 		final VCardReader reader = new VCardReader(is);
 		if (!ignoreAttachments) reader.registerScribe(new XAttachmentScribe());
-		if (!ignoreCustomFieldsValues) reader.registerScribe(new XCustomFieldScribe());
+		if (!ignoreCustomFieldsValues) reader.registerScribe(new XCustomFieldValueScribe());
 		return parseAllVCards(reader);
 	}
 	
 	public List<ContactInput> parseAllVCards(final String s) throws IOException, WTException {
 		final VCardReader reader = new VCardReader(s);
 		if (!ignoreAttachments) reader.registerScribe(new XAttachmentScribe());
-		if (!ignoreCustomFieldsValues) reader.registerScribe(new XCustomFieldScribe());
+		if (!ignoreCustomFieldsValues) reader.registerScribe(new XCustomFieldValueScribe());
 		return parseAllVCards(reader);
 	}
 	

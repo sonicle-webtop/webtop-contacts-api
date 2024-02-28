@@ -63,12 +63,15 @@ public class ContactVCardFileReader extends AbstractReader implements ContactFil
 	public void read(File file, BeanHandler beanHandler) throws IOException, WTReaderException {
 		VCardInput input = new VCardInput()
 				.withLogHandler(logHandler)
-				.withBeanHandler(beanHandler);
+				.withBeanHandler(beanHandler)
+				.withReturnSourceObject(true)
+				.withIgnoreAttachments(false)
+				.withIgnoreCustomFieldsValues(false);
 		
 		InputStream is = null;
 		try {
 			is = new FileInputStream(file);
-			input.parseVCard(is);
+			input.parseAllVCards(is);
 			
 		} catch (WTException ex) {
 			throw new WTReaderException(ex, "Unable to read");

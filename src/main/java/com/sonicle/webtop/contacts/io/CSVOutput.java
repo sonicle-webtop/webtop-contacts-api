@@ -40,7 +40,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.supercsv.io.CsvListWriter;
@@ -101,14 +104,25 @@ public class CSVOutput {
 			"WorkPostalCode",
 			"WorkState",
 			"WorkTelephone1",
-			"WorkTelephone2"
+			"WorkTelephone2",
+			"TagIds",
+			"TagNames"
 	};
 	
 	public void writeHeader(CsvListWriter wr) throws IOException {
 		wr.write(headers);
 	}
 	
-	public void writeContact(ContactEx c, String categoryName, CsvListWriter wr) throws IOException {
+	public void writeContact(ContactEx c, String categoryName, CsvListWriter wr, Map<String, String> tagNamesById) throws IOException {
+		Set<String> tagIdsArray = c.getTagsOrEmpty();
+		ArrayList<String> tagNamesArray = new ArrayList<>();
+		for(String tagId: tagIdsArray) {
+			String tagName = tagNamesById.get(tagId);
+			if (tagName!=null) tagNamesArray.add(tagName);
+		}
+		String tagIds = StringUtils.join(tagIdsArray, ",");
+		String tagNames = StringUtils.join(tagNamesArray, ",");
+		
 		wr.write(
 			new String[] {
 				d2s(c.getAnniversary()),
@@ -158,7 +172,9 @@ public class CSVOutput {
 				n2b(c.getWorkPostalCode()),
 				n2b(c.getWorkState()),
 				n2b(c.getWorkTelephone1()),
-				n2b(c.getWorkTelephone2())
+				n2b(c.getWorkTelephone2()),
+				n2b(tagIds),
+				n2b(tagNames)
 			}
 		);
 	}

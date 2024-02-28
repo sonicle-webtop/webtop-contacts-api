@@ -33,6 +33,7 @@
 package com.sonicle.webtop.contacts.io;
 
 import com.sonicle.commons.LangUtils;
+import com.sonicle.commons.time.DateTimeUtils;
 import com.sonicle.webtop.contacts.model.ContactAttachment;
 import com.sonicle.webtop.contacts.model.ContactAttachmentWithBytes;
 import com.sonicle.webtop.contacts.model.ContactBase;
@@ -99,6 +100,7 @@ import java.util.Set;
 import net.sf.qualitycheck.Check;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  *
@@ -321,7 +323,8 @@ public class VCardOutput {
 					ContactAttachmentWithBytes attb = (ContactAttachmentWithBytes)att;
 					XAttachment xatt = new XAttachment(
 							attb.getBytes(), 
-							BinaryType.get(null, attb.getMediaType(), null)
+							BinaryType.get(null, attb.getMediaType(), null),
+							att.getFilename()
 					);
 					vcard.addProperty(xatt);
 				}
@@ -339,17 +342,17 @@ public class VCardOutput {
 			for (Entry<String, CustomFieldValue> e: cv.entrySet()) {
 				CustomFieldValue cfv = e.getValue();
 				String uid = e.getKey();
-				DateFormat df = new SimpleDateFormat("yyyyMMdd");
+				DateTimeFormatter dtf = DateTimeUtils.createYmdHmsFormatter();
 				Boolean bv = cfv.getBooleanValue();
 				DateTime dv = cfv.getDateValue();
 				Double nv = cfv.getNumberValue();
 				String sv = cfv.getStringValue();
 				String tv = cfv.getTextValue();
-				if (bv!=null) vcard.addProperty(new XCustomFieldValue(uid, "boolean", ""+bv));
-				else if (dv!=null) vcard.addProperty(new XCustomFieldValue(uid, "date", df.format(dv.toDate())));
-				else if (nv!=null) vcard.addProperty(new XCustomFieldValue(uid, "number", ""+nv));
-				else if (!StringUtils.isEmpty(sv)) vcard.addProperty(new XCustomFieldValue(uid, "string", ""+sv));
-				else if (!StringUtils.isEmpty(tv)) vcard.addProperty(new XCustomFieldValue(uid, "text", ""+tv));
+				if (bv!=null) vcard.addProperty(new XCustomFieldValue(uid, XCustomFieldValue.TYPE_BOOLEAN, ""+bv));
+				else if (dv!=null) vcard.addProperty(new XCustomFieldValue(uid, XCustomFieldValue.TYPE_DATE, dtf.print(dv)));
+				else if (nv!=null) vcard.addProperty(new XCustomFieldValue(uid, XCustomFieldValue.TYPE_NUMBER, String.valueOf(nv)));
+				else if (!StringUtils.isEmpty(sv)) vcard.addProperty(new XCustomFieldValue(uid, XCustomFieldValue.TYPE_STRING, sv));
+				else if (!StringUtils.isEmpty(tv)) vcard.addProperty(new XCustomFieldValue(uid, XCustomFieldValue.TYPE_TEXT, tv));
 			}
 		}
 		

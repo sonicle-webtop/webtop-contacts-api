@@ -32,21 +32,24 @@
  */
 package com.sonicle.webtop.contacts.io;
 
+import com.sonicle.commons.LangUtils;
+import com.sonicle.commons.time.DateTimeUtils;
 import com.sonicle.webtop.contacts.model.ContactAttachmentWithStream;
 import com.sonicle.webtop.contacts.model.ContactBase;
 import com.sonicle.webtop.contacts.model.ContactCompany;
 import com.sonicle.webtop.contacts.model.ContactPicture;
 import com.sonicle.webtop.core.app.ezvcard.BinaryType;
 import com.sonicle.webtop.core.app.ezvcard.XAttachment;
+import com.sonicle.webtop.core.app.ezvcard.XCustomFieldValue;
 import com.sonicle.webtop.core.model.CustomFieldValue;
 import ezvcard.VCard;
-import ezvcard.property.RawProperty;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  *
@@ -56,14 +59,14 @@ public class ContactInput {
 	public final ContactBase contact;
 	public final ContactCompany contactCompany;
 	public final ContactPicture contactPicture;
-	public final Set<String> tagNames;
+	public final Set<String> tagIds;
 	public final VCard sourceObject;
 
-	public ContactInput(ContactBase contact, ContactCompany contactCompany, ContactPicture contactPicture, Set<String> tagNames, VCard sourceObject) {
+	public ContactInput(ContactBase contact, ContactCompany contactCompany, ContactPicture contactPicture, Set<String> tagIds, VCard sourceObject) {
 		this.contact = contact;
 		this.contactCompany = contactCompany;
 		this.contactPicture = contactPicture;
-		this.tagNames = tagNames;
+		this.tagIds = tagIds;
 		this.sourceObject = sourceObject;
 	}
 	
@@ -85,7 +88,7 @@ public class ContactInput {
 				byte[] bytes = xatt.getData();
 				if (bytes != null) {
 					BinaryType btype = xatt.getContentType();
-					attachments.add(new ContactAttachmentWithStream(new ByteArrayInputStream(bytes), (btype != null) ? btype.getMediaType() : null, xatt.getFilename(), (long)bytes.length));
+					attachments.add(new ContactAttachmentWithStream(new ByteArrayInputStream(bytes), (btype != null) ? btype.getMediaType() : null, xatt.getFileName(), (long)bytes.length));
 				}
 			}
 			sourceObject.removeProperties(XAttachment.class);
@@ -95,18 +98,35 @@ public class ContactInput {
 	
 	public Map<String, CustomFieldValue> extractCustomFieldsValues(final Set<String> validCustomFieldsIds) {
 		Map<String, CustomFieldValue> values = new LinkedHashMap<>();
-		//TODO: add support to XCustomFieldValue
-		/*
+		
 		if (sourceObject != null) {
 			for (XCustomFieldValue xval : sourceObject.getProperties(XCustomFieldValue.class)) {
-				String id = xval.getID();
-				if (validCustomFieldsIds.contains(id)) {
+				String uid = xval.getUid();
+				String type = xval.getType();
+				if (validCustomFieldsIds.contains(uid)) {
 					CustomFieldValue value = new CustomFieldValue();
-					values.put(id, value);
+					value.setFieldId(uid);
+					if (XCustomFieldValue.TYPE_BOOLEAN.equals(type))
+						value.setBooleanValue(Boolean.parseBoolean(xval.getValue()));
+					
+					else if (XCustomFieldValue.TYPE_DATE.equals(type)) {
+						DateTimeFormatter dtf = DateTimeUtils.createYmdHmsFormatter();
+						value.setDateValue(DateTimeUtils.parseDateTime(dtf, xval.getValue()));
+					}
+					else if (XCustomFieldValue.TYPE_NUMBER.equals(type))
+						value.setNumberValue(LangUtils.value(xval.getValue(), (Double)null));
+					
+					else if (XCustomFieldValue.TYPE_STRING.equals(type))
+						value.setStringValue(xval.getValue());
+					
+					else if (XCustomFieldValue.TYPE_TEXT.equals(type))
+						value.setTextValue(xval.getValue());
+					
+					values.put(uid, value);
 				}
 			}
 		}
-		*/
+		
 		return values;
 	}
 }

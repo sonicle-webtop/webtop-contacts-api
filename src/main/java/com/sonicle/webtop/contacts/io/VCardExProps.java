@@ -42,5 +42,6 @@ public class VCardExProps {
 	public static final String ASSISTANT_TELEPHONE = "X-WT-ASSISTANTTELEPHONE";
 	public static final String HREF = "X-WT-HREF";
 	public static final String TAGS = "X-WT-TAGS";
+	public static final String CUSTOMFIELDVALUE = "X-WT-CUSTOMFIELDVALUE";
 	//public static final String CATEGORY_ID = "X-WT-CATEGORYID";
 }

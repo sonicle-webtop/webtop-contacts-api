@@ -491,8 +491,12 @@ public class VCardInput {
 		}
 		
 		// X-PROPS(*)
-		if (!vcCopy.getExtendedProperties().isEmpty()) {
-			for (RawProperty rp : vcCopy.getExtendedProperties()) {
+		List<RawProperty> extProps = vcCopy.getExtendedProperties();
+		if (!extProps.isEmpty()) {
+			ArrayList<RawProperty> extPropsCopy = new ArrayList<>();
+			for (RawProperty rp : extProps) extPropsCopy.add(rp);
+			
+			for (RawProperty rp : extPropsCopy) {
 				if (VCardExProps.MANAGER.equals(rp.getPropertyName())) {
 					contact.setAssistant(rp.getValue());
 					vcCopy.removeProperty(rp);

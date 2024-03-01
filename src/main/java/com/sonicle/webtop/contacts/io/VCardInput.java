@@ -88,6 +88,7 @@ import org.joda.time.LocalDate;
 import com.sonicle.webtop.core.app.io.BeanHandler;
 import com.sonicle.webtop.core.app.ezvcard.XAttachmentScribe;
 import com.sonicle.webtop.core.app.ezvcard.XCustomFieldValueScribe;
+import com.sonicle.webtop.core.app.ezvcard.XTagScribe;
 import ezvcard.io.text.VCardReader;
 import ezvcard.property.RawProperty;
 import java.util.LinkedHashSet;
@@ -148,6 +149,7 @@ public class VCardInput {
 		final VCardReader reader = new VCardReader(is);
 		if (!ignoreAttachments) reader.registerScribe(new XAttachmentScribe());
 		if (!ignoreCustomFieldsValues) reader.registerScribe(new XCustomFieldValueScribe());
+		reader.registerScribe(new XTagScribe());
 		return parseAllVCards(reader);
 	}
 	
@@ -155,6 +157,7 @@ public class VCardInput {
 		final VCardReader reader = new VCardReader(s);
 		if (!ignoreAttachments) reader.registerScribe(new XAttachmentScribe());
 		if (!ignoreCustomFieldsValues) reader.registerScribe(new XCustomFieldValueScribe());
+		reader.registerScribe(new XTagScribe());
 		return parseAllVCards(reader);
 	}
 	
@@ -508,10 +511,6 @@ public class VCardInput {
 					vcCopy.removeProperty(rp);
 				} else if (VCardExProps.HREF.equals(rp.getPropertyName())) {
 					contact.setHref(rp.getValue());
-					vcCopy.removeProperty(rp);
-				} else if (VCardExProps.TAGS.equals(rp.getPropertyName())) {
-					if (tagNames == null) tagNames = new LinkedHashSet<>();
-					tagNames.addAll(LangUtils.parseStringAsList(rp.getValue(), String.class));
 					vcCopy.removeProperty(rp);
 				}
 			}

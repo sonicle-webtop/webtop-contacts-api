@@ -46,6 +46,8 @@ import com.sonicle.webtop.core.app.ezvcard.XAttachment;
 import com.sonicle.webtop.core.app.ezvcard.XAttachmentScribe;
 import com.sonicle.webtop.core.app.ezvcard.XCustomFieldValue;
 import com.sonicle.webtop.core.app.ezvcard.XCustomFieldValueScribe;
+import com.sonicle.webtop.core.app.ezvcard.XTag;
+import com.sonicle.webtop.core.app.ezvcard.XTagScribe;
 import com.sonicle.webtop.core.app.util.log.BufferingLogHandler;
 import com.sonicle.webtop.core.app.util.log.LogEntry;
 import com.sonicle.webtop.core.app.util.log.LogHandler;
@@ -55,18 +57,13 @@ import com.sonicle.webtop.core.model.RecipientFieldCategory;
 import com.sonicle.webtop.core.sdk.WTException;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
-import ezvcard.VCardDataType;
 import ezvcard.VCardVersion;
-import ezvcard.io.scribe.StringPropertyScribe;
-import ezvcard.io.scribe.VCardPropertyScribe;
 import ezvcard.parameter.AddressType;
 import ezvcard.parameter.EmailType;
 import ezvcard.parameter.ImageType;
 import ezvcard.parameter.ImppType;
 import ezvcard.parameter.RelatedType;
 import ezvcard.parameter.TelephoneType;
-import ezvcard.parameter.VCardParameter;
-import ezvcard.parameter.VCardParameters;
 import ezvcard.property.Address;
 import ezvcard.property.Anniversary;
 import ezvcard.property.Birthday;
@@ -82,21 +79,15 @@ import ezvcard.property.Related;
 import ezvcard.property.Role;
 import ezvcard.property.StructuredName;
 import ezvcard.property.Telephone;
-import ezvcard.property.TextProperty;
 import ezvcard.property.Title;
 import ezvcard.property.Uid;
 import ezvcard.property.Url;
-import ezvcard.property.VCardProperty;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import net.sf.qualitycheck.Check;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -171,6 +162,7 @@ public class VCardOutput {
 				.version(version)
 				.register(new XCustomFieldValueScribe())
 				.register(new XAttachmentScribe())
+				.register(new XTagScribe())
 				.go();
 	}
 	
@@ -188,6 +180,7 @@ public class VCardOutput {
 			.version(version)
 			.register(new XCustomFieldValueScribe())
 			.register(new XAttachmentScribe())
+			.register(new XTagScribe())
 			.go();
 	}
 	
@@ -197,6 +190,7 @@ public class VCardOutput {
 			.version(version)
 			.register(new XCustomFieldValueScribe())
 			.register(new XAttachmentScribe())
+			.register(new XTagScribe())
 			.go();
 	}
 	
@@ -335,6 +329,16 @@ public class VCardOutput {
 		for(ExtendedProperty extp: toExtendedProperties(contact)) {
 			vcard.addExtendedProperty(extp.getName(), extp.getValue());
 		}
+		
+		//TAGS
+		for(String tagId: contact.getTagsOrEmpty()) {
+			String tagName = null;
+			if (tagNamesByIdMap!=null) tagName = tagNamesByIdMap.get(tagId);
+			if (tagName == null) tagName = tagId;
+			XTag xtag = new XTag(tagId, tagName);
+			vcard.addProperty(xtag);
+		}
+		
 		
 		// CUSTOM FIELDS AS EXTENDED PROPERTIES
 		Map<String, CustomFieldValue> cv = contact.getCustomValues();
@@ -660,7 +664,6 @@ public class VCardOutput {
 		addPropIfValued(exProps, VCardExProps.ASSISTANT, c.getAssistant());
 		addPropIfValued(exProps, VCardExProps.ASSISTANT_TELEPHONE, c.getAssistantTelephone());
 		addPropIfValued(exProps, VCardExProps.HREF, c.getHref());
-		addPropIfValued(exProps, VCardExProps.TAGS, StringUtils.join(c.getTagsOrEmpty(), ","));
 		//addPropIfValued(exProps, VCardExProps.CATEGORY_ID, String.valueOf(c.getCategoryId()));
 		return exProps;
 	}

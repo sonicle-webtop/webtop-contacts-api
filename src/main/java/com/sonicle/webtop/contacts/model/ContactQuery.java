@@ -32,6 +32,7 @@
  */
 package com.sonicle.webtop.contacts.model;
 
+import com.sonicle.commons.qbuilders.builders.QBuilder;
 import com.sonicle.commons.qbuilders.conditions.Condition;
 import com.sonicle.commons.qbuilders.properties.concrete.StringProperty;
 import com.sonicle.commons.web.json.CId;
@@ -111,7 +112,7 @@ public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 				last = new ContactQuery().and(last, createCondition(key, values.isEmpty() ? null : values.get(0), customFieldTypeMapping, timezone, smartStringComparison));
 			} else {
 				List<Condition<ContactQuery>> conds = new ArrayList<>();
-				for (String value : entry.getValue()) {
+				for (String value : values) {
 					conds.add(createCondition(key, value, customFieldTypeMapping, timezone, smartStringComparison));
 				}
 				last = new ContactQuery().and(last, new ContactQuery().or(conds));
@@ -119,9 +120,22 @@ public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 		}
 		
 		if (!StringUtils.isBlank(query.getAllText())) {
-			return new ContactQuery().and(last, new ContactQuery().any().eq(asStringValue(query.getAllText(), smartStringComparison)));
+			String[] values = toConditionStringValues(query.getAllText(), smartStringComparison);
+			return new ContactQuery().and(last, combineFieldValuesAsCondition(values, v -> new ContactQuery().any().eq(v)));
 		} else {
 			return last;
+		}
+	}
+	
+	private static Condition<ContactQuery> combineFieldValuesAsCondition(final String[] values, final QueryFieldConditionCreatorMethod<ContactQuery, String> creator) {
+		if (values.length == 1) {
+			return creator.create(values[0]);
+		} else {
+			List<Condition<ContactQuery>> conds = new ArrayList<>(values.length);
+			for (String value : values) {
+				conds.add(creator.create(value));
+			}
+			return new ContactQuery().or(conds);
 		}
 	}
 	
@@ -130,7 +144,8 @@ public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
 			return new ContactQuery().id().eq(asStringValue(value, false));
 
 		} else if ("name".equals(condition.keyword)) {
-			return new ContactQuery().name().eq(asStringValue(value, smartStringComparison));
+			String[] values = toConditionStringValues(value, smartStringComparison);
+			return combineFieldValuesAsCondition(values, v -> new ContactQuery().name().eq(v));
 
 		} else if ("company".equals(condition.keyword)) {
 			return new ContactQuery().company().eq(asStringValue(value, smartStringComparison));

@@ -36,13 +36,8 @@ package com.sonicle.webtop.contacts.model;
  *
  * @author malbinola
  */
-public class ContactListRecipient {
+public class ContactListRecipient extends ContactListRecipientBase {
 	protected Integer listRecipientId;
-	protected String recipient;
-	protected Integer recipientContactId;
-	protected String recipientType;
-	
-	public ContactListRecipient() {}
 
 	public Integer getListRecipientId() {
 		return listRecipientId;
@@ -50,29 +45,5 @@ public class ContactListRecipient {
 
 	public void setListRecipientId(Integer listRecipientId) {
 		this.listRecipientId = listRecipientId;
-	}
-
-	public String getRecipient() {
-		return recipient;
-	}
-
-	public void setRecipient(String recipient) {
-		this.recipient = recipient;
-	}
-	
-	public Integer getRecipientContactId() {
-		return recipientContactId;
-	}
-
-	public void setRecipientContactId(Integer recipientContactId) {
-		this.recipientContactId = recipientContactId;
-	}
-
-	public String getRecipientType() {
-		return recipientType;
-	}
-
-	public void setRecipientType(String recipientType) {
-		this.recipientType = recipientType;
 	}
 }

@@ -35,8 +35,9 @@ package com.sonicle.webtop.contacts.model;
 /**
  *
  * @author malbinola
+ * @param <RT>
  */
-public class ContactList extends ContactListEx {
+public class ContactList <RT extends ContactListRecipientBase> extends ContactListEx<RT> {
 	protected Integer contactId;
 	
 	public ContactList() {

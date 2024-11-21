@@ -40,7 +40,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class ContactListRecipientBase {
 	protected String recipient;
-	protected Integer recipientContactId;
+	protected String recipientContactId;
 	protected RecipientType recipientType;
 
 	public String getRecipient() {
@@ -51,11 +51,11 @@ public class ContactListRecipientBase {
 		this.recipient = recipient;
 	}
 
-	public Integer getRecipientContactId() {
+	public String getRecipientContactId() {
 		return recipientContactId;
 	}
 
-	public void setRecipientContactId(Integer recipientContactId) {
+	public void setRecipientContactId(String recipientContactId) {
 		this.recipientContactId = recipientContactId;
 	}
 

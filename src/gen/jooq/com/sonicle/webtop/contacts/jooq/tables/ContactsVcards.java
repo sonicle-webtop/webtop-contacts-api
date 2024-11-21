@@ -29,7 +29,7 @@ public class ContactsVcards extends org.jooq.impl.TableImpl<com.sonicle.webtop.c
     /**
      * The column <code>contacts.contacts_vcards.contact_id</code>.
      */
-    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ContactsVcardsRecord, java.lang.Integer> CONTACT_ID = createField(org.jooq.impl.DSL.name("contact_id"), org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ContactsVcardsRecord, java.lang.String> CONTACT_ID = createField(org.jooq.impl.DSL.name("contact_id"), org.jooq.impl.SQLDataType.VARCHAR(32).nullable(false), this, "");
 
     /**
      * The column <code>contacts.contacts_vcards.raw_data</code>.
@@ -129,7 +129,7 @@ public class ContactsVcards extends org.jooq.impl.TableImpl<com.sonicle.webtop.c
     // -------------------------------------------------------------------------
 
     @java.lang.Override
-    public org.jooq.Row2<java.lang.Integer, java.lang.String> fieldsRow() {
+    public org.jooq.Row2<java.lang.String, java.lang.String> fieldsRow() {
         return (org.jooq.Row2) super.fieldsRow();
     }
 }

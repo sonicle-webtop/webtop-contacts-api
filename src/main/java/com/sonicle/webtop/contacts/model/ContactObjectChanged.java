@@ -39,18 +39,18 @@ import org.joda.time.DateTime;
  * @author malbinola
  */
 public class ContactObjectChanged {
-	protected final Integer contactId;
+	protected final String contactId;
 	protected final DateTime revisionTimestamp;
 	//protected final String publicUid;
 	protected final String href;
 	
-	public ContactObjectChanged(int contactId, DateTime revisionTimestamp, String href) {
+	public ContactObjectChanged(String contactId, DateTime revisionTimestamp, String href) {
 		this.contactId = contactId;
 		this.revisionTimestamp = revisionTimestamp;
 		this.href = href;
 	}
 
-	public Integer getContactId() {
+	public String getContactId() {
 		return contactId;
 	}
 

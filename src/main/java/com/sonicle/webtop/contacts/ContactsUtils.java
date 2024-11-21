@@ -70,8 +70,14 @@ public class ContactsUtils {
 		return publicUid + ".vcf";
 	}
 	
-	public static String buildContactUid(int contactId, String internetName) {
-		String id = IdentifierUtils.getUUIDTimeBased(true) + "." + String.valueOf(contactId);
+	public static String buildContactUid(String contactId, String internetName) {
+		String id = null;
+		if (contactId.length() == 32) {
+			id = contactId;
+		} else {
+			// Backward compatibility against old-style numeric IDs
+			id = IdentifierUtils.getUUIDTimeBased(true) + "." + contactId;
+		}
 		return VCardUtils.buildUid(DigestUtils.md5Hex(id), internetName);
 	}
 	
@@ -84,7 +90,7 @@ public class ContactsUtils {
 		return ia != null ? isListVirtualRecipient(ia) : false;
 	}
 	
-	public static Integer virtualRecipientToListId(InternetAddress ia) {
+	public static String virtualRecipientToListId(InternetAddress ia) {
 		return virtualRecipientToListId(new VirtualAddress(ia.getAddress()).getLocal());
 	}
 	
@@ -94,8 +100,8 @@ public class ContactsUtils {
 	 * @param virtualRecipient
 	 * @return 
 	 */
-	public static Integer virtualRecipientToListId(String virtualRecipient) {
+	public static String virtualRecipientToListId(String virtualRecipient) {
 		Matcher matcher = PATTERN_VIRTUALRCPT_LIST.matcher(virtualRecipient);
-		return matcher.matches() ? Integer.valueOf(matcher.group(1)) : null;
+		return matcher.matches() ? matcher.group(1) : null;
 	}
 }

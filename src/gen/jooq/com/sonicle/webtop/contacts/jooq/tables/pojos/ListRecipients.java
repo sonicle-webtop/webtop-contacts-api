@@ -13,11 +13,11 @@ public class ListRecipients implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private java.lang.Integer listRecipientId;
-    private java.lang.Integer contactId;
-    private java.lang.String  recipient;
-    private java.lang.Integer recipientContactId;
-    private java.lang.String  recipientType;
+    private java.lang.String listRecipientId;
+    private java.lang.String contactId;
+    private java.lang.String recipient;
+    private java.lang.String recipientContactId;
+    private java.lang.String recipientType;
 
     public ListRecipients() {}
 
@@ -30,11 +30,11 @@ public class ListRecipients implements java.io.Serializable {
     }
 
     public ListRecipients(
-        java.lang.Integer listRecipientId,
-        java.lang.Integer contactId,
-        java.lang.String  recipient,
-        java.lang.Integer recipientContactId,
-        java.lang.String  recipientType
+        java.lang.String listRecipientId,
+        java.lang.String contactId,
+        java.lang.String recipient,
+        java.lang.String recipientContactId,
+        java.lang.String recipientType
     ) {
         this.listRecipientId = listRecipientId;
         this.contactId = contactId;
@@ -46,28 +46,28 @@ public class ListRecipients implements java.io.Serializable {
     /**
      * Getter for <code>contacts.list_recipients.list_recipient_id</code>.
      */
-    public java.lang.Integer getListRecipientId() {
+    public java.lang.String getListRecipientId() {
         return this.listRecipientId;
     }
 
     /**
      * Setter for <code>contacts.list_recipients.list_recipient_id</code>.
      */
-    public void setListRecipientId(java.lang.Integer listRecipientId) {
+    public void setListRecipientId(java.lang.String listRecipientId) {
         this.listRecipientId = listRecipientId;
     }
 
     /**
      * Getter for <code>contacts.list_recipients.contact_id</code>.
      */
-    public java.lang.Integer getContactId() {
+    public java.lang.String getContactId() {
         return this.contactId;
     }
 
     /**
      * Setter for <code>contacts.list_recipients.contact_id</code>.
      */
-    public void setContactId(java.lang.Integer contactId) {
+    public void setContactId(java.lang.String contactId) {
         this.contactId = contactId;
     }
 
@@ -88,14 +88,14 @@ public class ListRecipients implements java.io.Serializable {
     /**
      * Getter for <code>contacts.list_recipients.recipient_contact_id</code>.
      */
-    public java.lang.Integer getRecipientContactId() {
+    public java.lang.String getRecipientContactId() {
         return this.recipientContactId;
     }
 
     /**
      * Setter for <code>contacts.list_recipients.recipient_contact_id</code>.
      */
-    public void setRecipientContactId(java.lang.Integer recipientContactId) {
+    public void setRecipientContactId(java.lang.String recipientContactId) {
         this.recipientContactId = recipientContactId;
     }
 

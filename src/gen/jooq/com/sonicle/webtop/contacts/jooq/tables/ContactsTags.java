@@ -29,7 +29,7 @@ public class ContactsTags extends org.jooq.impl.TableImpl<com.sonicle.webtop.con
     /**
      * The column <code>contacts.contacts_tags.contact_id</code>.
      */
-    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ContactsTagsRecord, java.lang.Integer> CONTACT_ID = createField(org.jooq.impl.DSL.name("contact_id"), org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ContactsTagsRecord, java.lang.String> CONTACT_ID = createField(org.jooq.impl.DSL.name("contact_id"), org.jooq.impl.SQLDataType.VARCHAR(32).nullable(false), this, "");
 
     /**
      * The column <code>contacts.contacts_tags.tag_id</code>.
@@ -90,6 +90,20 @@ public class ContactsTags extends org.jooq.impl.TableImpl<com.sonicle.webtop.con
     }
 
     @java.lang.Override
+    public java.util.List<org.jooq.ForeignKey<com.sonicle.webtop.contacts.jooq.tables.records.ContactsTagsRecord, ?>> getReferences() {
+        return java.util.Arrays.<org.jooq.ForeignKey<com.sonicle.webtop.contacts.jooq.tables.records.ContactsTagsRecord, ?>>asList(com.sonicle.webtop.contacts.jooq.Keys.CONTACTS_TAGS__CONTACTS_TAGS_CONTACT_ID_FKEY);
+    }
+
+    private transient com.sonicle.webtop.contacts.jooq.tables.Contacts _contacts;
+
+    public com.sonicle.webtop.contacts.jooq.tables.Contacts contacts() {
+        if (_contacts == null)
+            _contacts = new com.sonicle.webtop.contacts.jooq.tables.Contacts(this, com.sonicle.webtop.contacts.jooq.Keys.CONTACTS_TAGS__CONTACTS_TAGS_CONTACT_ID_FKEY);
+
+        return _contacts;
+    }
+
+    @java.lang.Override
     public ContactsTags as(java.lang.String alias) {
         return new ContactsTags(org.jooq.impl.DSL.name(alias), this);
     }
@@ -120,7 +134,7 @@ public class ContactsTags extends org.jooq.impl.TableImpl<com.sonicle.webtop.con
     // -------------------------------------------------------------------------
 
     @java.lang.Override
-    public org.jooq.Row2<java.lang.Integer, java.lang.String> fieldsRow() {
+    public org.jooq.Row2<java.lang.String, java.lang.String> fieldsRow() {
         return (org.jooq.Row2) super.fieldsRow();
     }
 }

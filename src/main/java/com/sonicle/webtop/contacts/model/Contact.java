@@ -39,26 +39,26 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author malbinola
  */
 public class Contact extends ContactEx {
-	protected Integer contactId;
+	protected String contactId;
 	
 	public Contact() {
 		super();
 	}
 	
-	public Integer getContactId() {
+	public String getContactId() {
 		return contactId;
 	}
 
-	public void setContactId(Integer contactId) {
+	public void setContactId(String contactId) {
 		this.contactId = contactId;
 	}
 	
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this)
-				.append(getContactId())
-				.append(getFirstName())
-				.append(getLastName())
-				.toString();
+			.append(getContactId())
+			.append(getFirstName())
+			.append(getLastName())
+			.toString();
 	}
 }

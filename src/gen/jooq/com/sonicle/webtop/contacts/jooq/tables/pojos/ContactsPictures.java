@@ -13,7 +13,7 @@ public class ContactsPictures implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private java.lang.Integer contactId;
+    private java.lang.String  contactId;
     private java.lang.Integer width;
     private java.lang.Integer height;
     private java.lang.String  mediaType;
@@ -30,7 +30,7 @@ public class ContactsPictures implements java.io.Serializable {
     }
 
     public ContactsPictures(
-        java.lang.Integer contactId,
+        java.lang.String  contactId,
         java.lang.Integer width,
         java.lang.Integer height,
         java.lang.String  mediaType,
@@ -46,14 +46,14 @@ public class ContactsPictures implements java.io.Serializable {
     /**
      * Getter for <code>contacts.contacts_pictures.contact_id</code>.
      */
-    public java.lang.Integer getContactId() {
+    public java.lang.String getContactId() {
         return this.contactId;
     }
 
     /**
      * Setter for <code>contacts.contacts_pictures.contact_id</code>.
      */
-    public void setContactId(java.lang.Integer contactId) {
+    public void setContactId(java.lang.String contactId) {
         this.contactId = contactId;
     }
 

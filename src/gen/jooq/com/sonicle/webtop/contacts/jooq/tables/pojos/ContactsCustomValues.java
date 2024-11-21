@@ -13,7 +13,7 @@ public class ContactsCustomValues implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private java.lang.Integer      contactId;
+    private java.lang.String       contactId;
     private java.lang.String       customFieldId;
     private java.lang.String       stringValue;
     private java.lang.Double       numberValue;
@@ -34,7 +34,7 @@ public class ContactsCustomValues implements java.io.Serializable {
     }
 
     public ContactsCustomValues(
-        java.lang.Integer      contactId,
+        java.lang.String       contactId,
         java.lang.String       customFieldId,
         java.lang.String       stringValue,
         java.lang.Double       numberValue,
@@ -54,14 +54,14 @@ public class ContactsCustomValues implements java.io.Serializable {
     /**
      * Getter for <code>contacts.contacts_custom_values.contact_id</code>.
      */
-    public java.lang.Integer getContactId() {
+    public java.lang.String getContactId() {
         return this.contactId;
     }
 
     /**
      * Setter for <code>contacts.contacts_custom_values.contact_id</code>.
      */
-    public void setContactId(java.lang.Integer contactId) {
+    public void setContactId(java.lang.String contactId) {
         this.contactId = contactId;
     }
 

@@ -29,12 +29,12 @@ public class ListRecipients extends org.jooq.impl.TableImpl<com.sonicle.webtop.c
     /**
      * The column <code>contacts.list_recipients.list_recipient_id</code>.
      */
-    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ListRecipientsRecord, java.lang.Integer> LIST_RECIPIENT_ID = createField(org.jooq.impl.DSL.name("list_recipient_id"), org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('contacts.seq_list_recipients'::regclass)", org.jooq.impl.SQLDataType.INTEGER)), this, "");
+    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ListRecipientsRecord, java.lang.String> LIST_RECIPIENT_ID = createField(org.jooq.impl.DSL.name("list_recipient_id"), org.jooq.impl.SQLDataType.VARCHAR(32).nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('contacts.seq_list_recipients'::regclass)", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>contacts.list_recipients.contact_id</code>.
      */
-    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ListRecipientsRecord, java.lang.Integer> CONTACT_ID = createField(org.jooq.impl.DSL.name("contact_id"), org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ListRecipientsRecord, java.lang.String> CONTACT_ID = createField(org.jooq.impl.DSL.name("contact_id"), org.jooq.impl.SQLDataType.VARCHAR(32).nullable(false), this, "");
 
     /**
      * The column <code>contacts.list_recipients.recipient</code>.
@@ -44,7 +44,7 @@ public class ListRecipients extends org.jooq.impl.TableImpl<com.sonicle.webtop.c
     /**
      * The column <code>contacts.list_recipients.recipient_contact_id</code>.
      */
-    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ListRecipientsRecord, java.lang.Integer> RECIPIENT_CONTACT_ID = createField(org.jooq.impl.DSL.name("recipient_contact_id"), org.jooq.impl.SQLDataType.INTEGER, this, "");
+    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ListRecipientsRecord, java.lang.String> RECIPIENT_CONTACT_ID = createField(org.jooq.impl.DSL.name("recipient_contact_id"), org.jooq.impl.SQLDataType.VARCHAR(32), this, "");
 
     /**
      * The column <code>contacts.list_recipients.recipient_type</code>.
@@ -101,16 +101,24 @@ public class ListRecipients extends org.jooq.impl.TableImpl<com.sonicle.webtop.c
 
     @java.lang.Override
     public java.util.List<org.jooq.ForeignKey<com.sonicle.webtop.contacts.jooq.tables.records.ListRecipientsRecord, ?>> getReferences() {
-        return java.util.Arrays.<org.jooq.ForeignKey<com.sonicle.webtop.contacts.jooq.tables.records.ListRecipientsRecord, ?>>asList(com.sonicle.webtop.contacts.jooq.Keys.LIST_RECIPIENTS__LIST_RECIPIENTS_CONTACT_ID_FKEY);
+        return java.util.Arrays.<org.jooq.ForeignKey<com.sonicle.webtop.contacts.jooq.tables.records.ListRecipientsRecord, ?>>asList(com.sonicle.webtop.contacts.jooq.Keys.LIST_RECIPIENTS__LIST_RECIPIENTS_CONTACT_ID_FKEY, com.sonicle.webtop.contacts.jooq.Keys.LIST_RECIPIENTS__LIST_RECIPIENTS_RECIPIENT_CONTACT_ID_FKEY);
     }
 
-    private transient com.sonicle.webtop.contacts.jooq.tables.Contacts _contacts;
+    private transient com.sonicle.webtop.contacts.jooq.tables.Contacts _listRecipientsContactIdFkey;
+    private transient com.sonicle.webtop.contacts.jooq.tables.Contacts _listRecipientsRecipientContactIdFkey;
 
-    public com.sonicle.webtop.contacts.jooq.tables.Contacts contacts() {
-        if (_contacts == null)
-            _contacts = new com.sonicle.webtop.contacts.jooq.tables.Contacts(this, com.sonicle.webtop.contacts.jooq.Keys.LIST_RECIPIENTS__LIST_RECIPIENTS_CONTACT_ID_FKEY);
+    public com.sonicle.webtop.contacts.jooq.tables.Contacts listRecipientsContactIdFkey() {
+        if (_listRecipientsContactIdFkey == null)
+            _listRecipientsContactIdFkey = new com.sonicle.webtop.contacts.jooq.tables.Contacts(this, com.sonicle.webtop.contacts.jooq.Keys.LIST_RECIPIENTS__LIST_RECIPIENTS_CONTACT_ID_FKEY);
 
-        return _contacts;
+        return _listRecipientsContactIdFkey;
+    }
+
+    public com.sonicle.webtop.contacts.jooq.tables.Contacts listRecipientsRecipientContactIdFkey() {
+        if (_listRecipientsRecipientContactIdFkey == null)
+            _listRecipientsRecipientContactIdFkey = new com.sonicle.webtop.contacts.jooq.tables.Contacts(this, com.sonicle.webtop.contacts.jooq.Keys.LIST_RECIPIENTS__LIST_RECIPIENTS_RECIPIENT_CONTACT_ID_FKEY);
+
+        return _listRecipientsRecipientContactIdFkey;
     }
 
     @java.lang.Override
@@ -144,7 +152,7 @@ public class ListRecipients extends org.jooq.impl.TableImpl<com.sonicle.webtop.c
     // -------------------------------------------------------------------------
 
     @java.lang.Override
-    public org.jooq.Row5<java.lang.Integer, java.lang.Integer, java.lang.String, java.lang.Integer, java.lang.String> fieldsRow() {
+    public org.jooq.Row5<java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String> fieldsRow() {
         return (org.jooq.Row5) super.fieldsRow();
     }
 }

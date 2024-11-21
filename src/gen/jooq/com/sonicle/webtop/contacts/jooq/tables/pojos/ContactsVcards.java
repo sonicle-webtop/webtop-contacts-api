@@ -13,8 +13,8 @@ public class ContactsVcards implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private java.lang.Integer contactId;
-    private java.lang.String  rawData;
+    private java.lang.String contactId;
+    private java.lang.String rawData;
 
     public ContactsVcards() {}
 
@@ -24,8 +24,8 @@ public class ContactsVcards implements java.io.Serializable {
     }
 
     public ContactsVcards(
-        java.lang.Integer contactId,
-        java.lang.String  rawData
+        java.lang.String contactId,
+        java.lang.String rawData
     ) {
         this.contactId = contactId;
         this.rawData = rawData;
@@ -34,14 +34,14 @@ public class ContactsVcards implements java.io.Serializable {
     /**
      * Getter for <code>contacts.contacts_vcards.contact_id</code>.
      */
-    public java.lang.Integer getContactId() {
+    public java.lang.String getContactId() {
         return this.contactId;
     }
 
     /**
      * Setter for <code>contacts.contacts_vcards.contact_id</code>.
      */
-    public void setContactId(java.lang.Integer contactId) {
+    public void setContactId(java.lang.String contactId) {
         this.contactId = contactId;
     }
 

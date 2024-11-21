@@ -14,7 +14,7 @@ public class ContactsAttachments implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
     private java.lang.String       contactAttachmentId;
-    private java.lang.Integer      contactId;
+    private java.lang.String       contactId;
     private org.joda.time.DateTime revisionTimestamp;
     private java.lang.Short        revisionSequence;
     private java.lang.String       filename;
@@ -35,7 +35,7 @@ public class ContactsAttachments implements java.io.Serializable {
 
     public ContactsAttachments(
         java.lang.String       contactAttachmentId,
-        java.lang.Integer      contactId,
+        java.lang.String       contactId,
         org.joda.time.DateTime revisionTimestamp,
         java.lang.Short        revisionSequence,
         java.lang.String       filename,
@@ -68,14 +68,14 @@ public class ContactsAttachments implements java.io.Serializable {
     /**
      * Getter for <code>contacts.contacts_attachments.contact_id</code>.
      */
-    public java.lang.Integer getContactId() {
+    public java.lang.String getContactId() {
         return this.contactId;
     }
 
     /**
      * Setter for <code>contacts.contacts_attachments.contact_id</code>.
      */
-    public void setContactId(java.lang.Integer contactId) {
+    public void setContactId(java.lang.String contactId) {
         this.contactId = contactId;
     }
 

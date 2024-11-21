@@ -13,8 +13,8 @@ public class ContactsTags implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private java.lang.Integer contactId;
-    private java.lang.String  tagId;
+    private java.lang.String contactId;
+    private java.lang.String tagId;
 
     public ContactsTags() {}
 
@@ -24,8 +24,8 @@ public class ContactsTags implements java.io.Serializable {
     }
 
     public ContactsTags(
-        java.lang.Integer contactId,
-        java.lang.String  tagId
+        java.lang.String contactId,
+        java.lang.String tagId
     ) {
         this.contactId = contactId;
         this.tagId = tagId;
@@ -34,14 +34,14 @@ public class ContactsTags implements java.io.Serializable {
     /**
      * Getter for <code>contacts.contacts_tags.contact_id</code>.
      */
-    public java.lang.Integer getContactId() {
+    public java.lang.String getContactId() {
         return this.contactId;
     }
 
     /**
      * Setter for <code>contacts.contacts_tags.contact_id</code>.
      */
-    public void setContactId(java.lang.Integer contactId) {
+    public void setContactId(java.lang.String contactId) {
         this.contactId = contactId;
     }
 

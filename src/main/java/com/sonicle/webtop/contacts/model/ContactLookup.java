@@ -39,7 +39,7 @@ import com.sonicle.webtop.core.sdk.UserProfileId;
  * @author malbinola
  */
 public class ContactLookup extends ContactBase {
-	protected Integer contactId;
+	protected String contactId;
 	protected Boolean isList;
 	protected String companyId;
 	protected String companyDescription;
@@ -49,11 +49,11 @@ public class ContactLookup extends ContactBase {
 	protected String tags;
 	protected boolean hasPicture;
 	
-	public Integer getContactId() {
+	public String getContactId() {
 		return contactId;
 	}
 
-	public void setContactId(Integer contactId) {
+	public void setContactId(String contactId) {
 		this.contactId = contactId;
 	}
 

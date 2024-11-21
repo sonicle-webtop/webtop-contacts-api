@@ -29,7 +29,7 @@ public class Contacts extends org.jooq.impl.TableImpl<com.sonicle.webtop.contact
     /**
      * The column <code>contacts.contacts.contact_id</code>.
      */
-    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ContactsRecord, java.lang.Integer> CONTACT_ID = createField(org.jooq.impl.DSL.name("contact_id"), org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('contacts.seq_contacts'::regclass)", org.jooq.impl.SQLDataType.INTEGER)), this, "");
+    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ContactsRecord, java.lang.String> CONTACT_ID = createField(org.jooq.impl.DSL.name("contact_id"), org.jooq.impl.SQLDataType.VARCHAR(32).nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('contacts.seq_contacts'::regclass)", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>contacts.contacts.category_id</code>.

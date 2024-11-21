@@ -29,7 +29,7 @@ public class ContactsPictures extends org.jooq.impl.TableImpl<com.sonicle.webtop
     /**
      * The column <code>contacts.contacts_pictures.contact_id</code>.
      */
-    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ContactsPicturesRecord, java.lang.Integer> CONTACT_ID = createField(org.jooq.impl.DSL.name("contact_id"), org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ContactsPicturesRecord, java.lang.String> CONTACT_ID = createField(org.jooq.impl.DSL.name("contact_id"), org.jooq.impl.SQLDataType.VARCHAR(32).nullable(false), this, "");
 
     /**
      * The column <code>contacts.contacts_pictures.width</code>.
@@ -144,7 +144,7 @@ public class ContactsPictures extends org.jooq.impl.TableImpl<com.sonicle.webtop
     // -------------------------------------------------------------------------
 
     @java.lang.Override
-    public org.jooq.Row5<java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.String, byte[]> fieldsRow() {
+    public org.jooq.Row5<java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.String, byte[]> fieldsRow() {
         return (org.jooq.Row5) super.fieldsRow();
     }
 }

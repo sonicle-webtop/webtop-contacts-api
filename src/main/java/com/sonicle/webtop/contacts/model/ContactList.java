@@ -38,17 +38,17 @@ package com.sonicle.webtop.contacts.model;
  * @param <RT>
  */
 public class ContactList <RT extends ContactListRecipientBase> extends ContactListEx<RT> {
-	protected Integer contactId;
+	protected String contactId;
 	
 	public ContactList() {
 		super();
 	}
 	
-	public Integer getContactId() {
+	public String getContactId() {
 		return contactId;
 	}
 
-	public void setContactId(Integer contactId) {
+	public void setContactId(String contactId) {
 		this.contactId = contactId;
 	}
 }

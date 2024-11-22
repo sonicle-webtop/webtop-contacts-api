@@ -33,10 +33,10 @@
 package com.sonicle.webtop.contacts;
 
 import com.google.gson.annotations.SerializedName;
-import com.sonicle.commons.BitFlag;
-import com.sonicle.commons.BitFlagEnum;
 import com.sonicle.commons.qbuilders.conditions.Condition;
 import com.sonicle.commons.LangUtils;
+import com.sonicle.commons.flags.BitFlags;
+import com.sonicle.commons.flags.BitFlagsEnum;
 import com.sonicle.webtop.contacts.model.Category;
 import com.sonicle.webtop.contacts.model.CategoryBase;
 import com.sonicle.webtop.contacts.model.CategoryFSFolder;
@@ -130,7 +130,7 @@ public interface IContactsManager {
 	public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQuery> conditionPredicate) throws WTException;
 	public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQuery> conditionPredicate, final int page, final int limit, final boolean returnFullCount) throws WTException;
 	public Contact getContact(final String contactId) throws WTException;
-	public Contact getContact(final String contactId, final BitFlag<ContactGetOptions> opts) throws WTException;
+	public Contact getContact(final String contactId, final BitFlags<ContactGetOption> opts) throws WTException;
 	public ContactPictureWithBytes getContactPicture(final String contactId) throws WTException;
 	public ContactCompany getContactCompany(final String contactId) throws WTException;
 	public ContactAttachmentWithBytes getContactAttachment(final String contactId, final String attachmentId) throws WTException;
@@ -138,19 +138,19 @@ public interface IContactsManager {
 	public Contact addContact(ContactEx contact) throws WTException;
 	public Contact addContact(ContactEx contact, String vCardRawData) throws WTException;
 	public void updateContact(final String contactId, final ContactEx contact) throws WTException;
-	public void updateContact(final String contactId, final ContactEx contact, final BitFlag<ContactUpdateOptions> opts) throws WTException;
+	public void updateContact(final String contactId, final ContactEx contact, final BitFlags<ContactUpdateOption> opts) throws WTException;
 	public void updateContactPicture(final String contactId, final ContactPictureWithBytes picture) throws WTException;	
 	public void deleteContact(final String contactId) throws WTException;
 	public void deleteContact(final Collection<String> contactIds) throws WTException;
 	public void moveContact(final boolean copy, final String contactId, final int targetCategoryId) throws WTException;
-	public void moveContact(final boolean copy, final String contactId, final int targetCategoryId, BitFlag<ContactGetOptions> opts) throws WTException;
+	public void moveContact(final boolean copy, final String contactId, final int targetCategoryId, BitFlags<ContactGetOption> opts) throws WTException;
 	public void moveContact(final boolean copy, final Collection<String> contactIds, final int targetCategoryId) throws WTException;
-	public void moveContact(final boolean copy, final Collection<String> contactIds, final int targetCategoryId, BitFlag<ContactGetOptions> opts) throws WTException;
+	public void moveContact(final boolean copy, final Collection<String> contactIds, final int targetCategoryId, BitFlags<ContactGetOption> opts) throws WTException;
 	public ContactList<ContactListRecipient> getContactList(final String contactId) throws WTException;
-	public ContactList<ContactListRecipient> getContactList(final String contactId, final BitFlag<ContactGetOptions> opts) throws WTException;
+	public ContactList<ContactListRecipient> getContactList(final String contactId, final BitFlags<ContactGetOption> opts) throws WTException;
 	public ContactList<ContactListRecipient> addContactList(final ContactListEx<ContactListRecipientBase> contact) throws WTException;
 	public void updateContactList(final String contactId, final ContactListEx<ContactListRecipientBase> contact) throws WTException;
-	public void updateContactList(final String contactId, final ContactListEx<ContactListRecipientBase> contact, final BitFlag<ContactUpdateOptions> opts) throws WTException;
+	public void updateContactList(final String contactId, final ContactListEx<ContactListRecipientBase> contact, final BitFlags<ContactUpdateOption> opts) throws WTException;
 	public void updateContactsListRecipients(final String contactId, final Collection<ContactListRecipientBase> recipients, final boolean append) throws WTException;
 	public void deleteContactList(final String contactId) throws WTException;
 	public void deleteContactList(final Collection<String> contactIds) throws WTException;
@@ -158,22 +158,22 @@ public interface IContactsManager {
 	public void updateContactCategoryTags(final UpdateTagsOperation operation, final int categoryId, final Set<String> tagIds) throws WTException;
 	public void updateContactTags(final UpdateTagsOperation operation, final Collection<String> contactIds, final Set<String> tagIds) throws WTException;
 	
-	public static enum ContactGetOptions implements BitFlagEnum {
-		PICTURE(1), ATTACHMENTS(2), TAGS(4), CUSTOM_VALUES(8), LIST_RECIPIENTS(16);
+	public static enum ContactGetOption implements BitFlagsEnum<ContactGetOption> {
+		PICTURE(1<<0), ATTACHMENTS(1<<1), TAGS(1<<2), CUSTOM_VALUES(1<<3), LIST_RECIPIENTS(1<<4);
 		
-		private int value = 0;
-		private ContactGetOptions(int value) { this.value = value; }
+		private int mask = 0;
+		private ContactGetOption(int mask) { this.mask = mask; }
 		@Override
-		public int value() { return this.value; }
+		public long mask() { return this.mask; }
 	}
 	
-	public static enum ContactUpdateOptions implements BitFlagEnum {
-		PICTURE(1), ATTACHMENTS(2), TAGS(4), CUSTOM_VALUES(8), LIST_RECIPIENTS(16);
+	public static enum ContactUpdateOption implements BitFlagsEnum<ContactUpdateOption> {
+		PICTURE(1<<0), ATTACHMENTS(1<<1), TAGS(1<<2), CUSTOM_VALUES(1<<3), LIST_RECIPIENTS(1<<4);
 		
-		private int value = 0;
-		private ContactUpdateOptions(int value) { this.value = value; }
+		private int mask = 0;
+		private ContactUpdateOption(int mask) { this.mask = mask; }
 		@Override
-		public int value() { return this.value; }
+		public long mask() { return this.mask; }
 	}
 	
 	public static enum ImportMode {

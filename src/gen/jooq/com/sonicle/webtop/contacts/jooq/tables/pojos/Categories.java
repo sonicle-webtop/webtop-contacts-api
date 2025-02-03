@@ -16,6 +16,8 @@ public class Categories implements java.io.Serializable {
     private java.lang.Integer      categoryId;
     private java.lang.String       domainId;
     private java.lang.String       userId;
+    private org.joda.time.DateTime revisionTimestamp;
+    private org.joda.time.DateTime creationTimestamp;
     private java.lang.Boolean      builtIn;
     private java.lang.String       provider;
     private java.lang.String       name;
@@ -34,6 +36,8 @@ public class Categories implements java.io.Serializable {
         this.categoryId = value.categoryId;
         this.domainId = value.domainId;
         this.userId = value.userId;
+        this.revisionTimestamp = value.revisionTimestamp;
+        this.creationTimestamp = value.creationTimestamp;
         this.builtIn = value.builtIn;
         this.provider = value.provider;
         this.name = value.name;
@@ -51,6 +55,8 @@ public class Categories implements java.io.Serializable {
         java.lang.Integer      categoryId,
         java.lang.String       domainId,
         java.lang.String       userId,
+        org.joda.time.DateTime revisionTimestamp,
+        org.joda.time.DateTime creationTimestamp,
         java.lang.Boolean      builtIn,
         java.lang.String       provider,
         java.lang.String       name,
@@ -66,6 +72,8 @@ public class Categories implements java.io.Serializable {
         this.categoryId = categoryId;
         this.domainId = domainId;
         this.userId = userId;
+        this.revisionTimestamp = revisionTimestamp;
+        this.creationTimestamp = creationTimestamp;
         this.builtIn = builtIn;
         this.provider = provider;
         this.name = name;
@@ -119,6 +127,34 @@ public class Categories implements java.io.Serializable {
      */
     public void setUserId(java.lang.String userId) {
         this.userId = userId;
+    }
+
+    /**
+     * Getter for <code>contacts.categories.revision_timestamp</code>.
+     */
+    public org.joda.time.DateTime getRevisionTimestamp() {
+        return this.revisionTimestamp;
+    }
+
+    /**
+     * Setter for <code>contacts.categories.revision_timestamp</code>.
+     */
+    public void setRevisionTimestamp(org.joda.time.DateTime revisionTimestamp) {
+        this.revisionTimestamp = revisionTimestamp;
+    }
+
+    /**
+     * Getter for <code>contacts.categories.creation_timestamp</code>.
+     */
+    public org.joda.time.DateTime getCreationTimestamp() {
+        return this.creationTimestamp;
+    }
+
+    /**
+     * Setter for <code>contacts.categories.creation_timestamp</code>.
+     */
+    public void setCreationTimestamp(org.joda.time.DateTime creationTimestamp) {
+        this.creationTimestamp = creationTimestamp;
     }
 
     /**
@@ -282,6 +318,8 @@ public class Categories implements java.io.Serializable {
         sb.append(categoryId);
         sb.append(", ").append(domainId);
         sb.append(", ").append(userId);
+        sb.append(", ").append(revisionTimestamp);
+        sb.append(", ").append(creationTimestamp);
         sb.append(", ").append(builtIn);
         sb.append(", ").append(provider);
         sb.append(", ").append(name);

@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2014 Sonicle S.r.l.
+/*
+ * Copyright (C) 2024 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,33 +28,55 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2014 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2024 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.contacts.model;
 
-import com.rits.cloning.Cloner;
+import com.sonicle.commons.time.DateTimeUtils;
+import com.sonicle.webtop.core.app.sdk.WTParseException;
+import java.util.ArrayList;
+import net.sf.qualitycheck.Check;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  *
  * @author malbinola
+ * @param <T>
  */
-public class Category extends CategoryBase {
-	protected Integer categoryId;
-
-	public Integer getCategoryId() {
-		return categoryId;
-	}
-
-	public void setCategoryId(Integer categoryId) {
-		this.categoryId = categoryId;
+public class Delta<T> {
+	public static final DateTimeFormatter SYNCTOKEN_FMT = DateTimeUtils.createFormatter("yyyyMMddHHmmssSSS", DateTimeZone.UTC);
+	private final String nextSyncToken;
+	private final ArrayList<ChangedItem<T>> items;
+	
+	public Delta(String nextSyncToken, ArrayList<ChangedItem<T>> items) {
+		this.nextSyncToken = Check.notNull(nextSyncToken, "nextSyncToken");
+		this.items = Check.notNull(items, "items");
 	}
 	
-	public static Category cloneAndSetProps(Category source, CategoryPropSet propSet) {
-		Category clone = Cloner.standard().deepClone(source);
-		if (propSet != null) {
-			clone.setColor(propSet.getColorOrDefault(clone.getColor()));
-			clone.setSync(propSet.getSyncOrDefault(clone.getSync()));
+	public Delta(DateTime lastSyncTimestamp, ArrayList<ChangedItem<T>> items) {
+		this(printSyncToken(lastSyncTimestamp), items);
+	}
+
+	public String getNextSyncToken() {
+		return nextSyncToken;
+	}
+
+	public ArrayList<ChangedItem<T>> getItems() {
+		return items;
+	}
+	
+	public static DateTime parseSyncToken(final String syncToken, final boolean silent) throws WTParseException {
+		final DateTime datetime = !StringUtils.isBlank(syncToken) ? SYNCTOKEN_FMT.parseDateTime(syncToken) : null;
+		if (datetime == null && !silent) {
+			throw new WTParseException("Unable to parse '{}' as syncToken", syncToken);
 		}
-		return clone;
+		return datetime;
+	}
+	
+	public static String printSyncToken(final DateTime timestamp) {
+		return timestamp != null ? SYNCTOKEN_FMT.print(timestamp) : null;
 	}
 }

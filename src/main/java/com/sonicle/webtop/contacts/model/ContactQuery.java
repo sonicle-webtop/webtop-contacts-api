@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Sonicle S.r.l.
+ * Copyright (C) 2025 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,156 +28,212 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2019 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2025 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.contacts.model;
 
-import com.sonicle.commons.qbuilders.builders.QBuilder;
-import com.sonicle.commons.qbuilders.conditions.Condition;
+import com.sonicle.commons.qbuilders.properties.concrete.InstantProperty;
 import com.sonicle.commons.qbuilders.properties.concrete.StringProperty;
-import com.sonicle.commons.web.json.CId;
-import com.sonicle.commons.web.json.bean.QueryObj;
-import com.sonicle.webtop.core.app.sdk.QueryBuilderWithCValues;
-import com.sonicle.webtop.core.app.sdk.WTUnsupportedOperationException;
-import com.sonicle.webtop.core.model.CustomField;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTimeZone;
+import com.sonicle.webtop.core.app.sdk.QueryBuilderWithCFields;
 
 /**
  *
  * @author malbinola
  */
-public class ContactQuery extends QueryBuilderWithCValues<ContactQuery> {
+public class ContactQuery extends QueryBuilderWithCFields<ContactQuery> {
+	public static final String ID = "id";
+	public static final String DISPLAY_NAME = "displayName";
+	public static final String FIRSTNAME = "firstName";
+	public static final String LASTNAME = "lastName";
+	public static final String NICKNAME = "nickname";
+	public static final String MOBILE = "mobile";
+	public static final String PAGER1 = "pager1";
+	public static final String PAGER2 = "pager2";
+	public static final String EMAIL1 = "email1";
+	public static final String EMAIL2 = "email2";
+	public static final String EMAIL3 = "email3";
+	public static final String WORK_TELEPHONE1 = "workTelephone1";
+	public static final String WORK_TELEPHONE2 = "workTelephone2";
+	public static final String WORK_FAX = "workFax";
+	public static final String HOME_TELEPHONE1 = "homeTelephone1";
+	public static final String HOME_TELEPHONE2 = "homeTelephone2";
+	public static final String HOME_FAX = "homeFax";
+	public static final String WORK_ADDRESS = "workAddress";
+	public static final String HOME_ADDRESS = "homeAddress";
+	public static final String OTHER_ADDRESS = "otherAddress";
+	public static final String COMPANY = "company";
+	public static final String COMPANY_ID = "companyId";
+	public static final String FUNCTION = "function";
+	public static final String DEPARTMENT = "department";
+	public static final String MANAGER = "manager";
+	public static final String ASSISTANT = "assistant";
+	public static final String ASSISTANT_TELEPHONE = "assistantTelephone";
+	public static final String PARTNER = "partner";
+	public static final String BIRTHDAY = "birthday";
+	public static final String ANNIVERSARY = "anniversary";
+	public static final String URL = "url";
+	public static final String NOTES = "notes";
+	public static final String TAG_ID = "tagId";
+	public static final String ANY_NAME = "anyName";
+	public static final String ANY_EMAIL = "anyEmail";
+	public static final String ANY_PHONES = "anyPhone";
+	public static final String ANY_WORK_PHONE = "anyWorkPhone";
+	public static final String ANY_HOME_PHONE = "anyHomePhone";
+	public static final String ANY_ADDRESS = "anyAddress";
 	
 	public StringProperty<ContactQuery> id() {
-		return string("id");
+		return string(ID);
 	}
 	
-	public StringProperty<ContactQuery> name() {
-		return string("name");
+	public StringProperty<ContactQuery> displayName() {
+		return string(DISPLAY_NAME);
+	}
+	
+	public StringProperty<ContactQuery> firstName() {
+		return string(FIRSTNAME);
+	}
+	
+	public StringProperty<ContactQuery> lastName() {
+		return string(LASTNAME);
+	}
+	
+	public StringProperty<ContactQuery> nickname() {
+		return string(NICKNAME);
+	}
+	
+	public StringProperty<ContactQuery> mobile() {
+		return string(MOBILE);
+	}
+	
+	public StringProperty<ContactQuery> pager1() {
+		return string(PAGER1);
+	}
+	
+	public StringProperty<ContactQuery> pager2() {
+		return string(PAGER2);
+	}
+	
+	public StringProperty<ContactQuery> email1() {
+		return string(EMAIL1);
+	}
+	
+	public StringProperty<ContactQuery> email2() {
+		return string(EMAIL2);
+	}
+	
+	public StringProperty<ContactQuery> email3() {
+		return string(EMAIL3);
+	}
+	
+	public StringProperty<ContactQuery> workTelephone1() {
+		return string(WORK_TELEPHONE1);
+	}
+	
+	public StringProperty<ContactQuery> workTelephone2() {
+		return string(WORK_TELEPHONE2);
+	}
+	
+	public StringProperty<ContactQuery> workFax() {
+		return string(WORK_FAX);
+	}
+	
+	public StringProperty<ContactQuery> homeTelephone1() {
+		return string(HOME_TELEPHONE1);
+	}
+	
+	public StringProperty<ContactQuery> homeTelephone2() {
+		return string(HOME_TELEPHONE2);
+	}
+	
+	public StringProperty<ContactQuery> homeFax() {
+		return string(HOME_FAX);
 	}
 
+	public StringProperty<ContactQuery> workAddress() {
+		return string(WORK_ADDRESS);
+	}
+
+	public StringProperty<ContactQuery> homeAddress() {
+		return string(HOME_ADDRESS);
+	}
+	
+	public StringProperty<ContactQuery> otherAddress() {
+		return string(OTHER_ADDRESS);
+	}
+	
 	public StringProperty<ContactQuery> company() {
-		return string("company");
+		return string(COMPANY);
 	}
 	
 	public StringProperty<ContactQuery> companyId() {
-		return string("companyId");
-	}
-
-	public StringProperty<ContactQuery> email() {
-		return string("email");
-	}
-
-	public StringProperty<ContactQuery> phone() {
-		return string("phone");
+		return string(COMPANY_ID);
 	}
 	
-	public StringProperty<ContactQuery> address() {
-		return string("address");
+	public StringProperty<ContactQuery> function() {
+		return string(FUNCTION);
+	}
+	
+	public StringProperty<ContactQuery> department() {
+		return string(DEPARTMENT);
+	}
+	
+	public StringProperty<ContactQuery> manager() {
+		return string(MANAGER);
+	}
+	
+	public StringProperty<ContactQuery> assistant() {
+		return string(ASSISTANT);
+	}
+	
+	public StringProperty<ContactQuery> assistantTelephone() {
+		return string(ASSISTANT_TELEPHONE);
+	}
+	
+	public StringProperty<ContactQuery> partner() {
+		return string(PARTNER);
+	}
+	
+	public InstantProperty<ContactQuery> birthday() {
+		return instant(BIRTHDAY);
+	}
+	
+	public InstantProperty<ContactQuery> anniversary() {
+		return instant(ANNIVERSARY);
+	}
+	
+	public StringProperty<ContactQuery> url() {
+		return string(URL);
 	}
 	
 	public StringProperty<ContactQuery> notes() {
-		return string("notes");
-	}
-
-	public StringProperty<ContactQuery> any() {
-		return string("any");
+		return string(NOTES);
 	}
 	
-	public StringProperty<ContactQuery> tag() {
-		return string("tag");
+	public StringProperty<ContactQuery> tagId() {
+		return string(TAG_ID);
 	}
 	
-	public static Condition<ContactQuery> createCondition(String pattern) {
-		if (!StringUtils.isBlank(pattern)) {
-			return new ContactQuery().any().eq(StringUtils.replace(pattern, "%", "*"));
-		} else {
-			return null;
-		}
+	public StringProperty<ContactQuery> anyName() {
+		return string(ANY_NAME);
 	}
 	
-	public static Condition<ContactQuery> createCondition(QueryObj query, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone) {
-		boolean smartStringComparison = true;
-		
-		Condition<ContactQuery> last = new ContactQuery().trueCondition();
-		for (Map.Entry<QueryObj.Condition, List<String>> entry : query.groupConditions().entrySet()) {
-			final QueryObj.Condition key = entry.getKey();
-			final List<String> values = entry.getValue();
-			
-			if (values.isEmpty() || values.size() == 1) {
-				last = new ContactQuery().and(last, createCondition(key, values.isEmpty() ? null : values.get(0), customFieldTypeMapping, timezone, smartStringComparison));
-			} else {
-				List<Condition<ContactQuery>> conds = new ArrayList<>();
-				for (String value : values) {
-					conds.add(createCondition(key, value, customFieldTypeMapping, timezone, smartStringComparison));
-				}
-				last = new ContactQuery().and(last, new ContactQuery().or(conds));
-			}
-		}
-		
-		if (!StringUtils.isBlank(query.getAllText())) {
-			String[] values = toConditionStringValues(query.getAllText(), smartStringComparison);
-			return new ContactQuery().and(last, combineFieldValuesAsCondition(values, v -> new ContactQuery().any().eq(v)));
-		} else {
-			return last;
-		}
+	public StringProperty<ContactQuery> anyEmail() {
+		return string(ANY_EMAIL);
 	}
 	
-	private static Condition<ContactQuery> combineFieldValuesAsCondition(final String[] values, final QueryFieldConditionCreatorMethod<ContactQuery, String> creator) {
-		if (values.length == 1) {
-			return creator.create(values[0]);
-		} else {
-			List<Condition<ContactQuery>> conds = new ArrayList<>(values.length);
-			for (String value : values) {
-				conds.add(creator.create(value));
-			}
-			return new ContactQuery().or(conds);
-		}
+	public StringProperty<ContactQuery> anyPhone() {
+		return string(ANY_PHONES);
 	}
 	
-	private static Condition<ContactQuery> createCondition(QueryObj.Condition condition, String value, Map<String, CustomField.Type> customFieldTypeMapping, DateTimeZone timezone, boolean smartStringComparison) {
-		if ("id".equals(condition.keyword)) {
-			return new ContactQuery().id().eq(asStringValue(value, false));
-
-		} else if ("name".equals(condition.keyword)) {
-			String[] values = toConditionStringValues(value, smartStringComparison);
-			return combineFieldValuesAsCondition(values, v -> new ContactQuery().name().eq(v));
-
-		} else if ("company".equals(condition.keyword)) {
-			return new ContactQuery().company().eq(asStringValue(value, smartStringComparison));
-
-		} else if ("companyId".equals(condition.keyword)) {
-			return new ContactQuery().companyId().eq(value);
-
-		} else if ("email".equals(condition.keyword)) {
-			return new ContactQuery().email().eq(asStringValue(value, smartStringComparison));
-
-		} else if ("phone".equals(condition.keyword)) {
-			return new ContactQuery().phone().eq(asStringValue(value, smartStringComparison));
-
-		} else if ("address".equals(condition.keyword)) {
-			return new ContactQuery().address().eq(asStringValue(value, smartStringComparison));
-
-		} else if ("notes".equals(condition.keyword)) {
-			return new ContactQuery().notes().eq(asStringValue(value, smartStringComparison));
-
-		} else if ("tag".equals(condition.keyword)) {
-			return new ContactQuery().tag().eq(value);
-
-		} else if (StringUtils.startsWith(condition.keyword, "cfield")) {
-			CId cf = new CId(condition.keyword, 2);
-			if (!cf.isTokenEmpty(1)) {
-				String cfId = cf.getToken(1);
-				if (customFieldTypeMapping.containsKey(cfId)) {
-					return new ContactQuery().customValueCondition(cfId, customFieldTypeMapping.get(cfId), value, condition.negated, smartStringComparison, timezone);
-				}
-			}
-		}
-		
-		throw new WTUnsupportedOperationException("Unsupported keyword '{}'", condition.keyword);
+	public StringProperty<ContactQuery> anyWorkPhone() {
+		return string(ANY_WORK_PHONE);
+	}
+	
+	public StringProperty<ContactQuery> anyHomePhone() {
+		return string(ANY_HOME_PHONE);
+	}
+	
+	public StringProperty<ContactQuery> anyAddress() {
+		return string(ANY_ADDRESS);
 	}
 }

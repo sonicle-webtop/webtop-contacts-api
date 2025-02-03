@@ -35,9 +35,10 @@ package com.sonicle.webtop.contacts.model;
 import java.util.List;
 
 /**
- *
+ * @deprecated replacec with ItemsListResult<>
  * @author malbinola
  */
+@Deprecated
 public class ListContactsResult {
 	public final List<ContactLookup> items;
 	public final Integer fullCount;

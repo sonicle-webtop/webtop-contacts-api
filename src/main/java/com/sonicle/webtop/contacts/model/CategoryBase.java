@@ -46,6 +46,8 @@ import org.joda.time.DateTime;
 public class CategoryBase {
 	protected String domainId;
 	protected String userId;
+	protected DateTime revisionTimestamp;
+	protected DateTime creationTimestamp;
 	protected Boolean builtIn;
 	protected Provider provider;
 	protected String name;
@@ -72,6 +74,22 @@ public class CategoryBase {
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+	
+	public DateTime getRevisionTimestamp() {
+		return revisionTimestamp;
+	}
+
+	public void setRevisionTimestamp(DateTime revisionTimestamp) {
+		this.revisionTimestamp = revisionTimestamp;
+	}
+	
+	public DateTime getCreationTimestamp() {
+		return creationTimestamp;
+	}
+
+	public void setCreationTimestamp(DateTime creationTimestamp) {
+		this.creationTimestamp = creationTimestamp;
 	}
 
 	public Boolean getBuiltIn() {

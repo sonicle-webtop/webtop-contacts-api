@@ -17,9 +17,19 @@ public class Sequences {
     public static final org.jooq.Sequence<java.lang.Long> SEQ_CATEGORIES = org.jooq.impl.Internal.createSequence("seq_categories", com.sonicle.webtop.contacts.jooq.Contacts.CONTACTS, org.jooq.impl.SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
 
     /**
+     * The sequence <code>contacts.seq_categories_changes</code>
+     */
+    public static final org.jooq.Sequence<java.lang.Long> SEQ_CATEGORIES_CHANGES = org.jooq.impl.Internal.createSequence("seq_categories_changes", com.sonicle.webtop.contacts.jooq.Contacts.CONTACTS, org.jooq.impl.SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
+
+    /**
      * The sequence <code>contacts.seq_contacts</code>
      */
     public static final org.jooq.Sequence<java.lang.Long> SEQ_CONTACTS = org.jooq.impl.Internal.createSequence("seq_contacts", com.sonicle.webtop.contacts.jooq.Contacts.CONTACTS, org.jooq.impl.SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
+
+    /**
+     * The sequence <code>contacts.seq_contacts_changes</code>
+     */
+    public static final org.jooq.Sequence<java.lang.Long> SEQ_CONTACTS_CHANGES = org.jooq.impl.Internal.createSequence("seq_contacts_changes", com.sonicle.webtop.contacts.jooq.Contacts.CONTACTS, org.jooq.impl.SQLDataType.BIGINT.nullable(false), null, null, null, null, false, null);
 
     /**
      * The sequence <code>contacts.seq_list_recipients</code>

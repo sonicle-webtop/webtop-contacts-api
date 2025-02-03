@@ -17,6 +17,11 @@ public class Tables {
     public static final com.sonicle.webtop.contacts.jooq.tables.Categories CATEGORIES = com.sonicle.webtop.contacts.jooq.tables.Categories.CATEGORIES;
 
     /**
+     * The table <code>contacts.categories_changes</code>.
+     */
+    public static final com.sonicle.webtop.contacts.jooq.tables.CategoriesChanges CATEGORIES_CHANGES = com.sonicle.webtop.contacts.jooq.tables.CategoriesChanges.CATEGORIES_CHANGES;
+
+    /**
      * The table <code>contacts.category_props</code>.
      */
     public static final com.sonicle.webtop.contacts.jooq.tables.CategoryProps CATEGORY_PROPS = com.sonicle.webtop.contacts.jooq.tables.CategoryProps.CATEGORY_PROPS;
@@ -35,6 +40,11 @@ public class Tables {
      * The table <code>contacts.contacts_attachments_data</code>.
      */
     public static final com.sonicle.webtop.contacts.jooq.tables.ContactsAttachmentsData CONTACTS_ATTACHMENTS_DATA = com.sonicle.webtop.contacts.jooq.tables.ContactsAttachmentsData.CONTACTS_ATTACHMENTS_DATA;
+
+    /**
+     * The table <code>contacts.contacts_changes</code>.
+     */
+    public static final com.sonicle.webtop.contacts.jooq.tables.ContactsChanges CONTACTS_CHANGES = com.sonicle.webtop.contacts.jooq.tables.ContactsChanges.CONTACTS_CHANGES;
 
     /**
      * The table <code>contacts.contacts_custom_values</code>.

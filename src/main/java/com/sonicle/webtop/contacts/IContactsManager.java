@@ -35,6 +35,8 @@ package com.sonicle.webtop.contacts;
 import com.google.gson.annotations.SerializedName;
 import com.sonicle.commons.qbuilders.conditions.Condition;
 import com.sonicle.commons.LangUtils;
+import com.sonicle.commons.beans.ItemsListResult;
+import com.sonicle.commons.beans.SortInfo;
 import com.sonicle.commons.flags.BitFlags;
 import com.sonicle.commons.flags.BitFlagsEnum;
 import com.sonicle.webtop.contacts.model.Category;
@@ -42,6 +44,7 @@ import com.sonicle.webtop.contacts.model.CategoryBase;
 import com.sonicle.webtop.contacts.model.CategoryFSFolder;
 import com.sonicle.webtop.contacts.model.CategoryFSOrigin;
 import com.sonicle.webtop.contacts.model.CategoryPropSet;
+import com.sonicle.webtop.contacts.model.CategoryQuery;
 import com.sonicle.webtop.contacts.model.Contact;
 import com.sonicle.webtop.contacts.model.ContactAttachmentWithBytes;
 import com.sonicle.webtop.contacts.model.ContactCompany;
@@ -52,12 +55,15 @@ import com.sonicle.webtop.contacts.model.ContactListRecipient;
 import com.sonicle.webtop.contacts.model.ContactObject;
 import com.sonicle.webtop.contacts.model.ContactObjectChanged;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
-import com.sonicle.webtop.contacts.model.ContactQuery;
+import com.sonicle.webtop.contacts.model.ContactQueryUI_OLD;
 import com.sonicle.webtop.contacts.model.Grouping;
 import com.sonicle.webtop.contacts.model.ListContactsResult;
 import com.sonicle.webtop.contacts.model.ShowBy;
 import com.sonicle.webtop.contacts.model.ContactType;
 import com.sonicle.webtop.contacts.model.ContactListRecipientBase;
+import com.sonicle.webtop.contacts.model.ContactLookup;
+import com.sonicle.webtop.contacts.model.ContactPicture;
+import com.sonicle.webtop.contacts.model.ContactQuery;
 import com.sonicle.webtop.core.app.model.FolderSharing;
 import com.sonicle.webtop.core.app.sdk.WTNotFoundException;
 import com.sonicle.webtop.core.model.CustomFieldValue;
@@ -89,6 +95,22 @@ public interface IContactsManager {
 	 * @deprecated Use listMyCategories() instead.
 	 */
 	@Deprecated public Map<Integer, Category> listCategories() throws WTException;
+	/**
+	 * @deprecated Use listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQueryApi> filterQuery, final Integer page, final Integer limit, final boolean returnFullCount) instead.
+	 */
+	@Deprecated public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final String pattern) throws WTException;
+	/**
+	 * @deprecated Use listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQueryApi> filterQuery, final Integer page, final Integer limit, final boolean returnFullCount) instead.
+	 */
+	@Deprecated public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQueryUI_OLD> conditionPredicate) throws WTException;
+	/**
+	 * @deprecated Use listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQueryApi> filterQuery, final Integer page, final Integer limit, final boolean returnFullCount) instead.
+	 */
+	@Deprecated public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQueryUI_OLD> conditionPredicate, final int page, final int limit, final boolean returnFullCount) throws WTException;
+	/**
+	 * @deprecated Use existAnyContact(final Collection<Integer> categoryIds, final Condition<ContactQueryApi> filterQuery) instead.
+	 */
+	@Deprecated public boolean existContact(final Collection<Integer> categoryIds, final Condition<ContactQueryUI_OLD> conditionPredicate) throws WTException;
 	
 	public Set<FolderSharing.SubjectConfiguration> getFolderShareConfigurations(final UserProfileId originProfileId, final FolderSharing.Scope scope) throws WTException;
 	public void updateFolderShareConfigurations(final UserProfileId originProfileId, final FolderSharing.Scope scope, final Set<FolderSharing.SubjectConfiguration> configurations) throws WTException;
@@ -103,6 +125,8 @@ public interface IContactsManager {
 	public Map<Integer, Category> listMyCategories() throws WTException;
 	public Map<Integer, Category> listIncomingCategories() throws WTException;
 	public Map<Integer, Category> listIncomingCategories(final UserProfileId originProfileId) throws WTException;
+	public ItemsListResult<Category> listCategories(final Condition<CategoryQuery> filterQuery, final Set<SortInfo> sortInfo, final Integer page, final Integer limit, final boolean returnFullCount) throws WTException;
+	public ItemsListResult<Category> listCategories(final String filterQuery, final Set<SortInfo> sortInfo, final Integer page, final Integer limit, final boolean returnFullCount) throws WTException;
 	public Map<Integer, DateTime> getCategoriesLastRevision(final Collection<Integer> categoryIds) throws WTException;
 	public UserProfileId getCategoryOwner(final int categoryId) throws WTException;
 	public Integer getDefaultCategoryId() throws WTException;
@@ -125,13 +149,16 @@ public interface IContactsManager {
 	public void addContactObject(final int categoryId, final String href, final VCard vCard) throws WTException;
 	public void updateContactObject(final int categoryId, final String href, final VCard vCard) throws WTException;
 	public void deleteContactObject(final int categoryId, final String href) throws WTException;
-	public boolean existContact(final Collection<Integer> categoryIds, final Condition<ContactQuery> conditionPredicate) throws WTException;
-	public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final String pattern) throws WTException;
-	public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQuery> conditionPredicate) throws WTException;
-	public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQuery> conditionPredicate, final int page, final int limit, final boolean returnFullCount) throws WTException;
+	public ItemsListResult<ContactLookup> listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQuery> filterQuery, final Integer page, final Integer limit, final boolean returnFullCount) throws WTException;
+	public ItemsListResult<ContactLookup> listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final String filterQuery, final Integer page, final Integer limit, final boolean returnFullCount) throws WTException;
+	public ItemsListResult<ContactObject> listContacts(final Collection<Integer> categoryIds, final Condition<ContactQuery> filterQuery, final Set<SortInfo> sortInfo, final Integer page, final Integer limit, final boolean returnFullCount, final ContactObjectOutputType outputType) throws WTException;
+	public ItemsListResult<ContactObject> listContacts(final Collection<Integer> categoryIds, final String filterQuery, final Set<SortInfo> sortInfo, final Integer page, final Integer limit, final boolean returnFullCount, final ContactObjectOutputType outputType) throws WTException;
+	public boolean existAnyContact(final Collection<Integer> categoryIds, final Condition<ContactQuery> filterQuery) throws WTException;
+	public boolean existAnyContact(final Collection<Integer> categoryIds, final String filterQuery) throws WTException;
 	public Contact getContact(final String contactId) throws WTException;
 	public Contact getContact(final String contactId, final BitFlags<ContactGetOption> opts) throws WTException;
 	public ContactPictureWithBytes getContactPicture(final String contactId) throws WTException;
+	public ContactPicture getContactPicture(final String contactId, final boolean metaOnly) throws WTException;
 	public ContactCompany getContactCompany(final String contactId) throws WTException;
 	public ContactAttachmentWithBytes getContactAttachment(final String contactId, final String attachmentId) throws WTException;
 	public Map<String, CustomFieldValue> getContactCustomValues(final String contactId) throws WTException;

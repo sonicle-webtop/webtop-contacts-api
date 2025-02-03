@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2014 Sonicle S.r.l.
+/*
+ * Copyright (C) 2024 Sonicle S.r.l.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by
@@ -28,33 +28,38 @@
  * version 3, these Appropriate Legal Notices must retain the display of the
  * Sonicle logo and Sonicle copyright notice. If the display of the logo is not
  * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Copyright (C) 2014 Sonicle S.r.l.".
+ * display the words "Copyright (C) 2024 Sonicle S.r.l.".
  */
 package com.sonicle.webtop.contacts.model;
-
-import com.rits.cloning.Cloner;
 
 /**
  *
  * @author malbinola
+ * @param <T>
  */
-public class Category extends CategoryBase {
-	protected Integer categoryId;
-
-	public Integer getCategoryId() {
-		return categoryId;
-	}
-
-	public void setCategoryId(Integer categoryId) {
-		this.categoryId = categoryId;
+public class ChangedItem<T> {
+	private final ChangeType changeType;
+	private final T object;
+	
+	public ChangedItem(ChangeType changeType, T object) {
+		this.changeType = changeType;
+		this.object = object;
 	}
 	
-	public static Category cloneAndSetProps(Category source, CategoryPropSet propSet) {
-		Category clone = Cloner.standard().deepClone(source);
-		if (propSet != null) {
-			clone.setColor(propSet.getColorOrDefault(clone.getColor()));
-			clone.setSync(propSet.getSyncOrDefault(clone.getSync()));
-		}
-		return clone;
+	public ChangeType getChangeType() {
+		return changeType;
+	}
+	
+	public T getObject() {
+		return object;
+	}
+	
+	public enum ChangeType {
+		ADDED("added"), UPDATED("updated"), DELETED("deleted");
+		
+		private final String altName;
+		private ChangeType(String altName) { this.altName = altName; }
+		@Override
+		public String toString() { return altName; }
 	}
 }

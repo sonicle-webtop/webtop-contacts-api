@@ -42,6 +42,16 @@ public class Categories extends org.jooq.impl.TableImpl<com.sonicle.webtop.conta
     public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.CategoriesRecord, java.lang.String> USER_ID = createField(org.jooq.impl.DSL.name("user_id"), org.jooq.impl.SQLDataType.VARCHAR(100).nullable(false), this, "");
 
     /**
+     * The column <code>contacts.categories.revision_timestamp</code>.
+     */
+    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.CategoriesRecord, org.joda.time.DateTime> REVISION_TIMESTAMP = createField(org.jooq.impl.DSL.name("revision_timestamp"), org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "", new com.sonicle.jooq.jsr310.OffsetDateTimeJodaConverter());
+
+    /**
+     * The column <code>contacts.categories.creation_timestamp</code>.
+     */
+    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.CategoriesRecord, org.joda.time.DateTime> CREATION_TIMESTAMP = createField(org.jooq.impl.DSL.name("creation_timestamp"), org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "", new com.sonicle.jooq.jsr310.OffsetDateTimeJodaConverter());
+
+    /**
      * The column <code>contacts.categories.built_in</code>.
      */
     public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.CategoriesRecord, java.lang.Boolean> BUILT_IN = createField(org.jooq.impl.DSL.name("built_in"), org.jooq.impl.SQLDataType.BOOLEAN.nullable(false).defaultValue(org.jooq.impl.DSL.field("false", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
@@ -135,21 +145,6 @@ public class Categories extends org.jooq.impl.TableImpl<com.sonicle.webtop.conta
     }
 
     @java.lang.Override
-    public java.util.List<org.jooq.Index> getIndexes() {
-        return java.util.Arrays.<org.jooq.Index>asList(com.sonicle.webtop.contacts.jooq.Indexes.CATEGORIES_AK1, com.sonicle.webtop.contacts.jooq.Indexes.CATEGORIES_AK2, com.sonicle.webtop.contacts.jooq.Indexes.CATEGORIES_AK3);
-    }
-
-    @java.lang.Override
-    public org.jooq.UniqueKey<com.sonicle.webtop.contacts.jooq.tables.records.CategoriesRecord> getPrimaryKey() {
-        return com.sonicle.webtop.contacts.jooq.Keys.CATEGORIES_PKEY;
-    }
-
-    @java.lang.Override
-    public java.util.List<org.jooq.UniqueKey<com.sonicle.webtop.contacts.jooq.tables.records.CategoriesRecord>> getKeys() {
-        return java.util.Arrays.<org.jooq.UniqueKey<com.sonicle.webtop.contacts.jooq.tables.records.CategoriesRecord>>asList(com.sonicle.webtop.contacts.jooq.Keys.CATEGORIES_PKEY);
-    }
-
-    @java.lang.Override
     public Categories as(java.lang.String alias) {
         return new Categories(org.jooq.impl.DSL.name(alias), this);
     }
@@ -176,11 +171,11 @@ public class Categories extends org.jooq.impl.TableImpl<com.sonicle.webtop.conta
     }
 
     // -------------------------------------------------------------------------
-    // Row14 type methods
+    // Row16 type methods
     // -------------------------------------------------------------------------
 
     @java.lang.Override
-    public org.jooq.Row14<java.lang.Integer, java.lang.String, java.lang.String, java.lang.Boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, java.lang.String, java.lang.Short, org.joda.time.DateTime, java.lang.String> fieldsRow() {
-        return (org.jooq.Row14) super.fieldsRow();
+    public org.jooq.Row16<java.lang.Integer, java.lang.String, java.lang.String, org.joda.time.DateTime, org.joda.time.DateTime, java.lang.Boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, java.lang.String, java.lang.Short, org.joda.time.DateTime, java.lang.String> fieldsRow() {
+        return (org.jooq.Row16) super.fieldsRow();
     }
 }

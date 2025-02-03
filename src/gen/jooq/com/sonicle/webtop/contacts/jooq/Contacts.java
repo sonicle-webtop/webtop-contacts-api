@@ -24,6 +24,11 @@ public class Contacts extends org.jooq.impl.SchemaImpl {
     public final com.sonicle.webtop.contacts.jooq.tables.Categories CATEGORIES = com.sonicle.webtop.contacts.jooq.tables.Categories.CATEGORIES;
 
     /**
+     * The table <code>contacts.categories_changes</code>.
+     */
+    public final com.sonicle.webtop.contacts.jooq.tables.CategoriesChanges CATEGORIES_CHANGES = com.sonicle.webtop.contacts.jooq.tables.CategoriesChanges.CATEGORIES_CHANGES;
+
+    /**
      * The table <code>contacts.category_props</code>.
      */
     public final com.sonicle.webtop.contacts.jooq.tables.CategoryProps CATEGORY_PROPS = com.sonicle.webtop.contacts.jooq.tables.CategoryProps.CATEGORY_PROPS;
@@ -42,6 +47,11 @@ public class Contacts extends org.jooq.impl.SchemaImpl {
      * The table <code>contacts.contacts_attachments_data</code>.
      */
     public final com.sonicle.webtop.contacts.jooq.tables.ContactsAttachmentsData CONTACTS_ATTACHMENTS_DATA = com.sonicle.webtop.contacts.jooq.tables.ContactsAttachmentsData.CONTACTS_ATTACHMENTS_DATA;
+
+    /**
+     * The table <code>contacts.contacts_changes</code>.
+     */
+    public final com.sonicle.webtop.contacts.jooq.tables.ContactsChanges CONTACTS_CHANGES = com.sonicle.webtop.contacts.jooq.tables.ContactsChanges.CONTACTS_CHANGES;
 
     /**
      * The table <code>contacts.contacts_custom_values</code>.
@@ -85,7 +95,9 @@ public class Contacts extends org.jooq.impl.SchemaImpl {
     public final java.util.List<org.jooq.Sequence<?>> getSequences() {
         return java.util.Arrays.<org.jooq.Sequence<?>>asList(
             com.sonicle.webtop.contacts.jooq.Sequences.SEQ_CATEGORIES,
+            com.sonicle.webtop.contacts.jooq.Sequences.SEQ_CATEGORIES_CHANGES,
             com.sonicle.webtop.contacts.jooq.Sequences.SEQ_CONTACTS,
+            com.sonicle.webtop.contacts.jooq.Sequences.SEQ_CONTACTS_CHANGES,
             com.sonicle.webtop.contacts.jooq.Sequences.SEQ_LIST_RECIPIENTS);
     }
 
@@ -93,10 +105,12 @@ public class Contacts extends org.jooq.impl.SchemaImpl {
     public final java.util.List<org.jooq.Table<?>> getTables() {
         return java.util.Arrays.<org.jooq.Table<?>>asList(
             com.sonicle.webtop.contacts.jooq.tables.Categories.CATEGORIES,
+            com.sonicle.webtop.contacts.jooq.tables.CategoriesChanges.CATEGORIES_CHANGES,
             com.sonicle.webtop.contacts.jooq.tables.CategoryProps.CATEGORY_PROPS,
             com.sonicle.webtop.contacts.jooq.tables.Contacts.CONTACTS_,
             com.sonicle.webtop.contacts.jooq.tables.ContactsAttachments.CONTACTS_ATTACHMENTS,
             com.sonicle.webtop.contacts.jooq.tables.ContactsAttachmentsData.CONTACTS_ATTACHMENTS_DATA,
+            com.sonicle.webtop.contacts.jooq.tables.ContactsChanges.CONTACTS_CHANGES,
             com.sonicle.webtop.contacts.jooq.tables.ContactsCustomValues.CONTACTS_CUSTOM_VALUES,
             com.sonicle.webtop.contacts.jooq.tables.ContactsPictures.CONTACTS_PICTURES,
             com.sonicle.webtop.contacts.jooq.tables.ContactsTags.CONTACTS_TAGS,

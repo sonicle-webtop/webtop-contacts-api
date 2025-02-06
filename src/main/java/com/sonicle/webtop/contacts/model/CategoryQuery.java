@@ -42,6 +42,7 @@ import com.sonicle.webtop.core.app.sdk.QueryBuilder;
  */
 public class CategoryQuery extends QueryBuilder<CategoryQuery> {
 	public static final String ID = "id";
+	public static final String USER_ID = "userId";
 	public static final String BUILT_IN = "builtIn";
 	public static final String PROVIDER = "provider";
 	public static final String NAME = "name";
@@ -52,6 +53,10 @@ public class CategoryQuery extends QueryBuilder<CategoryQuery> {
 	
 	public StringProperty<CategoryQuery> id() {
 		return string(ID);
+	}
+	
+	public StringProperty<CategoryQuery> userId() {
+		return string(USER_ID);
 	}
 	
 	public BooleanProperty<CategoryQuery> builtIn() {
@@ -81,66 +86,4 @@ public class CategoryQuery extends QueryBuilder<CategoryQuery> {
 	public BooleanProperty<CategoryQuery> isDefault() {
 		return bool(IS_DEFAULT);
 	}
-	
-	
-	
-	
-	/*
-	public static Condition<CategoryQuery> createCondition(QueryObj query, DateTimeZone timezone) {
-		boolean smartStringComparison = true;
-		
-		Condition<CategoryQuery> last = new CategoryQuery().trueCondition();
-		for (Map.Entry<QueryObj.Condition, List<String>> entry : query.groupConditions().entrySet()) {
-			final QueryObj.Condition key = entry.getKey();
-			final List<String> values = entry.getValue();
-			
-			if (values.isEmpty() || values.size() == 1) {
-				last = new CategoryQuery().and(last, createCondition(key, values.isEmpty() ? null : values.get(0), timezone, smartStringComparison));
-			} else {
-				List<Condition<CategoryQuery>> conds = new ArrayList<>();
-				for (String value : values) {
-					conds.add(createCondition(key, value, timezone, smartStringComparison));
-				}
-				last = new CategoryQuery().and(last, new CategoryQuery().or(conds));
-			}
-		}
-		
-		return last;
-	}
-	
-	private static Condition<CategoryQuery> createCondition(QueryObj.Condition condition, String value, DateTimeZone timezone, boolean smartStringComparison) {
-		if ("id".equals(condition.keyword)) {
-			return new CategoryQuery().id().eq(asStringValue(value, false));
-			
-		} else if ("builtIn".equals(condition.keyword)) {
-			return condition.negated ? new CategoryQuery().builtIn().isFalse() : new CategoryQuery().builtIn().isTrue();
-
-		} else if ("provider".equals(condition.keyword)) {
-			if (EnumUtils.forString(value, CategoryBase.Provider.class, true) == null) {
-				throw new UnsupportedOperationException(condition.keyword + ":" + value);
-			}
-			return new CategoryQuery().provider().eq(value);
-
-		} else if ("name".equals(condition.keyword)) {
-			return new CategoryQuery().name().eq(asStringValue(value, false));
-
-		} else if ("description".equals(condition.keyword)) {
-			return new CategoryQuery().description().eq(asStringValue(value, smartStringComparison));
-
-		} else if ("color".equals(condition.keyword)) {
-			return new CategoryQuery().color().eq(asStringValue(value, false));
-
-		} else if ("sync".equals(condition.keyword)) {
-			if (EnumUtils.forString(value, CategoryBase.Sync.class, true) == null) {
-				throw new UnsupportedOperationException(condition.keyword + ":" + value);
-			}
-			return new CategoryQuery().sync().eq(value);
-
-		} else if ("default".equals(condition.keyword)) {
-			return condition.negated ? new CategoryQuery().isDefault().isFalse() : new CategoryQuery().isDefault().isTrue();
-		}
-		
-		throw new WTUnsupportedOperationException("Unsupported keyword '{}'", condition.keyword);
-	}
-	*/
 }

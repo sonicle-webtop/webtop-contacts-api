@@ -59,14 +59,16 @@ import com.sonicle.webtop.contacts.model.ContactQueryUI_OLD;
 import com.sonicle.webtop.contacts.model.Grouping;
 import com.sonicle.webtop.contacts.model.ListContactsResult;
 import com.sonicle.webtop.contacts.model.ShowBy;
-import com.sonicle.webtop.contacts.model.ContactType;
 import com.sonicle.webtop.contacts.model.ContactListRecipientBase;
 import com.sonicle.webtop.contacts.model.ContactLookup;
 import com.sonicle.webtop.contacts.model.ContactPicture;
 import com.sonicle.webtop.contacts.model.ContactQuery;
+import com.sonicle.webtop.contacts.model.ContactType;
 import com.sonicle.webtop.core.app.model.FolderSharing;
 import com.sonicle.webtop.core.app.sdk.WTNotFoundException;
+import com.sonicle.webtop.core.app.sdk.WTParseException;
 import com.sonicle.webtop.core.model.CustomFieldValue;
+import com.sonicle.webtop.core.model.Delta;
 import com.sonicle.webtop.core.sdk.UserProfileId;
 import com.sonicle.webtop.core.sdk.WTException;
 import ezvcard.VCard;
@@ -111,6 +113,10 @@ public interface IContactsManager {
 	 * @deprecated Use existAnyContact(final Collection<Integer> categoryIds, final Condition<ContactQueryApi> filterQuery) instead.
 	 */
 	@Deprecated public boolean existContact(final Collection<Integer> categoryIds, final Condition<ContactQueryUI_OLD> conditionPredicate) throws WTException;
+	/**
+	 * @deprecated Use listContactsDelta instead
+	 */
+	@Deprecated public LangUtils.CollectionChangeSet<ContactObjectChanged> listContactObjectsChanges(final int categoryId, final DateTime since, final Integer limit) throws WTException;
 	
 	public Set<FolderSharing.SubjectConfiguration> getFolderShareConfigurations(final UserProfileId originProfileId, final FolderSharing.Scope scope) throws WTException;
 	public void updateFolderShareConfigurations(final UserProfileId originProfileId, final FolderSharing.Scope scope, final Set<FolderSharing.SubjectConfiguration> configurations) throws WTException;
@@ -127,7 +133,7 @@ public interface IContactsManager {
 	public Map<Integer, Category> listIncomingCategories(final UserProfileId originProfileId) throws WTException;
 	public ItemsListResult<Category> listCategories(final Condition<CategoryQuery> filterQuery, final Set<SortInfo> sortInfo, final Integer page, final Integer limit, final boolean returnFullCount) throws WTException;
 	public ItemsListResult<Category> listCategories(final String filterQuery, final Set<SortInfo> sortInfo, final Integer page, final Integer limit, final boolean returnFullCount) throws WTException;
-	public Map<Integer, DateTime> getCategoriesLastRevision(final Collection<Integer> categoryIds) throws WTException;
+	public Map<Integer, DateTime> getCategoriesItemsLastRevision(final Collection<Integer> categoryIds) throws WTException;
 	public UserProfileId getCategoryOwner(final int categoryId) throws WTException;
 	public Integer getDefaultCategoryId() throws WTException;
 	public Integer getBuiltInCategoryId() throws WTException;
@@ -142,7 +148,6 @@ public interface IContactsManager {
 	public Map<Integer, CategoryPropSet> getCategoriesCustomProps(final Collection<Integer> categoryIds) throws WTException;
 	public CategoryPropSet updateCategoryCustomProps(final int categoryId, final CategoryPropSet propertySet) throws WTException;
 	public List<ContactObject> listContactObjects(final int categoryId, final ContactObjectOutputType outputType) throws WTException;
-	public LangUtils.CollectionChangeSet<ContactObjectChanged> listContactObjectsChanges(final int categoryId, final DateTime since, final Integer limit) throws WTException;
 	public ContactObject getContactObject(final int categoryId, final String href, final ContactObjectOutputType outputType) throws WTException;
 	public List<ContactObject> getContactObjects(final int categoryId, final Collection<String> hrefs, final ContactObjectOutputType outputType) throws WTException;
 	public ContactObject getContactObject(final String contactId, final ContactObjectOutputType outputType) throws WTException;
@@ -153,6 +158,8 @@ public interface IContactsManager {
 	public ItemsListResult<ContactLookup> listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final String filterQuery, final Integer page, final Integer limit, final boolean returnFullCount) throws WTException;
 	public ItemsListResult<ContactObject> listContacts(final Collection<Integer> categoryIds, final Condition<ContactQuery> filterQuery, final Set<SortInfo> sortInfo, final Integer page, final Integer limit, final boolean returnFullCount, final ContactObjectOutputType outputType) throws WTException;
 	public ItemsListResult<ContactObject> listContacts(final Collection<Integer> categoryIds, final String filterQuery, final Set<SortInfo> sortInfo, final Integer page, final Integer limit, final boolean returnFullCount, final ContactObjectOutputType outputType) throws WTException;
+	public Delta<ContactObject> listContactsDelta(final int categoryId, final String syncToken, final ContactObjectOutputType outputType) throws WTParseException, WTException;
+	public Delta<ContactObject> listContactsDelta(final int categoryId, final DateTime since, final ContactObjectOutputType outputType) throws WTException;
 	public boolean existAnyContact(final Collection<Integer> categoryIds, final Condition<ContactQuery> filterQuery) throws WTException;
 	public boolean existAnyContact(final Collection<Integer> categoryIds, final String filterQuery) throws WTException;
 	public Contact getContact(final String contactId) throws WTException;

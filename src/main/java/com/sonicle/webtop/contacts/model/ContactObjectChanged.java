@@ -38,7 +38,7 @@ import org.joda.time.DateTime;
  *
  * @author malbinola
  */
-public class ContactObjectChanged {
+@Deprecated public class ContactObjectChanged {
 	protected final String contactId;
 	protected final DateTime revisionTimestamp;
 	//protected final String publicUid;

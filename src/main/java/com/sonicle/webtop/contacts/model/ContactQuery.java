@@ -42,6 +42,8 @@ import com.sonicle.webtop.core.app.sdk.QueryBuilderWithCFields;
  */
 public class ContactQuery extends QueryBuilderWithCFields<ContactQuery> {
 	public static final String ID = "id";
+	public static final String CREATED_ON = "createdOn";
+	public static final String UPDATED_ON = "updatedOn";
 	public static final String DISPLAY_NAME = "displayName";
 	public static final String FIRSTNAME = "firstName";
 	public static final String LASTNAME = "lastName";
@@ -83,6 +85,14 @@ public class ContactQuery extends QueryBuilderWithCFields<ContactQuery> {
 	
 	public StringProperty<ContactQuery> id() {
 		return string(ID);
+	}
+	
+	public InstantProperty<ContactQuery> createdOn() {
+		return instant(CREATED_ON);
+	}
+	
+	public InstantProperty<ContactQuery> updatedOn() {
+		return instant(UPDATED_ON);
 	}
 	
 	public StringProperty<ContactQuery> displayName() {

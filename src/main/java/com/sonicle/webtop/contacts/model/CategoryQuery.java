@@ -33,6 +33,7 @@
 package com.sonicle.webtop.contacts.model;
 
 import com.sonicle.commons.qbuilders.properties.concrete.BooleanProperty;
+import com.sonicle.commons.qbuilders.properties.concrete.InstantProperty;
 import com.sonicle.commons.qbuilders.properties.concrete.StringProperty;
 import com.sonicle.webtop.core.app.sdk.QueryBuilder;
 
@@ -42,6 +43,8 @@ import com.sonicle.webtop.core.app.sdk.QueryBuilder;
  */
 public class CategoryQuery extends QueryBuilder<CategoryQuery> {
 	public static final String ID = "id";
+	public static final String CREATED_ON = "createdOn";
+	public static final String UPDATED_ON = "updatedOn";
 	public static final String USER_ID = "userId";
 	public static final String BUILT_IN = "builtIn";
 	public static final String PROVIDER = "provider";
@@ -53,6 +56,14 @@ public class CategoryQuery extends QueryBuilder<CategoryQuery> {
 	
 	public StringProperty<CategoryQuery> id() {
 		return string(ID);
+	}
+	
+	public InstantProperty<CategoryQuery> createdOn() {
+		return instant(CREATED_ON);
+	}
+	
+	public InstantProperty<CategoryQuery> updatedOn() {
+		return instant(UPDATED_ON);
 	}
 	
 	public StringProperty<CategoryQuery> userId() {

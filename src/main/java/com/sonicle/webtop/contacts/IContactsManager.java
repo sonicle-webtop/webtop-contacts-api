@@ -53,7 +53,6 @@ import com.sonicle.webtop.contacts.model.ContactList;
 import com.sonicle.webtop.contacts.model.ContactListEx;
 import com.sonicle.webtop.contacts.model.ContactListRecipient;
 import com.sonicle.webtop.contacts.model.ContactObject;
-import com.sonicle.webtop.contacts.model.ContactObjectChanged;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
 import com.sonicle.webtop.contacts.model.ContactQueryUI_OLD;
 import com.sonicle.webtop.contacts.model.Grouping;
@@ -113,10 +112,6 @@ public interface IContactsManager {
 	 * @deprecated Use existAnyContact(final Collection<Integer> categoryIds, final Condition<ContactQueryApi> filterQuery) instead.
 	 */
 	@Deprecated public boolean existContact(final Collection<Integer> categoryIds, final Condition<ContactQueryUI_OLD> conditionPredicate) throws WTException;
-	/**
-	 * @deprecated Use listContactsDelta instead
-	 */
-	@Deprecated public LangUtils.CollectionChangeSet<ContactObjectChanged> listContactObjectsChanges(final int categoryId, final DateTime since, final Integer limit) throws WTException;
 	
 	public Set<FolderSharing.SubjectConfiguration> getFolderShareConfigurations(final UserProfileId originProfileId, final FolderSharing.Scope scope) throws WTException;
 	public void updateFolderShareConfigurations(final UserProfileId originProfileId, final FolderSharing.Scope scope, final Set<FolderSharing.SubjectConfiguration> configurations) throws WTException;

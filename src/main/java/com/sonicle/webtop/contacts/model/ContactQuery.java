@@ -45,6 +45,7 @@ public class ContactQuery extends QueryBuilderWithCFields<ContactQuery> {
 	public static final String CREATED_ON = "createdOn";
 	public static final String UPDATED_ON = "updatedOn";
 	public static final String DISPLAY_NAME = "displayName";
+	public static final String TITLE = "title";
 	public static final String FIRSTNAME = "firstName";
 	public static final String LASTNAME = "lastName";
 	public static final String NICKNAME = "nickname";
@@ -54,6 +55,9 @@ public class ContactQuery extends QueryBuilderWithCFields<ContactQuery> {
 	public static final String EMAIL1 = "email1";
 	public static final String EMAIL2 = "email2";
 	public static final String EMAIL3 = "email3";
+	public static final String IM1 = "im1";
+	public static final String IM2 = "im2";
+	public static final String IM3 = "im3";
 	public static final String WORK_TELEPHONE1 = "workTelephone1";
 	public static final String WORK_TELEPHONE2 = "workTelephone2";
 	public static final String WORK_FAX = "workFax";
@@ -61,8 +65,20 @@ public class ContactQuery extends QueryBuilderWithCFields<ContactQuery> {
 	public static final String HOME_TELEPHONE2 = "homeTelephone2";
 	public static final String HOME_FAX = "homeFax";
 	public static final String WORK_ADDRESS = "workAddress";
+	public static final String WORK_POSTALCODE = "workPostalCode";
+	public static final String WORK_CITY = "workCity";
+	public static final String WORK_STATE = "workCity";
+	public static final String WORK_COUNTRY = "workCountry";
 	public static final String HOME_ADDRESS = "homeAddress";
+	public static final String HOME_POSTALCODE = "homePostalCode";
+	public static final String HOME_CITY = "homeCity";
+	public static final String HOME_STATE = "homeCity";
+	public static final String HOME_COUNTRY = "homeCountry";
 	public static final String OTHER_ADDRESS = "otherAddress";
+	public static final String OTHER_POSTALCODE = "otherPostalCode";
+	public static final String OTHER_CITY = "otherCity";
+	public static final String OTHER_STATE = "otherCity";
+	public static final String OTHER_COUNTRY = "otherCountry";
 	public static final String COMPANY = "company";
 	public static final String COMPANY_ID = "companyId";
 	public static final String FUNCTION = "function";
@@ -97,6 +113,10 @@ public class ContactQuery extends QueryBuilderWithCFields<ContactQuery> {
 	
 	public StringProperty<ContactQuery> displayName() {
 		return string(DISPLAY_NAME);
+	}
+	
+	public StringProperty<ContactQuery> title() {
+		return string(TITLE);
 	}
 	
 	public StringProperty<ContactQuery> firstName() {
@@ -135,6 +155,18 @@ public class ContactQuery extends QueryBuilderWithCFields<ContactQuery> {
 		return string(EMAIL3);
 	}
 	
+	public StringProperty<ContactQuery> im1() {
+		return string(IM1);
+	}
+	
+	public StringProperty<ContactQuery> im2() {
+		return string(IM2);
+	}
+	
+	public StringProperty<ContactQuery> im3() {
+		return string(IM3);
+	}
+	
 	public StringProperty<ContactQuery> workTelephone1() {
 		return string(WORK_TELEPHONE1);
 	}
@@ -162,13 +194,61 @@ public class ContactQuery extends QueryBuilderWithCFields<ContactQuery> {
 	public StringProperty<ContactQuery> workAddress() {
 		return string(WORK_ADDRESS);
 	}
+	
+	public StringProperty<ContactQuery> workPostalCode() {
+		return string(WORK_POSTALCODE);
+	}
+	
+	public StringProperty<ContactQuery> workCity() {
+		return string(WORK_CITY);
+	}
+	
+	public StringProperty<ContactQuery> workState() {
+		return string(WORK_STATE);
+	}
+	
+	public StringProperty<ContactQuery> workCountry() {
+		return string(WORK_COUNTRY);
+	}
 
 	public StringProperty<ContactQuery> homeAddress() {
 		return string(HOME_ADDRESS);
 	}
 	
+	public StringProperty<ContactQuery> homePostalCode() {
+		return string(HOME_POSTALCODE);
+	}
+	
+	public StringProperty<ContactQuery> homeCity() {
+		return string(HOME_CITY);
+	}
+	
+	public StringProperty<ContactQuery> homeState() {
+		return string(HOME_STATE);
+	}
+	
+	public StringProperty<ContactQuery> homeCountry() {
+		return string(HOME_COUNTRY);
+	}
+	
 	public StringProperty<ContactQuery> otherAddress() {
 		return string(OTHER_ADDRESS);
+	}
+	
+	public StringProperty<ContactQuery> otherPostalCode() {
+		return string(OTHER_POSTALCODE);
+	}
+	
+	public StringProperty<ContactQuery> otherCity() {
+		return string(OTHER_CITY);
+	}
+	
+	public StringProperty<ContactQuery> otherState() {
+		return string(OTHER_STATE);
+	}
+	
+	public StringProperty<ContactQuery> otherCountry() {
+		return string(OTHER_COUNTRY);
 	}
 	
 	public StringProperty<ContactQuery> company() {

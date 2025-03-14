@@ -52,7 +52,7 @@ public class CategoryQuery extends QueryBuilder<CategoryQuery> {
 	public static final String DESCRIPTION = "description";
 	public static final String COLOR = "color";
 	public static final String SYNC = "sync";
-	public static final String IS_DEFAULT = "default";
+	public static final String IS_OWNER_DEFAULT = "isOwnerDefault";
 	
 	public StringProperty<CategoryQuery> id() {
 		return string(ID);
@@ -94,7 +94,7 @@ public class CategoryQuery extends QueryBuilder<CategoryQuery> {
 		return string(SYNC);
 	}
 	
-	public BooleanProperty<CategoryQuery> isDefault() {
-		return bool(IS_DEFAULT);
+	public BooleanProperty<CategoryQuery> isOwnerDefault() {
+		return bool(IS_OWNER_DEFAULT);
 	}
 }

@@ -63,7 +63,7 @@ public class ContactQueryUI extends ContactQuery {
 	
 	public static Condition<ContactQuery> build(String pattern) {
 		if (!StringUtils.isBlank(pattern)) {
-			return new ContactQueryUI().any().eq(StringUtils.replace(pattern, "%", "*"));
+			return new ContactQueryUI().any().like(StringUtils.replace(pattern, "%", "*"));
 		} else {
 			return null;
 		}
@@ -88,7 +88,7 @@ public class ContactQueryUI extends ContactQuery {
 		
 		if (!StringUtils.isBlank(query.getAllText())) {
 			String[] values = asStringValues(query.getAllText(), true);
-			return new ContactQueryUI().and(last, combineFieldValuesAsCondition(values, v -> new ContactQueryUI().any().eq(v)));
+			return new ContactQueryUI().and(last, combineFieldValuesAsCondition(values, v -> new ContactQueryUI().any().like(v)));
 		} else {
 			return last;
 		}

@@ -33,7 +33,7 @@
 package com.sonicle.webtop.contacts.io;
 
 import com.sonicle.commons.LangUtils;
-import com.sonicle.commons.time.DateTimeUtils;
+import com.sonicle.commons.time.JodaTimeUtils;
 import com.sonicle.webtop.contacts.model.ContactAttachmentWithStream;
 import com.sonicle.webtop.contacts.model.ContactBase;
 import com.sonicle.webtop.contacts.model.ContactCompany;
@@ -41,15 +41,17 @@ import com.sonicle.webtop.contacts.model.ContactPicture;
 import com.sonicle.webtop.core.app.ezvcard.BinaryType;
 import com.sonicle.webtop.core.app.ezvcard.XAttachment;
 import com.sonicle.webtop.core.app.ezvcard.XCustomFieldValue;
+import com.sonicle.webtop.core.app.ezvcard.XTag;
 import com.sonicle.webtop.core.model.CustomFieldValue;
 import ezvcard.VCard;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.joda.time.format.DateTimeFormatter;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  *
@@ -96,37 +98,58 @@ public class ContactInput {
 		return attachments;
 	}
 	
-	public Map<String, CustomFieldValue> extractCustomFieldsValues(final Set<String> validCustomFieldsIds) {
-		Map<String, CustomFieldValue> values = new LinkedHashMap<>();
+	public Set<String> extractTags(final Set<String> validTagIds, final Map<String, List<String>> tagIdsByName) {
+		Set<String> tags = new HashSet<>();
+		if (sourceObject != null) {
+			for (XTag prop : sourceObject.getProperties(XTag.class)) {
+				final String id = prop.getTagId();
+				final String name = prop.getTagName();
+				if (validTagIds.contains(id)) {
+					tags.add(id);
+				} else if (!StringUtils.isBlank(name)) {
+					List<String> ids = tagIdsByName.get(name);
+					if (ids != null && !ids.isEmpty()) tags.add(ids.get(0));
+				}
+			}
+		}
+		return tags;
+	}
+	
+	public Map<String, CustomFieldValue> extractCustomFieldsValues(final Set<String> validCustomFieldIds) {
+		Map<String, CustomFieldValue> customValues = new LinkedHashMap<>();
 		
 		if (sourceObject != null) {
-			for (XCustomFieldValue xval : sourceObject.getProperties(XCustomFieldValue.class)) {
-				String uid = xval.getUid();
-				String type = xval.getType();
-				if (validCustomFieldsIds.contains(uid)) {
-					CustomFieldValue value = new CustomFieldValue();
-					value.setFieldId(uid);
-					if (XCustomFieldValue.TYPE_BOOLEAN.equals(type))
-						value.setBooleanValue(Boolean.parseBoolean(xval.getValue()));
+			for (XCustomFieldValue prop : sourceObject.getProperties(XCustomFieldValue.class)) {
+				final String id = prop.getFieldId();
+				if (validCustomFieldIds.contains(id) && !customValues.containsKey(id)) {
+					final String type = prop.getFieldType();
+					final String value = prop.getFieldValue();
 					
-					else if (XCustomFieldValue.TYPE_DATE.equals(type)) {
-						DateTimeFormatter dtf = DateTimeUtils.createYmdHmsFormatter();
-						value.setDateValue(DateTimeUtils.parseDateTime(dtf, xval.getValue()));
+					CustomFieldValue cfv = null;
+					if (XCustomFieldValue.TYPE_STRING.equals(type)) {
+						cfv = new CustomFieldValue(id);
+						cfv.setStringValue(LangUtils.value(value, (String)null));
+					} else if (XCustomFieldValue.TYPE_NUMBER.equals(type)) {
+						cfv = new CustomFieldValue(id);
+						cfv.setNumberValue(LangUtils.value(value, (Double)null));
+					} else if (XCustomFieldValue.TYPE_BOOLEAN.equals(type)) {
+						cfv = new CustomFieldValue(id);
+						cfv.setBooleanValue(LangUtils.value(value, (Boolean)null));
+					} else if (XCustomFieldValue.TYPE_DATE.equals(type)) {
+						cfv = new CustomFieldValue(id);
+						cfv.setDateValue(JodaTimeUtils.parseDateTimeISO(value));
+					} else if (XCustomFieldValue.TYPE_TEXT.equals(type)) {
+						cfv = new CustomFieldValue(id);
+						cfv.setTextValue(LangUtils.value(value, (String)null));
+					} else {
+						// throw ???...
 					}
-					else if (XCustomFieldValue.TYPE_NUMBER.equals(type))
-						value.setNumberValue(LangUtils.value(xval.getValue(), (Double)null));
 					
-					else if (XCustomFieldValue.TYPE_STRING.equals(type))
-						value.setStringValue(xval.getValue());
-					
-					else if (XCustomFieldValue.TYPE_TEXT.equals(type))
-						value.setTextValue(xval.getValue());
-					
-					values.put(uid, value);
+					if (cfv != null) customValues.put(id, cfv);
 				}
 			}
 		}
 		
-		return values;
+		return customValues;
 	}
 }

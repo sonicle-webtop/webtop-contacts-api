@@ -33,7 +33,6 @@
 package com.sonicle.webtop.contacts.io;
 
 import com.sonicle.commons.LangUtils;
-import com.sonicle.commons.time.DateTimeUtils;
 import com.sonicle.webtop.contacts.model.ContactAttachment;
 import com.sonicle.webtop.contacts.model.ContactAttachmentWithBytes;
 import com.sonicle.webtop.contacts.model.ContactBase;
@@ -90,8 +89,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import net.sf.qualitycheck.Check;
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
 
 /**
  *
@@ -316,48 +313,39 @@ public class VCardOutput {
 				if (att instanceof ContactAttachmentWithBytes) {
 					ContactAttachmentWithBytes attb = (ContactAttachmentWithBytes)att;
 					XAttachment xatt = new XAttachment(
-							attb.getBytes(), 
-							BinaryType.get(null, attb.getMediaType(), null),
-							att.getFilename()
+						attb.getBytes(), 
+						BinaryType.get(null, attb.getMediaType(), null),
+						att.getFilename()
 					);
 					vcard.addProperty(xatt);
 				}
 			}
 		}
 		
-		// EXTENDED PROPERTIES
-		for(ExtendedProperty extp: toExtendedProperties(contact)) {
-			vcard.addExtendedProperty(extp.getName(), extp.getValue());
-		}
-		
-		//TAGS
-		for(String tagId: contact.getTagsOrEmpty()) {
+		// Tags (X-*)
+		for (String tagId : contact.getTagsOrEmpty()) {
 			String tagName = null;
-			if (tagNamesByIdMap!=null) tagName = tagNamesByIdMap.get(tagId);
+			if (tagNamesByIdMap != null) tagName = tagNamesByIdMap.get(tagId);
 			if (tagName == null) tagName = tagId;
-			XTag xtag = new XTag(tagId, tagName);
-			vcard.addProperty(xtag);
+			vcard.addProperty(new XTag(tagId, tagName));
 		}
 		
-		
-		// CUSTOM FIELDS AS EXTENDED PROPERTIES
-		Map<String, CustomFieldValue> cv = contact.getCustomValues();
-		if (cv!=null) {
-			for (Entry<String, CustomFieldValue> e: cv.entrySet()) {
-				CustomFieldValue cfv = e.getValue();
-				String uid = e.getKey();
-				DateTimeFormatter dtf = DateTimeUtils.createYmdHmsFormatter();
-				Boolean bv = cfv.getBooleanValue();
-				DateTime dv = cfv.getDateValue();
-				Double nv = cfv.getNumberValue();
-				String sv = cfv.getStringValue();
-				String tv = cfv.getTextValue();
-				if (bv!=null) vcard.addProperty(new XCustomFieldValue(uid, XCustomFieldValue.TYPE_BOOLEAN, ""+bv));
-				else if (dv!=null) vcard.addProperty(new XCustomFieldValue(uid, XCustomFieldValue.TYPE_DATE, dtf.print(dv)));
-				else if (nv!=null) vcard.addProperty(new XCustomFieldValue(uid, XCustomFieldValue.TYPE_NUMBER, String.valueOf(nv)));
-				else if (!StringUtils.isEmpty(sv)) vcard.addProperty(new XCustomFieldValue(uid, XCustomFieldValue.TYPE_STRING, sv));
-				else if (!StringUtils.isEmpty(tv)) vcard.addProperty(new XCustomFieldValue(uid, XCustomFieldValue.TYPE_TEXT, tv));
+		// Custom fields (X-*)
+		Map<String, CustomFieldValue> customValues = contact.getCustomValues();
+		if (customValues != null) {
+			for (Entry<String, CustomFieldValue> entry : customValues.entrySet()) {
+				CustomFieldValue cfv = entry.getValue();
+				if (cfv.getStringValue() != null) vcard.addProperty(new XCustomFieldValue(cfv.getFieldId(), cfv.getStringValue(), false));
+				if (cfv.getNumberValue()!= null) vcard.addProperty(new XCustomFieldValue(cfv.getFieldId(), cfv.getNumberValue()));
+				if (cfv.getBooleanValue()!= null) vcard.addProperty(new XCustomFieldValue(cfv.getFieldId(), cfv.getBooleanValue()));
+				if (cfv.getDateValue()!= null) vcard.addProperty(new XCustomFieldValue(cfv.getFieldId(), cfv.getDateValue()));
+				if (cfv.getTextValue()!= null) vcard.addProperty(new XCustomFieldValue(cfv.getFieldId(), cfv.getTextValue(), true));
 			}
+		}
+		
+		// EXTENDED PROPERTIES
+		for (ExtendedProperty extp: toExtendedProperties(contact)) {
+			vcard.addExtendedProperty(extp.getName(), extp.getValue());
 		}
 		
 		return vcard;

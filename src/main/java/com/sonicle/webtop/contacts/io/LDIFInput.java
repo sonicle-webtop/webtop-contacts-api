@@ -33,7 +33,7 @@
 package com.sonicle.webtop.contacts.io;
 
 import com.sonicle.commons.LangUtils;
-import com.sonicle.commons.time.DateTimeUtils;
+import com.sonicle.commons.time.JodaTimeUtils;
 import com.sonicle.webtop.contacts.model.ContactBase;
 import com.sonicle.webtop.core.app.util.log.BufferingLogHandler;
 import com.sonicle.webtop.core.app.util.log.LogEntry;
@@ -198,7 +198,7 @@ public class LDIFInput {
 		}
 		if (ldapEntry.getAttribute("birthday") != null && ldapEntry.getAttribute("birthmonth") != null && ldapEntry.getAttribute("birthyear") != null) {
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy");
-			contact.setBirthday(DateTimeUtils.parseLocalDate(fmt, ldapEntry.getAttribute("birthday").getStringValue() + "/" + ldapEntry.getAttribute("birthmonth").getStringValue() + "/" + ldapEntry.getAttribute("birthyear").getStringValue()));
+			contact.setBirthday(JodaTimeUtils.parseLocalDate(fmt, ldapEntry.getAttribute("birthday").getStringValue() + "/" + ldapEntry.getAttribute("birthmonth").getStringValue() + "/" + ldapEntry.getAttribute("birthyear").getStringValue()));
 		}
 		if (ldapEntry.getAttribute("description") != null) {
 			contact.setNotes(getAttributeValueAsString(ldapEntry.getAttribute("description")));

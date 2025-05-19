@@ -87,11 +87,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import com.sonicle.webtop.core.app.io.BeanHandler;
 import com.sonicle.webtop.core.app.ezvcard.XAttachmentScribe;
+import com.sonicle.webtop.core.app.ezvcard.XCustomFieldValue;
 import com.sonicle.webtop.core.app.ezvcard.XCustomFieldValueScribe;
+import com.sonicle.webtop.core.app.ezvcard.XTag;
 import com.sonicle.webtop.core.app.ezvcard.XTagScribe;
+import com.sonicle.webtop.core.model.CustomFieldValueCandidate;
+import com.sonicle.webtop.core.model.TagCandidate;
 import ezvcard.io.text.VCardReader;
 import ezvcard.property.RawProperty;
 import java.util.LinkedHashSet;
+import net.sf.qualitycheck.exception.IllegalStateOfArgumentException;
 
 /**
  *
@@ -268,7 +273,8 @@ public class VCardInput {
 		ContactBase contact = new ContactBase();
 		ContactCompany contactCompany = null;
 		ContactPictureWithBytes contactPicture = null;
-		Set<String> tagNames = null;
+		Set<TagCandidate> candidateTags = null; // Hold any tag found in source file regardless of validity of the tagId (postprocessing is needed)
+		Set<CustomFieldValueCandidate> candidateCFValues = null; // Hold any customFieldValue found in source file regardless of validity of the fieldId (postprocessing is needed)
 		VCard vcCopy = new VCard(vcard);
 		
 		//TODO: pass string field lengths in constructor or take them from db field definitions
@@ -493,6 +499,43 @@ public class VCardInput {
 			}
 		}
 		
+		// X-WT-TAG(*)
+		List<XTag> tagProps = vcCopy.getProperties(XTag.class);
+		if (!tagProps.isEmpty()) {
+			candidateTags = new LinkedHashSet<>();
+			for (XTag prop : tagProps) {
+				final String id = prop.getTagId();
+				final String name = prop.getTagName();
+				if (!StringUtils.isEmpty(id)) {
+					candidateTags.add(new TagCandidate(id, name));
+				} else if (!StringUtils.isEmpty(name)) {
+					candidateTags.add(new TagCandidate(name));
+				} else {
+					log(logHandler, 1, LogEntry.Level.WARN, "X-WT-TAG skipped: malformed data");
+				}
+			}
+		}
+		
+		// X-WT-CUSTOMFIELDVALUE(*)
+		List<XCustomFieldValue> cfValueProps = vcCopy.getProperties(XCustomFieldValue.class);
+		if (!cfValueProps.isEmpty()) {
+			candidateCFValues = new LinkedHashSet<>();
+			for (XCustomFieldValue prop : cfValueProps) {
+				final String fieldId = prop.getFieldId();
+				final String valueType = prop.getFieldType();
+				if (!StringUtils.isEmpty(fieldId) && !StringUtils.isEmpty(valueType)) {
+					try {
+						candidateCFValues.add(new CustomFieldValueCandidate(fieldId, valueType, prop.getFieldValue()));
+					} catch (IllegalStateOfArgumentException ex) {
+						log(logHandler, 1, LogEntry.Level.WARN, "X-WT-CUSTOMFIELDVALUE skipped: malformed data (unsupported TYPE)");
+					}
+					
+				} else {
+					log(logHandler, 1, LogEntry.Level.WARN, "X-WT-CUSTOMFIELDVALUE skipped: malformed data (empty UID or TYPE)");
+				}
+			}
+		}
+		
 		// X-PROPS(*)
 		List<RawProperty> extProps = vcCopy.getExtendedProperties();
 		if (!extProps.isEmpty()) {
@@ -517,7 +560,7 @@ public class VCardInput {
 		}
 		
 		VCard sourceObject = (returnSourceObject && !vcCopy.getProperties().isEmpty()) ? vcCopy : null;
-		return new ContactInput(contact, contactCompany, contactPicture, tagNames, sourceObject);
+		return new ContactInput(contact, contactCompany, contactPicture, candidateTags, candidateCFValues, sourceObject);
 	}
 	
 	/*

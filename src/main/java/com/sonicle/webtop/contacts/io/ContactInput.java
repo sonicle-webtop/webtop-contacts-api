@@ -43,6 +43,8 @@ import com.sonicle.webtop.core.app.ezvcard.XAttachment;
 import com.sonicle.webtop.core.app.ezvcard.XCustomFieldValue;
 import com.sonicle.webtop.core.app.ezvcard.XTag;
 import com.sonicle.webtop.core.model.CustomFieldValue;
+import com.sonicle.webtop.core.model.CustomFieldValueCandidate;
+import com.sonicle.webtop.core.model.TagCandidate;
 import ezvcard.VCard;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -61,14 +63,16 @@ public class ContactInput {
 	public final ContactBase contact;
 	public final ContactCompany contactCompany;
 	public final ContactPicture contactPicture;
-	public final Set<String> tagIds;
+	public final Set<TagCandidate> candidateTags;
+	public final Set<CustomFieldValueCandidate> candidateCFValues;
 	public final VCard sourceObject;
 
-	public ContactInput(ContactBase contact, ContactCompany contactCompany, ContactPicture contactPicture, Set<String> tagIds, VCard sourceObject) {
+	public ContactInput(ContactBase contact, ContactCompany contactCompany, ContactPicture contactPicture, Set<TagCandidate> candidateTags, Set<CustomFieldValueCandidate> candidateCFValues, VCard sourceObject) {
 		this.contact = contact;
 		this.contactCompany = contactCompany;
 		this.contactPicture = contactPicture;
-		this.tagIds = tagIds;
+		this.candidateTags = candidateTags;
+		this.candidateCFValues = candidateCFValues;
 		this.sourceObject = sourceObject;
 	}
 	
@@ -96,23 +100,6 @@ public class ContactInput {
 			sourceObject.removeProperties(XAttachment.class);
 		}
 		return attachments;
-	}
-	
-	public Set<String> extractTags(final Set<String> validTagIds, final Map<String, List<String>> tagIdsByName) {
-		Set<String> tags = new HashSet<>();
-		if (sourceObject != null) {
-			for (XTag prop : sourceObject.getProperties(XTag.class)) {
-				final String id = prop.getTagId();
-				final String name = prop.getTagName();
-				if (validTagIds.contains(id)) {
-					tags.add(id);
-				} else if (!StringUtils.isBlank(name)) {
-					List<String> ids = tagIdsByName.get(name);
-					if (ids != null && !ids.isEmpty()) tags.add(ids.get(0));
-				}
-			}
-		}
-		return tags;
 	}
 	
 	public Map<String, CustomFieldValue> extractCustomFieldsValues(final Set<String> validCustomFieldIds) {

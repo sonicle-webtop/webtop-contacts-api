@@ -129,7 +129,7 @@ public class ContactTextFileReader extends TextFileReader implements ContactFile
 			
 		} finally {
 			flushToLogHandler(buffLogHandler);
-			beanHandler.handle(new ContactInput(contact, contact != null ? contact.getCompany() : null, null, null, null));
+			beanHandler.handle(new ContactInput(contact, contact != null ? contact.getCompany() : null, null, null, null, null));
 		}
 	}
 	

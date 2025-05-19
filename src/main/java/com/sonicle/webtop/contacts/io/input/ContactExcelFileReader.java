@@ -193,7 +193,7 @@ public class ContactExcelFileReader extends ExcelFileReader implements ContactFi
 			
 		} finally {
 			flushToLogHandler(buffLogHandler);
-			boolean ret = beanHandler.handle(new ContactInput(contact, contact != null ? contact.getCompany() : null, null, null, null));
+			boolean ret = beanHandler.handle(new ContactInput(contact, contact != null ? contact.getCompany() : null, null, null, null, null));
 			if (!ret) throw new Exception("Handle not succesful");
 		}
 	}

@@ -203,7 +203,7 @@ public class LDIFInput {
 		if (ldapEntry.getAttribute("description") != null) {
 			contact.setNotes(getAttributeValueAsString(ldapEntry.getAttribute("description")));
 		}
-		return new ContactInput(contact, null, null, null, null);
+		return new ContactInput(contact, null, null, null, null, null);
 	}
 	
 	private String getAttributeValueAsString(LdapAttribute attribute) {

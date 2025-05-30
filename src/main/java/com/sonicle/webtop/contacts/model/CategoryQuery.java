@@ -43,8 +43,8 @@ import com.sonicle.webtop.core.app.sdk.QueryBuilder;
  */
 public class CategoryQuery extends QueryBuilder<CategoryQuery> {
 	public static final String ID = "id";
-	public static final String CREATED_ON = "createdOn";
-	public static final String UPDATED_ON = "updatedOn";
+	public static final String CREATED_AT = "createdAt";
+	public static final String UPDATED_AT = "updatedAt";
 	public static final String USER_ID = "userId";
 	public static final String BUILT_IN = "builtIn";
 	public static final String PROVIDER = "provider";
@@ -58,12 +58,12 @@ public class CategoryQuery extends QueryBuilder<CategoryQuery> {
 		return string(ID);
 	}
 	
-	public InstantProperty<CategoryQuery> createdOn() {
-		return instant(CREATED_ON);
+	public InstantProperty<CategoryQuery> createdAt() {
+		return instant(CREATED_AT);
 	}
 	
-	public InstantProperty<CategoryQuery> updatedOn() {
-		return instant(UPDATED_ON);
+	public InstantProperty<CategoryQuery> updatedAt() {
+		return instant(UPDATED_AT);
 	}
 	
 	public StringProperty<CategoryQuery> userId() {

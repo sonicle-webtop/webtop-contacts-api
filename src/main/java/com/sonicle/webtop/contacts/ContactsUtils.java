@@ -50,7 +50,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author malbinola
  */
 public class ContactsUtils {
-	private static final Pattern PATTERN_VIRTUALRCPT_LIST = Pattern.compile("^" + RCPT_ORIGIN_LIST + "-(\\d+)$");
+	private static final Pattern PATTERN_VIRTUALRCPT_LIST = Pattern.compile("^" + RCPT_ORIGIN_LIST + "-((?:\\d+)|(?:[0-9a-f]{8}[0-9a-f]{4}[0-9a-f]{4}[0-9a-f]{4}[0-9a-f]{12}))$");
 	public static final String CARDDAV_ADDRESSBOOK_URL = "/addressbooks/{0}/{1}";
 	public static final String CATEGORY_LINK_CARDDAV = "cardDav";
 	

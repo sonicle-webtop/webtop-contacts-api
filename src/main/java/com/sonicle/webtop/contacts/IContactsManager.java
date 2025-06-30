@@ -34,7 +34,6 @@ package com.sonicle.webtop.contacts;
 
 import com.google.gson.annotations.SerializedName;
 import com.sonicle.commons.qbuilders.conditions.Condition;
-import com.sonicle.commons.LangUtils;
 import com.sonicle.commons.beans.ItemsListResult;
 import com.sonicle.commons.beans.SortInfo;
 import com.sonicle.commons.flags.BitFlags;
@@ -172,9 +171,9 @@ public interface IContactsManager {
 	public void deleteContact(final String contactId) throws WTException;
 	public void deleteContact(final Collection<String> contactIds) throws WTException;
 	public void moveContact(final boolean copy, final String contactId, final int targetCategoryId) throws WTException;
-	public void moveContact(final boolean copy, final String contactId, final int targetCategoryId, BitFlags<ContactGetOption> opts) throws WTException;
+	public void moveContact(final boolean copy, final String contactId, final int targetCategoryId, BitFlags<ContactGetOption> copyOptions) throws WTException;
 	public void moveContact(final boolean copy, final Collection<String> contactIds, final int targetCategoryId) throws WTException;
-	public void moveContact(final boolean copy, final Collection<String> contactIds, final int targetCategoryId, BitFlags<ContactGetOption> opts) throws WTException;
+	public void moveContact(final boolean copy, final Collection<String> contactIds, final int targetCategoryId, BitFlags<ContactGetOption> copyOptions) throws WTException;
 	public ContactList<ContactListRecipient> getContactList(final String contactId) throws WTException;
 	public ContactList<ContactListRecipient> getContactList(final String contactId, final BitFlags<ContactGetOption> opts) throws WTException;
 	public ContactList<ContactListRecipient> addContactList(final ContactListEx<ContactListRecipientBase> contact) throws WTException;

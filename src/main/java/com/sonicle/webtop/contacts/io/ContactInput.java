@@ -34,7 +34,7 @@ package com.sonicle.webtop.contacts.io;
 
 import com.sonicle.commons.LangUtils;
 import com.sonicle.commons.time.JodaTimeUtils;
-import com.sonicle.webtop.contacts.model.ContactAttachmentWithStream;
+import com.sonicle.webtop.contacts.model.ContactAttachmentWithInputStream;
 import com.sonicle.webtop.contacts.model.ContactBase;
 import com.sonicle.webtop.contacts.model.ContactCompany;
 import com.sonicle.webtop.contacts.model.ContactPicture;
@@ -87,14 +87,14 @@ public class ContactInput {
 	}
 	*/
 	
-	public List<ContactAttachmentWithStream> extractAttachments() {
-		ArrayList<ContactAttachmentWithStream> attachments = new ArrayList<>();
+	public List<ContactAttachmentWithInputStream> extractAttachments() {
+		ArrayList<ContactAttachmentWithInputStream> attachments = new ArrayList<>();
 		if (sourceObject != null) {
 			for (XAttachment xatt : sourceObject.getProperties(XAttachment.class)) {
 				byte[] bytes = xatt.getData();
 				if (bytes != null) {
 					BinaryType btype = xatt.getContentType();
-					attachments.add(new ContactAttachmentWithStream(new ByteArrayInputStream(bytes), (btype != null) ? btype.getMediaType() : null, xatt.getFileName(), (long)bytes.length));
+					attachments.add(new ContactAttachmentWithInputStream(new ByteArrayInputStream(bytes), (btype != null) ? btype.getMediaType() : null, xatt.getFileName(), (long)bytes.length));
 				}
 			}
 			sourceObject.removeProperties(XAttachment.class);

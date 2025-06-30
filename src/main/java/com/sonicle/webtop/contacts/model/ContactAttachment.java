@@ -32,6 +32,8 @@
  */
 package com.sonicle.webtop.contacts.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.DateTime;
@@ -100,9 +102,6 @@ public class ContactAttachment {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(getAttachmentId())
-			.append(getFilename())
-			.append(getSize())
-			.append(getMediaType())
 			.toHashCode();
 	}
 	
@@ -114,5 +113,14 @@ public class ContactAttachment {
 		return new EqualsBuilder()
 			.append(getAttachmentId(), otherObject.getAttachmentId())
 			.isEquals();
+	}
+	
+	public static List<ContactAttachment> asListOfContactAttachmentsWithInputRef(List<ContactAttachment> attachmentsToClone) {
+		if (attachmentsToClone == null || attachmentsToClone.isEmpty()) return attachmentsToClone;
+		ArrayList<ContactAttachment> items = new ArrayList<>(attachmentsToClone.size());
+		for (ContactAttachment attachment : attachmentsToClone) {
+			items.add(new ContactAttachmentWithInputRef(attachment));
+		}
+		return items;
 	}
 }

@@ -53,9 +53,7 @@ import com.sonicle.webtop.contacts.model.ContactListEx;
 import com.sonicle.webtop.contacts.model.ContactListRecipient;
 import com.sonicle.webtop.contacts.model.ContactObject;
 import com.sonicle.webtop.contacts.model.ContactPictureWithBytes;
-import com.sonicle.webtop.contacts.model.ContactQueryUI_OLD;
 import com.sonicle.webtop.contacts.model.Grouping;
-import com.sonicle.webtop.contacts.model.ListContactsResult;
 import com.sonicle.webtop.contacts.model.ShowBy;
 import com.sonicle.webtop.contacts.model.ContactListRecipientBase;
 import com.sonicle.webtop.contacts.model.ContactLookup;
@@ -86,31 +84,6 @@ public interface IContactsManager {
 	public static final String RCPT_ORIGIN_CONTACT_OTHER = "contact-other";
 	public static final String RCPT_ORIGIN_LIST = "list";
 	public static final String RCPT_ORIGIN_LISTITEM = "listitem";
-	
-	/**
-	 * @deprecated Use listMyCategoryIds() instead.
-	 */
-	@Deprecated public Set<Integer> listCategoryIds() throws WTException;
-	/**
-	 * @deprecated Use listMyCategories() instead.
-	 */
-	@Deprecated public Map<Integer, Category> listCategories() throws WTException;
-	/**
-	 * @deprecated Use listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQueryApi> filterQuery, final Integer page, final Integer limit, final boolean returnFullCount) instead.
-	 */
-	@Deprecated public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final String pattern) throws WTException;
-	/**
-	 * @deprecated Use listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQueryApi> filterQuery, final Integer page, final Integer limit, final boolean returnFullCount) instead.
-	 */
-	@Deprecated public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQueryUI_OLD> conditionPredicate) throws WTException;
-	/**
-	 * @deprecated Use listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQueryApi> filterQuery, final Integer page, final Integer limit, final boolean returnFullCount) instead.
-	 */
-	@Deprecated public ListContactsResult listContacts(final Collection<Integer> categoryIds, final ContactType type, final Grouping groupBy, final ShowBy showBy, final Condition<ContactQueryUI_OLD> conditionPredicate, final int page, final int limit, final boolean returnFullCount) throws WTException;
-	/**
-	 * @deprecated Use existAnyContact(final Collection<Integer> categoryIds, final Condition<ContactQueryApi> filterQuery) instead.
-	 */
-	@Deprecated public boolean existContact(final Collection<Integer> categoryIds, final Condition<ContactQueryUI_OLD> conditionPredicate) throws WTException;
 	
 	public Set<FolderSharing.SubjectConfiguration> getFolderShareConfigurations(final UserProfileId originProfileId, final FolderSharing.Scope scope) throws WTException;
 	public void updateFolderShareConfigurations(final UserProfileId originProfileId, final FolderSharing.Scope scope, final Set<FolderSharing.SubjectConfiguration> configurations) throws WTException;

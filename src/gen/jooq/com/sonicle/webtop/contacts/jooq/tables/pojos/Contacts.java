@@ -73,6 +73,8 @@ public class Contacts implements java.io.Serializable {
     private java.lang.String        notes;
     private java.lang.String        href;
     private java.lang.String        etag;
+    private java.lang.String        taxCode;
+    private java.lang.String        vatNumber;
 
     public Contacts() {}
 
@@ -137,6 +139,8 @@ public class Contacts implements java.io.Serializable {
         this.notes = value.notes;
         this.href = value.href;
         this.etag = value.etag;
+        this.taxCode = value.taxCode;
+        this.vatNumber = value.vatNumber;
     }
 
     public Contacts(
@@ -199,7 +203,9 @@ public class Contacts implements java.io.Serializable {
         java.lang.String        url,
         java.lang.String        notes,
         java.lang.String        href,
-        java.lang.String        etag
+        java.lang.String        etag,
+        java.lang.String        taxCode,
+        java.lang.String        vatNumber
     ) {
         this.contactId = contactId;
         this.categoryId = categoryId;
@@ -261,6 +267,8 @@ public class Contacts implements java.io.Serializable {
         this.notes = notes;
         this.href = href;
         this.etag = etag;
+        this.taxCode = taxCode;
+        this.vatNumber = vatNumber;
     }
 
     /**
@@ -1103,6 +1111,34 @@ public class Contacts implements java.io.Serializable {
         this.etag = etag;
     }
 
+    /**
+     * Getter for <code>contacts.contacts.tax_code</code>.
+     */
+    public java.lang.String getTaxCode() {
+        return this.taxCode;
+    }
+
+    /**
+     * Setter for <code>contacts.contacts.tax_code</code>.
+     */
+    public void setTaxCode(java.lang.String taxCode) {
+        this.taxCode = taxCode;
+    }
+
+    /**
+     * Getter for <code>contacts.contacts.vat_number</code>.
+     */
+    public java.lang.String getVatNumber() {
+        return this.vatNumber;
+    }
+
+    /**
+     * Setter for <code>contacts.contacts.vat_number</code>.
+     */
+    public void setVatNumber(java.lang.String vatNumber) {
+        this.vatNumber = vatNumber;
+    }
+
     @Override
     public String toString() {
         java.lang.StringBuilder sb = new java.lang.StringBuilder("Contacts (");
@@ -1167,6 +1203,8 @@ public class Contacts implements java.io.Serializable {
         sb.append(", ").append(notes);
         sb.append(", ").append(href);
         sb.append(", ").append(etag);
+        sb.append(", ").append(taxCode);
+        sb.append(", ").append(vatNumber);
 
         sb.append(")");
         return sb.toString();

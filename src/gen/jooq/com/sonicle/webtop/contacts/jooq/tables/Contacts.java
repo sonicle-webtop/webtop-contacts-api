@@ -326,6 +326,16 @@ public class Contacts extends org.jooq.impl.TableImpl<com.sonicle.webtop.contact
      */
     public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ContactsRecord, java.lang.String> ETAG = createField(org.jooq.impl.DSL.name("etag"), org.jooq.impl.SQLDataType.VARCHAR(2048), this, "");
 
+    /**
+     * The column <code>contacts.contacts.tax_code</code>.
+     */
+    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ContactsRecord, java.lang.String> TAX_CODE = createField(org.jooq.impl.DSL.name("tax_code"), org.jooq.impl.SQLDataType.VARCHAR(255), this, "");
+
+    /**
+     * The column <code>contacts.contacts.vat_number</code>.
+     */
+    public final org.jooq.TableField<com.sonicle.webtop.contacts.jooq.tables.records.ContactsRecord, java.lang.String> VAT_NUMBER = createField(org.jooq.impl.DSL.name("vat_number"), org.jooq.impl.SQLDataType.VARCHAR(255), this, "");
+
     private Contacts(org.jooq.Name alias, org.jooq.Table<com.sonicle.webtop.contacts.jooq.tables.records.ContactsRecord> aliased) {
         this(alias, aliased, null);
     }

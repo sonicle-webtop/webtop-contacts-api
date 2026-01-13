@@ -555,6 +555,12 @@ public class VCardInput {
 				} else if (VCardExProps.HREF.equals(rp.getPropertyName())) {
 					contact.setHref(rp.getValue());
 					vcCopy.removeProperty(rp);
+				} else if (VCardExProps.TAX_CODE.equals(rp.getPropertyName())) {
+					contact.setTaxCode(rp.getValue());
+					vcCopy.removeProperty(rp);
+				} else if (VCardExProps.VAT_NUMBER.equals(rp.getPropertyName())) {
+					contact.setVATNumber(rp.getValue());
+					vcCopy.removeProperty(rp);
 				}
 			}
 		}

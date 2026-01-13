@@ -129,6 +129,12 @@ public class ContactQueryUI extends ContactQuery {
 		} else if ("address".equals(condition.keyword)) {
 			return new ContactQueryUI().anyAddress().like(asStringValue(value, true));
 
+		} else if ("taxCode".equals(condition.keyword)) {
+			return new ContactQueryUI().taxCode().like(asStringValue(value, true));
+
+		} else if ("vatNumber".equals(condition.keyword)) {
+			return new ContactQueryUI().vatNumber().like(asStringValue(value, true));
+
 		} else if ("notes".equals(condition.keyword)) {
 			return new ContactQueryUI().notes().like(asStringValue(value, true));
 

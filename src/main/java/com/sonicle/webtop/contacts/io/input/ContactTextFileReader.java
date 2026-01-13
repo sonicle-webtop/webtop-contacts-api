@@ -71,7 +71,8 @@ public class ContactTextFileReader extends TextFileReader implements ContactFile
 		"OtherEmail","OtherInstantMsg",
 		"Company","Function","Department","Manager","Assistant","AssistantTelephone",
 		"Partner",/*"Birthday","Anniversary",*/
-		"Url","Notes"
+		"Url","Notes",
+		"TaxCode","VATNumber"
 	};
 	protected List<FileRowsReader.FieldMapping> mappings = null;
 	
@@ -231,6 +232,10 @@ public class ContactTextFileReader extends TextFileReader implements ContactFile
 			contact.setUrl(value);
 		} else if (target.equals("Notes")) {
 			contact.setNotes(value);
+		} else if (target.equals("TaxCode")) {
+			contact.setTaxCode(value);
+		} else if (target.equals("VATNumber")) {
+			contact.setVATNumber(value);
 		}
 	}
 }

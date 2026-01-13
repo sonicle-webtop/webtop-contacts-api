@@ -96,6 +96,8 @@ public class ContactBase {
 	protected LocalDate birthday;
 	protected LocalDate anniversary;
 	protected String url;
+	protected String taxCode;
+	protected String vatNumber;
 	protected String notes;
 	protected String href;
 	protected String etag;
@@ -506,6 +508,22 @@ public class ContactBase {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public String getTaxCode() {
+		return taxCode;
+	}
+
+	public void setTaxCode(String taxCode) {
+		this.taxCode = taxCode;
+	}
+
+	public String getVATNumber() {
+		return vatNumber;
+	}
+
+	public void setVATNumber(String vatNumber) {
+		this.vatNumber = vatNumber;
 	}
 
 	public String getNotes() {

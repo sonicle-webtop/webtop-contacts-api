@@ -652,6 +652,8 @@ public class VCardOutput {
 		addPropIfValued(exProps, VCardExProps.ASSISTANT, c.getAssistant());
 		addPropIfValued(exProps, VCardExProps.ASSISTANT_TELEPHONE, c.getAssistantTelephone());
 		addPropIfValued(exProps, VCardExProps.HREF, c.getHref());
+		addPropIfValued(exProps, VCardExProps.TAX_CODE, c.getTaxCode());
+		addPropIfValued(exProps, VCardExProps.VAT_NUMBER, c.getVATNumber());
 		//addPropIfValued(exProps, VCardExProps.CATEGORY_ID, String.valueOf(c.getCategoryId()));
 		return exProps;
 	}

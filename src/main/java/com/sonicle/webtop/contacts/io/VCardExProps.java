@@ -43,5 +43,6 @@ public class VCardExProps {
 	public static final String HREF = "X-WT-HREF";
 	public static final String TAX_CODE = "X-WT-TAXCODE";
 	public static final String VAT_NUMBER = "X-WT-VATNUMBER";
+	public static final String E_INVOICING_CODE = "X-WT-EINVOICINGCODE";
 	//public static final String CATEGORY_ID = "X-WT-CATEGORYID";
 }

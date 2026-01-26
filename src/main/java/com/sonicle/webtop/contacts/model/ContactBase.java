@@ -98,6 +98,7 @@ public class ContactBase {
 	protected String url;
 	protected String taxCode;
 	protected String vatNumber;
+	protected String eInvoicingCode;
 	protected String notes;
 	protected String href;
 	protected String etag;
@@ -524,6 +525,14 @@ public class ContactBase {
 
 	public void setVATNumber(String vatNumber) {
 		this.vatNumber = vatNumber;
+	}
+	
+	public String getEInvoicingCode() {
+		return eInvoicingCode;
+	}
+
+	public void setEInvoicingCode(String eInvoiceCode) {
+		this.eInvoicingCode = eInvoiceCode;
 	}
 
 	public String getNotes() {

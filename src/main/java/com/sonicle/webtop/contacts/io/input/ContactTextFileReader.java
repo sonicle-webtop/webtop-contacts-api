@@ -72,7 +72,7 @@ public class ContactTextFileReader extends TextFileReader implements ContactFile
 		"Company","Function","Department","Manager","Assistant","AssistantTelephone",
 		"Partner",/*"Birthday","Anniversary",*/
 		"Url","Notes",
-		"TaxCode","VATNumber"
+		"TaxCode","VATNumber","eInvoicingCode"
 	};
 	protected List<FileRowsReader.FieldMapping> mappings = null;
 	
@@ -236,6 +236,8 @@ public class ContactTextFileReader extends TextFileReader implements ContactFile
 			contact.setTaxCode(value);
 		} else if (target.equals("VATNumber")) {
 			contact.setVATNumber(value);
+		} else if (target.equals("eInvoicingCode")) {
+			contact.setEInvoicingCode(value);
 		}
 	}
 }

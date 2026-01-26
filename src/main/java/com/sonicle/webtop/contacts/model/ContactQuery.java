@@ -92,6 +92,7 @@ public class ContactQuery extends QueryBuilderWithCFields<ContactQuery> {
 	public static final String URL = "url";
 	public static final String TAX_CODE = "taxCode";
 	public static final String VAT_NUMBER = "vatNumber";
+	public static final String E_INVOICING_CODE = "eInvoicingCode";
 	public static final String NOTES = "notes";
 	public static final String TAG_ID = "tagId";
 	public static final String ANY_NAME = "anyName";
@@ -303,6 +304,10 @@ public class ContactQuery extends QueryBuilderWithCFields<ContactQuery> {
 	
 	public StringProperty<ContactQuery> vatNumber() {
 		return string(VAT_NUMBER);
+	}
+	
+	public StringProperty<ContactQuery> eInvoicingCode() {
+		return string(E_INVOICING_CODE);
 	}
 	
 	public StringProperty<ContactQuery> notes() {

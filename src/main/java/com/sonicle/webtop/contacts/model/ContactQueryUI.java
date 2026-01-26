@@ -135,6 +135,9 @@ public class ContactQueryUI extends ContactQuery {
 		} else if ("vatNumber".equals(condition.keyword)) {
 			return new ContactQueryUI().vatNumber().like(asStringValue(value, true));
 
+		} else if ("eInvoicingCode".equals(condition.keyword)) {
+			return new ContactQueryUI().eInvoicingCode().like(asStringValue(value, true));
+
 		} else if ("notes".equals(condition.keyword)) {
 			return new ContactQueryUI().notes().like(asStringValue(value, true));
 

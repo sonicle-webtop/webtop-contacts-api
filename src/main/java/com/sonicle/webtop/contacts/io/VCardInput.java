@@ -561,6 +561,9 @@ public class VCardInput {
 				} else if (VCardExProps.VAT_NUMBER.equals(rp.getPropertyName())) {
 					contact.setVATNumber(rp.getValue());
 					vcCopy.removeProperty(rp);
+				} else if (VCardExProps.E_INVOICING_CODE.equals(rp.getPropertyName())) {
+					contact.setEInvoicingCode(rp.getValue());
+					vcCopy.removeProperty(rp);
 				}
 			}
 		}

@@ -87,7 +87,7 @@ public class ContactExcelFileReader extends ExcelFileReader implements ContactFi
 		"Company","Function","Department","Manager","Assistant","AssistantTelephone",
 		"Partner",/*"Birthday","Anniversary",*/
 		"Url","Notes",
-		"TaxCode","VATNumber"
+		"TaxCode","VATNumber","eInvoicingCode"
 	};
 	
 	protected List<FileRowsReader.FieldMapping> mappings = null;
@@ -301,6 +301,8 @@ public class ContactExcelFileReader extends ExcelFileReader implements ContactFi
 			contact.setTaxCode(value);
 		} else if (target.equals("VATNumber")) {
 			contact.setVATNumber(value);
+		} else if (target.equals("eInvoicingCode")) {
+			contact.setEInvoicingCode(value);
 		}
 	}
 	

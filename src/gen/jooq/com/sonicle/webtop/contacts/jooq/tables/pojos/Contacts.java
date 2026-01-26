@@ -75,6 +75,7 @@ public class Contacts implements java.io.Serializable {
     private java.lang.String        etag;
     private java.lang.String        taxCode;
     private java.lang.String        vatNumber;
+    private java.lang.String        eInvoicingCode;
 
     public Contacts() {}
 
@@ -141,6 +142,7 @@ public class Contacts implements java.io.Serializable {
         this.etag = value.etag;
         this.taxCode = value.taxCode;
         this.vatNumber = value.vatNumber;
+        this.eInvoicingCode = value.eInvoicingCode;
     }
 
     public Contacts(
@@ -205,7 +207,8 @@ public class Contacts implements java.io.Serializable {
         java.lang.String        href,
         java.lang.String        etag,
         java.lang.String        taxCode,
-        java.lang.String        vatNumber
+        java.lang.String        vatNumber,
+        java.lang.String        eInvoicingCode
     ) {
         this.contactId = contactId;
         this.categoryId = categoryId;
@@ -269,6 +272,7 @@ public class Contacts implements java.io.Serializable {
         this.etag = etag;
         this.taxCode = taxCode;
         this.vatNumber = vatNumber;
+        this.eInvoicingCode = eInvoicingCode;
     }
 
     /**
@@ -1139,6 +1143,20 @@ public class Contacts implements java.io.Serializable {
         this.vatNumber = vatNumber;
     }
 
+    /**
+     * Getter for <code>contacts.contacts.e_invoicing_code</code>.
+     */
+    public java.lang.String getEInvoicingCode() {
+        return this.eInvoicingCode;
+    }
+
+    /**
+     * Setter for <code>contacts.contacts.e_invoicing_code</code>.
+     */
+    public void setEInvoicingCode(java.lang.String eInvoicingCode) {
+        this.eInvoicingCode = eInvoicingCode;
+    }
+
     @Override
     public String toString() {
         java.lang.StringBuilder sb = new java.lang.StringBuilder("Contacts (");
@@ -1205,6 +1223,7 @@ public class Contacts implements java.io.Serializable {
         sb.append(", ").append(etag);
         sb.append(", ").append(taxCode);
         sb.append(", ").append(vatNumber);
+        sb.append(", ").append(eInvoicingCode);
 
         sb.append(")");
         return sb.toString();

@@ -102,7 +102,7 @@ public class ContactQueryUI extends ContactQuery {
 			for (String value : values) {
 				conds.add(creator.create(value));
 			}
-			return new ContactQueryUI().or(conds);
+			return new ContactQueryUI().and(conds);
 		}
 	}
 	

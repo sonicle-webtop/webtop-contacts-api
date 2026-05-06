@@ -33,11 +33,11 @@
 package com.sonicle.webtop.contacts.model;
 
 import com.rits.cloning.Cloner;
+import com.sonicle.commons.Check;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import net.sf.qualitycheck.Check;
 
 /**
  *

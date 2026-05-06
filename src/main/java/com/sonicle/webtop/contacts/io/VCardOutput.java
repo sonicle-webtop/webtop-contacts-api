@@ -32,6 +32,7 @@
  */
 package com.sonicle.webtop.contacts.io;
 
+import com.sonicle.commons.Check;
 import com.sonicle.commons.LangUtils;
 import com.sonicle.webtop.contacts.model.ContactAttachment;
 import com.sonicle.webtop.contacts.model.ContactAttachmentWithBytes;
@@ -87,7 +88,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import net.sf.qualitycheck.Check;
 import org.apache.commons.lang3.StringUtils;
 
 /**

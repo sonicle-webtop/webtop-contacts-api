@@ -33,6 +33,7 @@
 package com.sonicle.webtop.contacts.model;
 
 import com.rits.cloning.Cloner;
+import com.sonicle.commons.Check;
 import com.sonicle.webtop.core.model.CustomFieldValue;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import net.sf.qualitycheck.Check;
 
 /**
  *

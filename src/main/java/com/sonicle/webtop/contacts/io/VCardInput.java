@@ -33,6 +33,7 @@
 package com.sonicle.webtop.contacts.io;
 
 import com.google.gson.annotations.SerializedName;
+import com.sonicle.commons.Check;
 import com.sonicle.commons.LangUtils;
 import com.sonicle.webtop.contacts.model.ContactBase;
 import com.sonicle.webtop.contacts.model.ContactCompany;
@@ -96,7 +97,6 @@ import com.sonicle.webtop.core.model.TagCandidate;
 import ezvcard.io.text.VCardReader;
 import ezvcard.property.RawProperty;
 import java.util.LinkedHashSet;
-import net.sf.qualitycheck.exception.IllegalStateOfArgumentException;
 
 /**
  *
@@ -526,7 +526,7 @@ public class VCardInput {
 				if (!StringUtils.isEmpty(fieldId) && !StringUtils.isEmpty(valueType)) {
 					try {
 						candidateCFValues.add(new CustomFieldValueCandidate(fieldId, valueType, prop.getFieldValue()));
-					} catch (IllegalStateOfArgumentException ex) {
+					} catch (Check.IllegalStateOfArgumentException ex) {
 						log(logHandler, 1, LogEntry.Level.WARN, "X-WT-CUSTOMFIELDVALUE skipped: malformed data (unsupported TYPE)");
 					}
 					

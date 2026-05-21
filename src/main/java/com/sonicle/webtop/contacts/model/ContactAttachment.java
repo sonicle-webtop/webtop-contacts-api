@@ -32,10 +32,9 @@
  */
 package com.sonicle.webtop.contacts.model;
 
+import com.sonicle.commons.IdentityEquality;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.DateTime;
 
 /**
@@ -100,19 +99,12 @@ public class ContactAttachment {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(getAttachmentId())
-			.toHashCode();
+		return IdentityEquality.hashCode(this, attachmentId);
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ContactAttachment == false) return false;
-		if (this == obj) return true;
-		final ContactAttachment otherObject = (ContactAttachment)obj;
-		return new EqualsBuilder()
-			.append(getAttachmentId(), otherObject.getAttachmentId())
-			.isEquals();
+		return IdentityEquality.equals(this, obj, attachmentId, () -> ((ContactAttachment)obj).attachmentId);
 	}
 	
 	public static List<ContactAttachment> asListOfContactAttachmentsWithInputRef(List<ContactAttachment> attachmentsToClone) {
